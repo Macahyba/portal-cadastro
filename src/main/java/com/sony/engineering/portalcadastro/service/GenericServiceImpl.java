@@ -13,7 +13,7 @@ import com.sony.engineering.portalcadastro.repository.GenericDao;
 public abstract class GenericServiceImpl<T> implements GenericService<T> {
 
 	@Autowired
-	public GenericDao<T> dao;
+	private GenericDao<T> dao;
 	
 	public GenericServiceImpl(GenericDao<T> dao) {
 		this.dao = dao;

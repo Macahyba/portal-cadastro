@@ -1,9 +1,12 @@
 package com.sony.engineering.portalcadastro.model;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
 
 @Entity
@@ -20,6 +23,11 @@ public class Service {
 	
 	@NotEmpty
 	public Float price;
+	
+	@NotEmpty
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "quotation_id")
+	public Quotation quotation;
 
 	public Integer getId() {
 		return id;
@@ -51,6 +59,14 @@ public class Service {
 
 	public void setPrice(Float price) {
 		this.price = price;
+	}
+
+	public Quotation getQuotation() {
+		return quotation;
+	}
+
+	public void setQuotation(Quotation quotation) {
+		this.quotation = quotation;
 	}
 	
 }

@@ -5,9 +5,12 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -33,32 +36,37 @@ public class Quotation {
 	@NotEmpty
 	public String status;
 	
+	@NotEmpty
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreationTimestamp
 	public Date creationDate;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@UpdateTimestamp
-	public Date aprovalDate;
+	public Date approvalDate;
 	
 	@NotEmpty
 	@OneToOne
+	@JoinColumn(name = "user_id")
 	public User user;
-	
+
 	@NotEmpty
 	@OneToMany
+	@JoinColumn(name = "quotation_id")
 	public List<Equipment> equipments;
 	
 	@NotEmpty
-	@OneToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "customer_id")
 	public Customer customer;
 
-	@NotEmpty
 	@OneToOne
-	public User aprovalUser;
+	@JoinColumn(name = "approval_user_id")
+	public User approvalUser;
 	
 	@NotEmpty
 	@OneToMany
+	@JoinColumn(name = "quotation_id")
 	public List<Service> services;
 
 	public Integer getId() {
@@ -101,12 +109,12 @@ public class Quotation {
 		this.creationDate = creationDate;
 	}
 
-	public Date getAprovalDate() {
-		return aprovalDate;
+	public Date getApprovalDate() {
+		return approvalDate;
 	}
 
-	public void setAprovalDate(Date aprovalDate) {
-		this.aprovalDate = aprovalDate;
+	public void setApprovalDate(Date approvalDate) {
+		this.approvalDate = approvalDate;
 	}
 
 	public User getUser() {
@@ -133,12 +141,12 @@ public class Quotation {
 		this.customer = customer;
 	}
 
-	public User getAprovalUser() {
-		return aprovalUser;
+	public User getApprovalUser() {
+		return approvalUser;
 	}
 
-	public void setAprovalUser(User aprovalUser) {
-		this.aprovalUser = aprovalUser;
+	public void setApprovalUser(User approvalUser) {
+		this.approvalUser = approvalUser;
 	}
 
 	public List<Service> getServices() {

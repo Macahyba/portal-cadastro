@@ -1,9 +1,14 @@
 package com.sony.engineering.portalcadastro.model;
 
+
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 
 @Entity
@@ -16,7 +21,7 @@ public class Customer {
 	public String name;
 	
 	@NotEmpty
-	public String fullname;
+	public String fullName;
 	
 	@NotEmpty
 	public String cnpj;
@@ -27,6 +32,11 @@ public class Customer {
 	@NotEmpty
 	public String department;
 
+	@NotEmpty
+	@OneToMany
+	@JoinColumn(name = "customer_id")
+	public List<Quotation> quotations;
+	
 	public Integer getId() {
 		return id;
 	}
@@ -43,12 +53,12 @@ public class Customer {
 		this.name = name;
 	}
 
-	public String getFullname() {
-		return fullname;
+	public String getFullName() {
+		return fullName;
 	}
 
-	public void setFullname(String fullname) {
-		this.fullname = fullname;
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
 	}
 
 	public String getCnpj() {
@@ -73,6 +83,14 @@ public class Customer {
 
 	public void setDepartment(String department) {
 		this.department = department;
+	}
+
+	public List<Quotation> getQuotations() {
+		return quotations;
+	}
+
+	public void setQuotations(List<Quotation> quotations) {
+		this.quotations = quotations;
 	}
 	
 }
