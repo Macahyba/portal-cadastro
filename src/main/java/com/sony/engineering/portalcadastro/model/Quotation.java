@@ -10,8 +10,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -50,9 +51,10 @@ public class Quotation {
 	@JoinColumn(name = "user_id")
 	public User user;
 
-	@NotEmpty
-	@OneToMany
-	@JoinColumn(name = "quotation_id")
+	@ManyToMany
+	@JoinTable(name = "quotation_equipment", 
+	joinColumns = {@JoinColumn(name = "quotation_id")}, 
+	inverseJoinColumns = {@JoinColumn(name = "equipment_id")})
 	public List<Equipment> equipments;
 	
 	@NotEmpty
@@ -64,9 +66,9 @@ public class Quotation {
 	@JoinColumn(name = "approval_user_id")
 	public User approvalUser;
 	
-	@NotEmpty
-	@OneToMany
-	@JoinColumn(name = "quotation_id")
+	@ManyToMany
+	@JoinTable(name = "quotation_service", joinColumns = {@JoinColumn(name = "quotations_id")},
+	inverseJoinColumns = {@JoinColumn(name = "service_id")})
 	public List<Service> services;
 
 	public Integer getId() {

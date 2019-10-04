@@ -1,0 +1,30 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Home</title>
+		<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}">
+		<link rel="stylesheet" type="text/css" th:href="@{/public/css/style.css}">
+	</head>
+	<body>
+		<div class="container">
+			<p><span class="h1">Bem-vindo(a), <span th:text="${user.name}" /><span class="h2":text="(${user.login})" /></p>
+			<p>User: <span th:text="${user.login}" />&nbsp;&nbsp;Perfil: <span th:text="${user.profile}" />&nbsp;&nbsp;</p>
+			
+			<ul class="list-group ">
+				<li class="list-group-item"><a th:href="@{/inserirOrc}">Inserir Orçamento</a></li>
+				<li class="list-group-item"><a th:href="@{/listaOrcamentos}">Listar Orçamentos</a></li>
+				
+				<span th:if="${user.profile} != 'usuario'" >
+					<li class="list-group-item"><a th:href="@{/admin}">Gerenciar usuários</a></li>
+				</span>
+			</ul>
+			
+			<p><input class="btn btn-danger  mt-4" type="button" onclick="window.location.href='/logout'" value="Logout" /></p>
+		</div>
+		<script type="text/javascript" th:src="@{/public/scripts/jquery-3.3.1.min.js}"></script>
+        <script type="text/javascript" th:src="@{/public/scripts/script.js}"></script>
+	</body>
+</html>

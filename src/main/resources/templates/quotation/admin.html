@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Cadastrar</title>
+		<link rel="stylesheet" type="text/css" href="/public/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="/public/css/style.css">
+    </head>
+	<body>
+        <div class="container">
+            <h1>Cadastrar</h1>
+            <p>User: <%= user.login %>&nbsp;&nbsp;Perfil: <%= user.perfil %>&nbsp;&nbsp;</p>
+            <form action="/admin" method="post">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Login</span>
+                    </div>
+                    <input class="form-control" placeholder="Insira o Login" autocomplete="off" type="text" name="login">
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Nome Completo</span>
+                    </div>
+                    <input class="form-control" placeholder="Insira o nome completo" autocomplete="off" type="text" name="nome">
+                </div>
+
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Password</span>
+                    </div>
+                    <input class="form-control" placeholder="Insira a senha" autocomplete="off" type="password" name="password">
+                </div>
+
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">E-mail</span>
+                    </div>
+                    <input class="form-control" placeholder="Insira o e-mail" autocomplete="off" type="text" name="email">
+                </div>
+
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Cargo</span>
+                    </div>
+                    <input class="form-control" placeholder="Insira o cargo" autocomplete="off" type="text" name="cargo">
+                </div>
+                
+
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Telefone</span>
+                    </div>
+                    <input class="form-control" placeholder="Insira o telefone" autocomplete="off" type="tel" name="telefone">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">Perfil</span>
+                    </div>
+                    <select class="form-control" autocomplete="off" type="select" name="perfil">
+                        <option value="usuario">Usuario</option>
+                        <option value="manager">Manager</option>
+                        
+                        <% if (user.perfil == 'admin') { %>
+
+                            <option value="admin">Admin</option>
+
+                        <% } %>
+                    </select>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col">
+                        <button class="btn btn-success mr-4" onclick="this.disabled=true; this.form.submit();">Submit</button>	
+                        <input class="btn btn-info" type="button" onclick="window.location.href='/home'" value="Home" />
+                    </div>
+                </div>
+            </form>
+
+            <table class="table table-responsive respons">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Login</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Perfil</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                <%	for (let i=0; i < detalhe.length; i++) {%>
+
+                    <tr id="tr<%= detalhe[i].id %>">               
+                        <input type="hidden" name="id" value="<%= detalhe[i].id %>">
+                        <td><%= detalhe[i].login %></td>
+                        <td><%= detalhe[i].nome %></td>
+                        <td><%= detalhe[i].email %></td>
+                        <td><%= detalhe[i].perfil %></td>   
+                        <td><input class="btn btn-primary" type="button" id="res<%= detalhe[i].id %>" value="Reset" onclick='$("#form").submit();'></td>                     
+
+                    </tr>
+
+                <%	} %>
+
+                </tbody>
+            </table>
+            
+        </div>
+        <script type="text/javascript" src="/public/scripts/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="/public/scripts/script.js"></script>
+	</body>
+</html>

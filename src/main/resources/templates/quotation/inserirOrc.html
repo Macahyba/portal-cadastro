@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Inserir orcamentos!</title>
+		<script type="text/javascript"> var data = JSON.parse("<%- summData %>")</script>
+		<link rel="stylesheet" type="text/css" href="/public/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="/public/css/style.css">		
+	</head>
+	<body>
+		<div class="container">
+			<h2>Inserir Orçamento</h2>
+			<p>User: <%= user.login %>&nbsp;&nbsp;Perfil: <%= user.perfil %>&nbsp;&nbsp;</p>
+			<form action="/inserirOrc" method="post">
+				<div class="input-group mb-3">
+					<div class="input-group-prepend">
+						<span class="input-group-text">Cliente</span>
+					</div>
+					<datalist id="nomeList"></datalist>	
+					<input class="form-control" placeholder="Digite o nome do cliente" autocomplete="off" type="text" name="nomeCliente" list="nomeList" id="nomeCliente"> 
+				</div>
+
+				<div class="input-group mb-3 ">
+					<div class="input-group-prepend">
+						<span class="input-group-text">Nome Completo</span>
+					</div>
+					<datalist id="nomeCompList"></datalist>
+					<input class="form-control" placeholder="Digite o Nome Completo do cliente a constar no orçamento" autocomplete="off" type="text" name="nomeCompleto" list="nomeCompList" id="nomeCompleto"> 
+				</div>
+
+				<div class="input-group mb-3 ">
+					<div class="input-group-prepend">
+						<span class="input-group-text">CNPJ</span>
+					</div>
+					<input class="form-control" placeholder="Digite o CNPJ a constar no orçamento" autocomplete="off" type="text" name="cnpj" id="cnpj">
+				</div>
+
+				<div class="input-group mb-3 ">
+					<div class="input-group-prepend">
+						<span class="input-group-text">Responsável</span>
+					</div>
+					<datalist id="respList"></datalist>
+					<input class="form-control" placeholder="Digite o contato do cliente" autocomplete="off" type="text" name="responsavel" id="responsavel" list="respList">
+				</div>				
+						
+				<div class="input-group mb-3 ">
+					<div class="input-group-prepend">
+						<span class="input-group-text">Departamento</span>
+					</div>
+					<input class="form-control" placeholder="Digite o departamento do cliente" autocomplete="off" type="text" name="departamento" id="departamento">
+				</div>	
+						
+				<div class="input-group mb-3 ">
+					<div class="input-group-prepend">
+						<span class="input-group-text">Equipamento</span>
+					</div>
+					<datalist id="equipList"></datalist>
+					<input class="form-control" placeholder="Digite modelo do equipamento" autocomplete="off" type="text" name="nomeEquip" list="equipList" id="nomeEquip">
+				</div>	
+					
+				<div class="input-group mb-3 ">
+					<div class="input-group-prepend">
+						<span class="input-group-text">Serial Number</span>
+					</div>
+					<datalist id="serialList"></datalist>
+					<input class="form-control" placeholder="Digite número de série do equipamento" autocomplete="off" type="text" name="serialNumber" id="serialNumber" list="serialList">
+				</div>					
+						
+				<div class="input-group mb-3 ">
+					<div class="input-group-prepend">
+						<span class="input-group-text">Valor</span>
+						<span class="input-group-text">R$</span>
+					</div>
+					<input class="form-control" placeholder="Digite valor total do orçamento" autocomplete="off" type="number" name="valor" id="valor">
+				</div>
+				
+				<div class="input-group mb-3 ">
+					<div class="input-group-prepend">
+						<span class="input-group-text">Desconto</span>
+					</div>
+					<input class="form-control" placeholder="Digite o desconto, caso se aplique" autocomplete="off" type="number" name="desconto" id="desconto" value="0" min="0" max="100">
+					<div class="input-group-append">
+						<span class="input-group-text">%</span>
+					</div>
+				</div>
+
+				<div class="input-group mb-3 ">
+					<div class="input-group-prepend">
+						<span class="input-group-text">Valor Final</span>
+						<span class="input-group-text">R$</span>
+					</div>
+					<input class="form-control" autocomplete="off" type="number" name="vFinal" id="vFinal" readonly>
+				</div>	
+				<button class="btn btn-success mr-4" onclick="this.disabled=true; this.form.submit();">Submit</button>	
+				<input class="btn btn-info" type="button" onclick="window.location.href='/home'" value="Home" />								
+			</form>
+		</div>
+		<script type="text/javascript" src="/public/scripts/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="/public/scripts/script.js"></script>
+	</body>
+</html>
