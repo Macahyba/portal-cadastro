@@ -14,17 +14,22 @@
             <div class="card">
                 <div class="card-header bg-primary text-white">Login</div>
                 <div class="card-body">
+                
+                	<div class="col text-center p-2 mb-2 alert-danger" th:if="${error != null}">
+                		<span th:text="${error}" />
+                	</div>
+                
                     <form th:action="@{/login}" id="form" method="post">
 
                         <div class="form-group">
                             <label for="login">Usuário</label>
-                            <input name="login" type="email" class="form-control" id="login" aria-describedby="login" placeholder="Digite seu usuário" required><span class="error"><small>Campo obrigatório</small></span>
+                            <input name="login" type="text" class="form-control" id="login" aria-describedby="login" placeholder="Digite seu usuário" required><span class="error"><small>Campo obrigatório</small></span>
                         </div>
                         <div class="form-group">
                             <label for="password">Password</label>
                             <input name="password" type="password" class="form-control" id="password" placeholder="Senha"><span class="error"><small>Campo obrigatório</small></span>
                         </div>
-                        <input class="btn btn-primary mt-4" onclick="sendForm()" type="button" id="send" value="Enviar">
+                        <input class="btn btn-primary mt-4" onclick="sendForm()" type="submit" id="send" value="Enviar">
 
 
                     </form>

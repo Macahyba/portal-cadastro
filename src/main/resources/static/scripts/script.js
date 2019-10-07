@@ -28,7 +28,7 @@ $(function(){
         event.preventDefault();
         $.ajax({
             method: "post",
-            url: "/submit",
+            url: "login",
             data: formData
         })
 
@@ -42,9 +42,9 @@ $(function(){
         .fail(function(err){
     
             alert("Ocorreu um erro, favor tente novamente")
-            alert($('#'+$(this).attr('id')));
+            //alert($('#'+$(this).attr('id')));
             $('#'+$(this).attr('id')).prop('disabled', false);
-            console.log(Date.now()+JSON.stringify(err,null,4))
+            //console.log(Date.now()+JSON.stringify(err,null,4))
         })
 
     }))
@@ -307,9 +307,9 @@ function sendForm(){
 
     for (let input in formData){
         
-        if (!$('input[name='+formData[input].name+']').val()){
-            $('input[name='+formData[input].name+']').next().removeClass('error').addClass("errorShow");
-            $('input[name='+formData[input].name+']').removeClass('valid').addClass("invalid");
+        if (!$('input[name='+formData[input].login+']').val()){
+            $('input[name='+formData[input].login+']').next().removeClass('error').addClass("errorShow");
+            $('input[name='+formData[input].login+']').removeClass('valid').addClass("invalid");
             errorFree = false;
         }
     }

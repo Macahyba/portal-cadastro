@@ -34,4 +34,16 @@ public class UserService extends GenericServiceImpl<User> {
 		this.userDao = userDao;
 	}
 
+	public User validateLogin(User user) {
+		
+		User u = userDao.getUserByLogin(user.getLogin());
+		
+		if(user.getPassword().equals(u.getPassword())) {
+			
+			return u;
+		}
+		
+		return null;
+	}
+
 }

@@ -26,14 +26,21 @@ public class LoginController {
 	@RequestMapping(value = "login", method = RequestMethod.POST)
 	public String loginPost(Model model, @ModelAttribute("user") User user) {
 		
-		//REFACTOR
-		User a = userService.getUserByLogin(user.getLogin());
+		User dbUser = userService.validateLogin(user);
 		
-		if (a == null) {
-			return "redirect:/";
+		if(dbUser == null) {
+			
+			model.addAttribute("error", "Usuário ou senha incorretos!");
+			return "quotation/login";			
 		}
 		
-		model.addAttribute("user", userService.getUserByLogin(user.getLogin()));
+		model.addAttribute("user", dbUser);
 		return "quotation/home";
 	}	
+	
+	@RequestMapping(value = "logout", method = RequestMethod.GET)
+	public String logout(Model model) {
+		
+		return "redirect:/";
+	}
 }

@@ -23,7 +23,7 @@ public class UserDao extends GenericDaoImpl<User> {
 		try {
 			return getEm().createQuery(query).getSingleResult();
 		} catch(NoResultException noRes) {
-			return null;
+			return new User();
 		}
 	}
 	
