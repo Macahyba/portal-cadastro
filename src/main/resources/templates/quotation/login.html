@@ -29,7 +29,7 @@
                             <label for="password">Password</label>
                             <input name="password" type="password" class="form-control" id="password" placeholder="Senha"><span class="error"><small>Campo obrigatório</small></span>
                         </div>
-                        <input class="btn btn-primary mt-4" onclick="sendForm()" type="submit" id="send" value="Enviar">
+                        <input class="btn btn-outline-primary mt-4" onclick="sendForm()" type="submit" id="send" value="Enviar">
 
 
                     </form>
@@ -37,6 +37,7 @@
             </div>
         </div>
         <script type="text/javascript" th:src="@{/scripts/jquery-3.3.1.min.js}"></script>
+        <script type="text/javascript" th:src="@{/scripts/jquery.serializejson.min.js}"></script>
         <script type="text/javascript" th:src="@{/scripts/script.js}"></script>
 	</body>
 </html>

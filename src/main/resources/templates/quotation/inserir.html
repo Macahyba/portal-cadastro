@@ -1,3 +1,4 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <!DOCTYPE html>
 <html lang="pt-br">
 	<head>
@@ -6,14 +7,14 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Inserir orcamentos!</title>
 		<script type="text/javascript"> var data = JSON.parse("<%- summData %>")</script>
-		<link rel="stylesheet" type="text/css" href="/public/css/bootstrap.min.css">
-		<link rel="stylesheet" type="text/css" href="/public/css/style.css">		
+		<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}">
+		<link rel="stylesheet" type="text/css" th:href="@{/public/css/style.css}">		
 	</head>
 	<body>
 		<div class="container">
 			<h2>Inserir Orçamento</h2>
-			<p>User: <%= user.login %>&nbsp;&nbsp;Perfil: <%= user.perfil %>&nbsp;&nbsp;</p>
-			<form action="/inserirOrc" method="post">
+			<p>User: <span th:text="@{user.login}" />&nbsp;&nbsp;Perfil: <span th:text="@{user.perfil}" />&nbsp;&nbsp;</p>
+			<form th:action="@{/inserir}" method="post">
 				<div class="input-group mb-3">
 					<div class="input-group-prepend">
 						<span class="input-group-text">Cliente</span>
@@ -93,11 +94,12 @@
 					</div>
 					<input class="form-control" autocomplete="off" type="number" name="vFinal" id="vFinal" readonly>
 				</div>	
-				<button class="btn btn-success mr-4" onclick="this.disabled=true; this.form.submit();">Submit</button>	
-				<input class="btn btn-info" type="button" onclick="window.location.href='/home'" value="Home" />								
+				<button class="btn btn-outline-success mr-4" onclick="this.disabled=true; this.form.submit();">Submit</button>	
+				<input class="btn btn-outline-info" type="button" onclick="window.location.href='/home'" value="Home" />								
 			</form>
 		</div>
-		<script type="text/javascript" src="/public/scripts/jquery-3.3.1.min.js"></script>
-        <script type="text/javascript" src="/public/scripts/script.js"></script>
+		<script type="text/javascript" src="@{/scripts/jquery-3.3.1.min.js}"></script>
+		<script type="text/javascript" th:src="@{/scripts/jquery.serializejson.min.js}"></script>
+        <script type="text/javascript" src="@{/public/scripts/script.js}"></script>
 	</body>
 </html>

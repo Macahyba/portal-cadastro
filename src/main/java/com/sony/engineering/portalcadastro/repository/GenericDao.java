@@ -2,6 +2,9 @@ package com.sony.engineering.portalcadastro.repository;
 
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+
+@Repository
 public interface GenericDao<T> {
 
 	void save(T t);

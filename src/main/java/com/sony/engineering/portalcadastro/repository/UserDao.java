@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.sony.engineering.portalcadastro.model.User;
 
 @Repository
-public class UserDao extends GenericDaoImpl<User> {
+public class UserDao extends GenericDaoImpl<User>{
 
 	public User getUserByLogin(String login) {
 		

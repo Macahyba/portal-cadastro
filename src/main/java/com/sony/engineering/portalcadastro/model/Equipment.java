@@ -21,10 +21,6 @@ public class Equipment {
 	@NotEmpty
 	public String serialNumber;
 	
-	@NotEmpty
-	@ManyToMany(mappedBy = "equipments")
-	public List<Quotation> quotations;
-	
 	public Integer getId() {
 		return id;
 	}
@@ -47,14 +43,6 @@ public class Equipment {
 
 	public void setSerialNumber(String serialNumber) {
 		this.serialNumber = serialNumber;
-	}
-
-	public List<Quotation> getQuotations() {
-		return quotations;
-	}
-
-	public void setQuotations(List<Quotation> quotations) {
-		this.quotations = quotations;
 	}
 	
 }

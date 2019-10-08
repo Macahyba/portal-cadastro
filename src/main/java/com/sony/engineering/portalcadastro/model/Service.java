@@ -23,10 +23,6 @@ public class Service {
 	
 	@NotEmpty
 	public Float price;
-	
-	@NotEmpty
-	@ManyToMany(mappedBy = "services")
-	public List<Quotation> quotations;
 
 	public Integer getId() {
 		return id;
@@ -58,14 +54,6 @@ public class Service {
 
 	public void setPrice(Float price) {
 		this.price = price;
-	}
-
-	public List<Quotation> getQuotations() {
-		return quotations;
-	}
-
-	public void setQuotations(List<Quotation> quotations) {
-		this.quotations = quotations;
 	}
 	
 }

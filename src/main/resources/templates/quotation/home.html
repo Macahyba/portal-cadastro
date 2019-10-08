@@ -14,8 +14,8 @@
 			<p>User: <span th:text="${user.login}" />&nbsp;&nbsp;Perfil: <span th:text="${user.profile}" />&nbsp;&nbsp;</p>
 			
 			<ul class="list-group ">
-				<li class="list-group-item"><a th:href="@{/inserirOrc}">Inserir Orçamento</a></li>
-				<li class="list-group-item"><a th:href="@{/listaOrcamentos}">Listar Orçamentos</a></li>
+				<li class="list-group-item"><a th:href="@{/inserir}">Inserir Orçamento</a></li>
+				<li class="list-group-item"><a th:href="@{/lista}">Listar Orçamentos</a></li>
 				
 				<span th:if="${user.profile} != 'usuario'" >
 					<li class="list-group-item"><a th:href="@{/admin}">Gerenciar usuários</a></li>

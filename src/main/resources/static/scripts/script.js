@@ -22,14 +22,17 @@ $(function(){
     $('body').on('click','input[type="button"]', (function(event){
         
         let id = $(this).attr('id');
-        let formData= $('#tr' + id.slice(3) + ' :input').serializeArray();
-
+        let formData= $('form').serializeJSON();
+        
+        alert(JSON.stringify(formData,null,4));
         $('#' + id).prop('disabled', true); // AVOID MULTIPLE SUBMITS
         event.preventDefault();
         $.ajax({
             method: "post",
+            contentType: "application/json",
             url: "login",
-            data: formData
+            dataType: 'json',
+            data: JSON.stringify(formData)
         })
 
         .done(function(msg){
@@ -37,6 +40,8 @@ $(function(){
             alert("Sucesso!")
             alert(msg);
             $('#' + id).prop('disabled', false);
+            $('form').submit();
+            
         })
 
         .fail(function(err){
@@ -44,7 +49,7 @@ $(function(){
             alert("Ocorreu um erro, favor tente novamente")
             //alert($('#'+$(this).attr('id')));
             $('#'+$(this).attr('id')).prop('disabled', false);
-            //console.log(Date.now()+JSON.stringify(err,null,4))
+            console.log(Date.now()+JSON.stringify(err,null,4))
         })
 
     }))
@@ -300,23 +305,25 @@ function limpaEquip(){
 
 }
 
-function sendForm(){
 
-    let formData = $('#form').serializeArray();
-    let errorFree = true;
-
-    for (let input in formData){
-        
-        if (!$('input[name='+formData[input].login+']').val()){
-            $('input[name='+formData[input].login+']').next().removeClass('error').addClass("errorShow");
-            $('input[name='+formData[input].login+']').removeClass('valid').addClass("invalid");
-            errorFree = false;
-        }
-    }
-
-    if (errorFree){
-        
-        $("#send").prop('disabled', true);
-        $("#form").submit();
-    }
-}
+// DESNECESSARIO
+//function sendForm(){
+//
+//    let formData = $('#form').serializeArray();
+//    let errorFree = true;
+//
+//    for (let input in formData){
+//        
+//        if (!$('input[name='+formData[input].login+']').val()){
+//            $('input[name='+formData[input].login+']').next().removeClass('error').addClass("errorShow");
+//            $('input[name='+formData[input].login+']').removeClass('valid').addClass("invalid");
+//            errorFree = false;
+//        }
+//    }
+//
+//    if (errorFree){
+//        
+//        $("#send").prop('disabled', true);
+//        $("#form").submit();
+//    }
+//}

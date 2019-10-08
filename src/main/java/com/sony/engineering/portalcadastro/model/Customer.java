@@ -31,11 +31,6 @@ public class Customer {
 	
 	@NotEmpty
 	public String department;
-
-	@NotEmpty
-	@OneToMany
-	@JoinColumn(name = "customer_id")
-	public List<Quotation> quotations;
 	
 	public Integer getId() {
 		return id;
@@ -83,14 +78,6 @@ public class Customer {
 
 	public void setDepartment(String department) {
 		this.department = department;
-	}
-
-	public List<Quotation> getQuotations() {
-		return quotations;
-	}
-
-	public void setQuotations(List<Quotation> quotations) {
-		this.quotations = quotations;
 	}
 	
 }
