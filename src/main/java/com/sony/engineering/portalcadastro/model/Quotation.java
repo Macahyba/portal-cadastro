@@ -3,6 +3,7 @@ package com.sony.engineering.portalcadastro.model;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,7 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -27,17 +29,14 @@ public class Quotation {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer id;
 	
-	@NotEmpty
 	@Column(columnDefinition = "float default 0")
 	public Float totalPrice;
 	
 	@Column(columnDefinition = "float default 0")
-	public Float discount;
+	public Float totalDiscount;
 	
-	@NotEmpty
 	public String status;
 	
-	@NotEmpty
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreationTimestamp
 	public Date creationDate;
@@ -46,27 +45,25 @@ public class Quotation {
 	@UpdateTimestamp
 	public Date approvalDate;
 	
-	@NotEmpty
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
 	public User user;
 
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "quotation_equipment", 
 	joinColumns = {@JoinColumn(name = "quotation_id")}, 
 	inverseJoinColumns = {@JoinColumn(name = "equipment_id")})
 	public List<Equipment> equipments;
 	
-	@NotEmpty
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "customer_id")
 	public Customer customer;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "approval_user_id")
 	public User approvalUser;
 	
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "quotation_service", joinColumns = {@JoinColumn(name = "quotations_id")},
 	inverseJoinColumns = {@JoinColumn(name = "service_id")})
 	public List<Service> services;
@@ -87,12 +84,12 @@ public class Quotation {
 		this.totalPrice = totalPrice;
 	}
 
-	public Float getDiscount() {
-		return discount;
+	public Float getTotalDiscount() {
+		return totalDiscount;
 	}
 
-	public void setDiscount(Float discount) {
-		this.discount = discount;
+	public void setTotalDiscount(Float totalDiscount) {
+		this.totalDiscount = totalDiscount;
 	}
 
 	public String getStatus() {

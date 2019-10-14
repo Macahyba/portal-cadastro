@@ -3,13 +3,13 @@ package com.sony.engineering.portalcadastro.model;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotEmpty;
 
 @Entity
 public class Customer {
@@ -17,20 +17,15 @@ public class Customer {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer id;
 	
-	@NotEmpty
 	public String name;
 	
-	@NotEmpty
 	public String fullName;
 	
-	@NotEmpty
 	public String cnpj;
 	
-	@NotEmpty
-	public String contact;
-	
-	@NotEmpty
-	public String department;
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "customer_id")
+	public List<Contact> contact;
 	
 	public Integer getId() {
 		return id;
@@ -64,20 +59,12 @@ public class Customer {
 		this.cnpj = cnpj;
 	}
 
-	public String getContact() {
+	public List<Contact> getContact() {
 		return contact;
 	}
 
-	public void setContact(String contact) {
+	public void setContact(List<Contact> contact) {
 		this.contact = contact;
-	}
-
-	public String getDepartment() {
-		return department;
-	}
-
-	public void setDepartment(String department) {
-		this.department = department;
 	}
 	
 }

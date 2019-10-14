@@ -6,9 +6,8 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Inserir orcamentos!</title>
-		<script type="text/javascript"> var data = JSON.parse("<%- summData %>")</script>
 		<link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}">
-		<link rel="stylesheet" type="text/css" th:href="@{/public/css/style.css}">		
+		<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">		
 	</head>
 	<body>
 		<div class="container">
@@ -19,87 +18,129 @@
 					<div class="input-group-prepend">
 						<span class="input-group-text">Cliente</span>
 					</div>
-					<datalist id="nomeList"></datalist>	
-					<input class="form-control" placeholder="Digite o nome do cliente" autocomplete="off" type="text" name="nomeCliente" list="nomeList" id="nomeCliente"> 
+					<datalist id="custNameList">
+						<option th:each="name: ${customers}" th:value="${name}" />
+					</datalist>	
+					<input class="form-control" placeholder="Digite o nome do cliente" autocomplete="off" type="text" name="customer.name" list="custNameList" id="customer.name"> 
 				</div>
 
 				<div class="input-group mb-3 ">
 					<div class="input-group-prepend">
 						<span class="input-group-text">Nome Completo</span>
 					</div>
-					<datalist id="nomeCompList"></datalist>
-					<input class="form-control" placeholder="Digite o Nome Completo do cliente a constar no orçamento" autocomplete="off" type="text" name="nomeCompleto" list="nomeCompList" id="nomeCompleto"> 
+					<datalist id="fullNameList">
+						<option th:each="fullName: ${customers}" th:value="${fullName}" />
+					</datalist>
+					<input class="form-control" placeholder="Digite o Nome Completo do cliente a constar no orçamento" autocomplete="off" type="text" name="customer.fullName" list="fullNameList" id="customer.fullName"> 
 				</div>
 
 				<div class="input-group mb-3 ">
 					<div class="input-group-prepend">
 						<span class="input-group-text">CNPJ</span>
 					</div>
-					<input class="form-control" placeholder="Digite o CNPJ a constar no orçamento" autocomplete="off" type="text" name="cnpj" id="cnpj">
+					<input class="form-control" placeholder="Digite o CNPJ a constar no orçamento" autocomplete="off" type="text" name="customer.cnpj" id="customer.cnpj">
 				</div>
 
-				<div class="input-group mb-3 ">
-					<div class="input-group-prepend">
-						<span class="input-group-text">Responsável</span>
-					</div>
-					<datalist id="respList"></datalist>
-					<input class="form-control" placeholder="Digite o contato do cliente" autocomplete="off" type="text" name="responsavel" id="responsavel" list="respList">
-				</div>				
-						
-				<div class="input-group mb-3 ">
-					<div class="input-group-prepend">
-						<span class="input-group-text">Departamento</span>
-					</div>
-					<input class="form-control" placeholder="Digite o departamento do cliente" autocomplete="off" type="text" name="departamento" id="departamento">
-				</div>	
-						
-				<div class="input-group mb-3 ">
-					<div class="input-group-prepend">
-						<span class="input-group-text">Equipamento</span>
-					</div>
-					<datalist id="equipList"></datalist>
-					<input class="form-control" placeholder="Digite modelo do equipamento" autocomplete="off" type="text" name="nomeEquip" list="equipList" id="nomeEquip">
-				</div>	
+				<div class="row">
+
+					<div class="input-group mb-3 col-6">
+						<div class="input-group-prepend">
+							<span class="input-group-text">Responsável</span>
+						</div>
+						<datalist id="contactList">
+							<option th:each="contact: ${customers}" th:value="${contact}" />
+						</datalist>
+						<input class="form-control" placeholder="Digite o contato do cliente" autocomplete="off" type="text" name="customer.contact" id="customer.contact" list="contactList">
+					</div>				
+							
+					<div class="input-group mb-3 col-6">
+						<div class="input-group-prepend">
+							<span class="input-group-text">Departamento</span>
+						</div>
+						<datalist id="deptartmentList">
+							<option th:each="customer: ${customers}" th:value="${index}" />
+						</datalist>					
+						<input class="form-control" placeholder="Digite o departamento do contato" autocomplete="off" type="text" name="customer.department" id="customer.department" list="departmentList">
+					</div>	
 					
-				<div class="input-group mb-3 ">
-					<div class="input-group-prepend">
-						<span class="input-group-text">Serial Number</span>
-					</div>
-					<datalist id="serialList"></datalist>
-					<input class="form-control" placeholder="Digite número de série do equipamento" autocomplete="off" type="text" name="serialNumber" id="serialNumber" list="serialList">
-				</div>					
+				</div>		
+				
+				<div class="row">
+				
+					<div class="input-group mb-3 col-6">
+						<div class="input-group-prepend">
+							<span class="input-group-text">Equipamento</span>
+						</div>
+						<datalist id="equipNameList">
+							<option th:each="equipment: ${equipments}" th:value="${equipment}" />
+						</datalist>
+						<input class="form-control" placeholder="Digite modelo do equipamento" autocomplete="off" type="text" name="equipment.name" list="equipNameList" id="equipment.name">
+					</div>	
 						
-				<div class="input-group mb-3 ">
-					<div class="input-group-prepend">
-						<span class="input-group-text">Valor</span>
-						<span class="input-group-text">R$</span>
-					</div>
-					<input class="form-control" placeholder="Digite valor total do orçamento" autocomplete="off" type="number" name="valor" id="valor">
+					<div class="input-group mb-3 col-6">
+						<div class="input-group-prepend">
+							<span class="input-group-text">Serial Number</span>
+						</div>
+						<datalist id="serialList">
+							<option th:each="equipment: ${equipments}" th:value="${index}" />
+						</datalist>
+						<input class="form-control" placeholder="Digite número de série do equipamento" autocomplete="off" type="text" name="equipment.serialNumber" id="equipment.serialNumber" list="serialList">
+					</div>					
+
 				</div>
 				
-				<div class="input-group mb-3 ">
-					<div class="input-group-prepend">
-						<span class="input-group-text">Desconto</span>
-					</div>
-					<input class="form-control" placeholder="Digite o desconto, caso se aplique" autocomplete="off" type="number" name="desconto" id="desconto" value="0" min="0" max="100">
-					<div class="input-group-append">
-						<span class="input-group-text">%</span>
-					</div>
-				</div>
+				<div class="row">
 
-				<div class="input-group mb-3 ">
-					<div class="input-group-prepend">
-						<span class="input-group-text">Valor Final</span>
-						<span class="input-group-text">R$</span>
+					<div class="input-group mb-3 col-6">
+						<div class="input-group-prepend">
+							<span class="input-group-text">Serviço</span>
+						</div>
+						<select class="form-control" name="service.description" id="service.description">
+							<option selected="true" disabled="disabled">Selecione o serviço</option>
+							<option th:each="service: ${services}" th:text="${service}" th:value="${service}" ></option>
+						</select>
+					</div>			
+							
+					<div class="input-group mb-3 col-5">
+						<div class="input-group-prepend">
+							<span class="input-group-text">Valor</span>
+							<span class="input-group-text">R$</span>
+						</div>
+						<input class="form-control" placeholder="Valor do serviço" autocomplete="off" type="number" name="service.price" id="service.price">
 					</div>
-					<input class="form-control" autocomplete="off" type="number" name="vFinal" id="vFinal" readonly>
-				</div>	
+
+					<div class="input-group mb-3 col-1 float-right">
+						<input type="button" class="btn btn btn-outline-info" id="add" value="+">
+					</div>
+				
+				</div>
+				
+				<div class="row">
+				
+					<div class="input-group mb-3 col-6">
+						<div class="input-group-prepend">
+							<span class="input-group-text">Desconto</span>
+						</div>
+						<input class="form-control" autocomplete="off" type="number" name="quotation.totalDiscount" id="quotation.totalDiscount" value="0" min="0" max="100">
+						<div class="input-group-append">
+							<span class="input-group-text">%</span>
+						</div>
+					</div>
+	
+					<div class="input-group mb-3 col-6">
+						<div class="input-group-prepend">
+							<span class="input-group-text">Valor Final</span>
+							<span class="input-group-text">R$</span>
+						</div>
+						<input class="form-control" autocomplete="off" type="number" name="quotation.totalPrice" id="quotation.totalPrice" >
+					</div>
+				</div>						
 				<button class="btn btn-outline-success mr-4" onclick="this.disabled=true; this.form.submit();">Submit</button>	
-				<input class="btn btn-outline-info" type="button" onclick="window.location.href='/home'" value="Home" />								
+				<input class="btn btn-outline-info" type="button" onclick="window.location.href='/portalcadastro/home'" value="Home" />								
 			</form>
 		</div>
-		<script type="text/javascript" src="@{/scripts/jquery-3.3.1.min.js}"></script>
+		<script type="text/javascript" th:src="@{/scripts/jquery-3.3.1.min.js}"></script>
 		<script type="text/javascript" th:src="@{/scripts/jquery.serializejson.min.js}"></script>
-        <script type="text/javascript" src="@{/public/scripts/script.js}"></script>
+        <script type="text/javascript" th:src="@{/scripts/script.js}"></script>
 	</body>
 </html>

@@ -1,10 +1,11 @@
 package com.sony.engineering.portalcadastro.controller;
 
-import javax.validation.Valid;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,13 +20,13 @@ public class LoginController {
 	@Autowired
 	UserService userService;
 	
-	@RequestMapping(value = {"/", "login"}, method = RequestMethod.GET)
+	@GetMapping(value = {"/", "login"})
 	public String loginGet(Model model) {
 		return "quotation/login";
 	}
 	
 	@PostMapping(value = "login")
-	public String loginPost(Model model, @ModelAttribute("user") User user) {
+	public String loginPost(Model model, @ModelAttribute("user") User user, HttpSession session) {
 		
 		User dbUser = userService.validateLogin(user);
 		
@@ -35,9 +36,14 @@ public class LoginController {
 			return "quotation/login";			
 		}
 		
-		model.addAttribute("user", dbUser);
-		return "quotation/home";
+		session.setAttribute("user", dbUser);
+		return "redirect:/home";
 	}	
+	
+	@GetMapping(value = "home")
+	public String home(Model model) {
+		return "/quotation/home";
+	}
 	
 //	AJAX CONTROLLER	
 //	@PostMapping(value = "login")

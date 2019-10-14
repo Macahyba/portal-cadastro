@@ -8,22 +8,23 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sony.engineering.portalcadastro.repository.GenericDao;
+import com.sony.engineering.portalcadastro.repository.GenericDaoImpl;
 
 @Service
 public abstract class GenericServiceImpl<T> implements GenericService<T> {
 
 	@Autowired
-	private GenericDao<T> dao;
+	private GenericDaoImpl<T> dao;
 	
 	public GenericServiceImpl(GenericDao<T> dao) {
-		this.dao = dao;
+		this.dao = (GenericDaoImpl<T>)dao;
 	}
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void save(T t) {
-		
+	public T save(T t) {
 		dao.save(t);
+		return t;
 	}
 
 	@Override
@@ -35,9 +36,10 @@ public abstract class GenericServiceImpl<T> implements GenericService<T> {
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
-	public void edit(T t) {
+	public T edit(T t) {
 
 		dao.edit(t);
+		return t;
 	}
 
 	@Override
@@ -53,5 +55,19 @@ public abstract class GenericServiceImpl<T> implements GenericService<T> {
 
 		return dao.getAll();
 	}
-
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	public List<T> getListByAttr(String attribute, String value) {
+		
+		return dao.getListByAttr(attribute, value);
+	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	public List<T> getAttrList(String attribute) {
+		
+		return dao.getAttrList(attribute);
+	}
+	
 }

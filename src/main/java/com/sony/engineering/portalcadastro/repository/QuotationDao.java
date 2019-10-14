@@ -1,11 +1,10 @@
 package com.sony.engineering.portalcadastro.repository;
 
-
 import org.springframework.stereotype.Repository;
 
-import com.sony.engineering.portalcadastro.model.Equipment;
+import com.sony.engineering.portalcadastro.model.Quotation;
 
 @Repository
-public class EquipmentDao extends GenericDaoImpl<Equipment> {
+public class QuotationDao extends GenericDaoImpl<Quotation>{
 
 }

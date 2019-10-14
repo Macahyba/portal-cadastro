@@ -1,13 +1,12 @@
 package com.sony.engineering.portalcadastro.model;
 
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class Service {
@@ -15,13 +14,10 @@ public class Service {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	public Integer id;
 	
-	@NotEmpty
 	public String description;
 	
-	@NotEmpty
 	public String name;
 	
-	@NotEmpty
 	public Float price;
 
 	public Integer getId() {

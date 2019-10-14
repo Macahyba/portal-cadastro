@@ -11,10 +11,14 @@ public interface GenericDao<T> {
 	
 	void delete(Integer id);
 	
-	void edit(T t);
+	T edit(T t);
 	
 	T getOne(Integer id);
 	
+	List<T> getListByAttr(String attribute, String value);
+	
 	List<T> getAll();
+	
+	List<T> getAttrList(String attribute);
 	
 }

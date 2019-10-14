@@ -19,8 +19,8 @@ $(function(){
     });
     //<script>document.write($.format.date("<%= detalhe[i].datacriacao %>", "dd/MM/yyyy HH:mm"))</script>
 
-    $('body').on('click','input[type="button"]', (function(event){
-        
+//    $('body').on('click','input[type="button"]', (function(event){
+      function placeholder(){  
         let id = $(this).attr('id');
         let formData= $('form').serializeJSON();
         
@@ -52,7 +52,8 @@ $(function(){
             console.log(Date.now()+JSON.stringify(err,null,4))
         })
 
-    }))
+    }
+//      ))
     /*
     $('body').on('click','input[type="button"]', (function(event){
  
@@ -174,7 +175,7 @@ $(function(){
     })
 
     if (typeof(data) !== 'undefined') {
-        //console.log(JSON.stringify(data,null,4))
+        console.log(JSON.stringify(data,null,4))
         if (('cliente' in data)){
             //console.log(JSON.stringify(data,null,4))
             for (let i=0; i < data.cliente.rowCount; i++) {
@@ -194,10 +195,9 @@ $(function(){
     }
 
     var full;
-    $("#nomeCliente").blur(function(){
-
-        let nomeCliente= $("#nomeCliente").val().toUpperCase(); 
-        $("#nomeCliente").val($("#nomeCliente").val().toUpperCase());
+    $("#customer\\.name").blur(function(){
+        let nomeCliente= $("#customer\\.name").val().toUpperCase(); 
+        $("#customer\\.name").val($("#customer\\.name").val().toUpperCase());
         //let idCliente = $("#nomeList").find('option[value="' + nomeCliente + '"]').attr('id');
         
         if (!nomeCliente) { 
@@ -205,7 +205,7 @@ $(function(){
             return;
         }
 
-        fetch("/formFill/cnpj/" + nomeCliente)
+        fetch("/customer/cnpj/" + nomeCliente)
 
         .then(function(res){
 

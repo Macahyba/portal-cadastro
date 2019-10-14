@@ -1,21 +1,22 @@
 package com.sony.engineering.portalcadastro.model;
 
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotEmpty;
 
 @Entity
-public class Equipment {
+public class Contact {
 
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Integer id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
 	
-	public String name;
+	private String name;
 	
-	public String serialNumber;
+	private String email;
+	
+	private String department;
 	
 	public Integer getId() {
 		return id;
@@ -33,12 +34,20 @@ public class Equipment {
 		this.name = name;
 	}
 
-	public String getSerialNumber() {
-		return serialNumber;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setSerialNumber(String serialNumber) {
-		this.serialNumber = serialNumber;
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
 	}
 	
 }

@@ -1,7 +1,5 @@
 package com.sony.engineering.portalcadastro.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,9 +25,5 @@ public class EquipmentService extends GenericServiceImpl<Equipment>{
 	public void setEquipmentDao(EquipmentDao equipmentDao) {
 		this.equipmentDao = equipmentDao;
 	}
-
-	public List<Equipment> getEquipNameList() {
-		return equipmentDao.getEquipNameList();
-	}
-
+	
 }
