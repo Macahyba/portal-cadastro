@@ -27,46 +27,46 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class Quotation {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Integer id;
+	private Integer id;
 	
 	@Column(columnDefinition = "float default 0")
-	public Float totalPrice;
+	private Float totalPrice;
 	
 	@Column(columnDefinition = "float default 0")
-	public Float totalDiscount;
+	private Float totalDiscount;
 	
-	public String status;
+	private String status;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreationTimestamp
-	public Date creationDate;
+	private Date creationDate;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@UpdateTimestamp
-	public Date approvalDate;
+	private Date approvalDate;
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id")
-	public User user;
+	private User user;
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "quotation_equipment", 
 	joinColumns = {@JoinColumn(name = "quotation_id")}, 
 	inverseJoinColumns = {@JoinColumn(name = "equipment_id")})
-	public List<Equipment> equipments;
+	private List<Equipment> equipments;
 	
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "customer_id")
-	public Customer customer;
+	private Customer customer;
 
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "approval_user_id")
-	public User approvalUser;
+	private User approvalUser;
 	
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "quotation_service", joinColumns = {@JoinColumn(name = "quotations_id")},
 	inverseJoinColumns = {@JoinColumn(name = "service_id")})
-	public List<Service> services;
+	private List<Service> services;
 
 	public Integer getId() {
 		return id;

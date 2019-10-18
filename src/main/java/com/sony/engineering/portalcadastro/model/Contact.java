@@ -1,9 +1,14 @@
 package com.sony.engineering.portalcadastro.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Contact {
@@ -17,6 +22,11 @@ public class Contact {
 	private String email;
 	
 	private String department;
+	
+	@JsonIgnore
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "customer_id", referencedColumnName = "id")	
+	private Customer customer;
 	
 	public Integer getId() {
 		return id;
@@ -48,6 +58,14 @@ public class Contact {
 
 	public void setDepartment(String department) {
 		this.department = department;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 	
 }

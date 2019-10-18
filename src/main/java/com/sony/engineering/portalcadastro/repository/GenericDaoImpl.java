@@ -4,6 +4,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -25,9 +26,10 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
 	}
 	
 	@Override
-	public void save(T t) {
+	public T save(T t) {
 
 		em.persist(t);
+		return t;
 	}
 
 	@Override
@@ -47,6 +49,20 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
 
 		return em.find(classType, id);
 	}
+	
+	@Override
+	public T getOneByAttr(String attribute, String value) {
+
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaQuery<T> query = cb.createQuery(classType);
+		Root<T> root = query.from(classType);
+		query.select(root).where(cb.equal(root.get(attribute), value)).distinct(true);
+		try {
+			return getEm().createQuery(query).getSingleResult();
+		} catch (NoResultException nr){
+			return null;
+		}
+	}	
 	
 	@Override
 	public List<T> getListByAttr(String attribute, String value) {

@@ -5,27 +5,36 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Customer {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Integer id;
+	private Integer id;
 	
-	public String name;
+	private String name;
 	
-	public String fullName;
+	private String fullName;
 	
-	public String cnpj;
+	private String cnpj;
 	
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinColumn(name = "customer_id")
-	public List<Contact> contact;
+	@OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+	private Contact contact;
+	
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	private List<Quotation> quotation;
 	
 	public Integer getId() {
 		return id;
@@ -59,12 +68,20 @@ public class Customer {
 		this.cnpj = cnpj;
 	}
 
-	public List<Contact> getContact() {
+	public Contact getContact() {
 		return contact;
 	}
 
-	public void setContact(List<Contact> contact) {
+	public void setContact(Contact contact) {
 		this.contact = contact;
+	}
+
+	public List<Quotation> getQuotation() {
+		return quotation;
+	}
+
+	public void setQuotation(List<Quotation> quotation) {
+		this.quotation = quotation;
 	}
 	
 }

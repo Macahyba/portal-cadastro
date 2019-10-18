@@ -15,6 +15,8 @@ public interface GenericService<T> {
 	
 	T getOne(Integer id);
 	
+	T getOneByAttr(String attribute, String value);
+	
 	List<T> getListByAttr(String attribute, String value);
 	
 	List<T> getAll();

@@ -7,13 +7,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GenericDao<T> {
 
-	void save(T t);
+	T save(T t);
 	
 	void delete(Integer id);
 	
 	T edit(T t);
 	
 	T getOne(Integer id);
+	
+	T getOneByAttr(String attribute, String value);
 	
 	List<T> getListByAttr(String attribute, String value);
 	

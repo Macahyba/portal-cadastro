@@ -16,8 +16,12 @@ public abstract class GenericServiceImpl<T> implements GenericService<T> {
 	@Autowired
 	private GenericDaoImpl<T> dao;
 	
-	public GenericServiceImpl(GenericDao<T> dao) {
-		this.dao = (GenericDaoImpl<T>)dao;
+	public GenericServiceImpl(GenericDaoImpl<T> dao) {
+		this.dao = dao;
+	}
+	
+	public GenericServiceImpl(){
+		
 	}
 	
 	@Override
@@ -49,6 +53,13 @@ public abstract class GenericServiceImpl<T> implements GenericService<T> {
 		return dao.getOne(id);
 	}
 
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+	public T getOneByAttr(String attribute, String value) {
+
+		return dao.getOneByAttr(attribute, value);
+	}	
+	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public List<T> getAll() {

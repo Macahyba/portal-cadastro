@@ -12,13 +12,13 @@ import javax.validation.constraints.NotNull;
 public class Service {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Integer id;
+	private Integer id;
 	
-	public String description;
+	private String description;
 	
-	public String name;
+	private String name;
 	
-	public Float price;
+	private Float price;
 
 	public Integer getId() {
 		return id;

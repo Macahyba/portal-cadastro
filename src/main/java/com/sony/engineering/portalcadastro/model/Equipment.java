@@ -11,11 +11,11 @@ import javax.validation.constraints.NotEmpty;
 public class Equipment {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	public Integer id;
+	private Integer id;
 	
-	public String name;
+	private String name;
 	
-	public String serialNumber;
+	private String serialNumber;
 	
 	public Integer getId() {
 		return id;

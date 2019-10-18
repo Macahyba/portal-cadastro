@@ -16,7 +16,6 @@ public class UserService extends GenericServiceImpl<User> {
 	
 	@Autowired
 	public UserService(GenericDao<User> dao) {
-		super(dao);
 		this.userDao = (UserDao) dao;
 	}
 
