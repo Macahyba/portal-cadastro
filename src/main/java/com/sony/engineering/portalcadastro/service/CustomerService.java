@@ -2,6 +2,8 @@ package com.sony.engineering.portalcadastro.service;
 
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -28,15 +30,27 @@ public class CustomerService extends GenericServiceImpl<Customer>{
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Customer save(Customer customer) {
 	
-		Contact contact = contactService.getOneByAttr("email", customer.getContact().getEmail());
-			
-		if (contact == null) {
-			
-			contact = contactService.save(customer.getContact());
-			customer.setContact(contact);
+		List<Customer> customers = customerDao.getListByAttr("name", customer.getName());
+		
+		if (customers.isEmpty()) {
+			return customerDao.save(customer);
 		}
-		customerDao.save(customer);	
-		return customer;
+		
+		
+		
+//		Contact contact = contactService.getOneByAttr("email", customer.getContact().getEmail());
+//			
+//		if (contact == null) {
+//			
+//			contact = contactService.save(customer.getContact());
+//			c.setContact(contact);
+//			
+//			return c;
+//		}
+
+//		return customerDao.save(c);
+		return customerDao.save(customer);
+		//return null;
 	}
 	
 }

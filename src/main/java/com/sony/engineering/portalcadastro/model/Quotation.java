@@ -42,10 +42,9 @@ public class Quotation {
 	private Date creationDate;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@UpdateTimestamp
 	private Date approvalDate;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
 
@@ -59,7 +58,7 @@ public class Quotation {
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@ManyToOne
 	@JoinColumn(name = "approval_user_id")
 	private User approvalUser;
 	

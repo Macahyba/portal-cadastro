@@ -13,10 +13,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
+//@Table(uniqueConstraints = @UniqueConstraint(columnNames = "name"))
 public class Customer {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,8 +31,8 @@ public class Customer {
 	
 	private String cnpj;
 	
-	@OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
-	private Contact contact;
+	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+	private List<Contact> contact;
 	
 	
 	@JsonIgnore
@@ -68,11 +71,11 @@ public class Customer {
 		this.cnpj = cnpj;
 	}
 
-	public Contact getContact() {
+	public List<Contact> getContact() {
 		return contact;
 	}
 
-	public void setContact(Contact contact) {
+	public void setContact(List<Contact> contact) {
 		this.contact = contact;
 	}
 
