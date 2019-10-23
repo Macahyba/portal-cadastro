@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import com.sony.engineering.portalcadastro.model.Quotation;
 
 @Repository
-public class QuotationDao extends GenericDaoImpl<Quotation>{
+public interface QuotationDao extends GenericDao<Quotation> {
 
 }

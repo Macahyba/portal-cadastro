@@ -12,7 +12,6 @@ import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
-@Repository
 public abstract class GenericDaoImpl<T> implements GenericDao<T>{
 
 	@PersistenceContext
@@ -25,73 +24,36 @@ public abstract class GenericDaoImpl<T> implements GenericDao<T>{
 		this.classType = ((Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
 	}
 	
-	@Override
-	public T save(T t) {
+//	public T getOneByAttr(String attribute, String value) {
+//
+//		CriteriaBuilder cb = em.getCriteriaBuilder();
+//		CriteriaQuery<T> query = cb.createQuery(classType);
+//		Root<T> root = query.from(classType);
+//		query.select(root).where(cb.equal(root.get(attribute), value)).distinct(true);
+//		try {
+//			return getEm().createQuery(query).getSingleResult();
+//		} catch (NoResultException nr){
+//			return null;
+//		}
+//	}	
+//	
+//	public List<T> getListByAttr(String attribute, String value) {
+//		CriteriaBuilder cb = em.getCriteriaBuilder();
+//		CriteriaQuery<T> query = cb.createQuery(classType);
+//		Root<T> root = query.from(classType);
+//		query.select(root).where(cb.equal(root.get(attribute), value)).distinct(true);
+//		return getEm().createQuery(query).getResultList();	
+//	}
 
-		em.persist(t);
-		return t;
-	}
-
-	@Override
-	public void delete(Integer id) {
-		
-		em.remove(getOne(id));
-	}
-
-	@Override
-	public T edit(T t) {
-
-		return em.merge(t);
-	}
-
-	@Override
-	public T getOne(Integer id) {
-
-		return em.find(classType, id);
-	}
-	
-	@Override
-	public T getOneByAttr(String attribute, String value) {
-
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<T> query = cb.createQuery(classType);
-		Root<T> root = query.from(classType);
-		query.select(root).where(cb.equal(root.get(attribute), value)).distinct(true);
-		try {
-			return getEm().createQuery(query).getSingleResult();
-		} catch (NoResultException nr){
-			return null;
-		}
-	}	
-	
-	@Override
-	public List<T> getListByAttr(String attribute, String value) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<T> query = cb.createQuery(classType);
-		Root<T> root = query.from(classType);
-		query.select(root).where(cb.equal(root.get(attribute), value)).distinct(true);
-		return getEm().createQuery(query).getResultList();	
-	}
-
-	@Override
-	public List<T> getAll() {
-
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<T> query = cb.createQuery(classType);
-		query.from(classType);
-		List<T> a =  em.createQuery(query).getResultList();
-		return a;
-	}
-	
-	@Override
-	public List<T> getAttrList(String attribute){
-		
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<T> query = cb.createQuery(classType);
-		Root<T> equipRoot = query.from(classType);
-		query.select(equipRoot.get(attribute)).distinct(true);
-		return (List<T>)getEm().createQuery(query).getResultList();		
-	}
+//	@Override
+//	public List<T> getAttrList(String attribute){
+//		
+//		CriteriaBuilder cb = em.getCriteriaBuilder();
+//		CriteriaQuery<T> query = cb.createQuery(classType);
+//		Root<T> equipRoot = query.from(classType);
+//		query.select(equipRoot.get(attribute)).distinct(true);
+//		return (List<T>)getEm().createQuery(query).getResultList();		
+//	}
 
 	public EntityManager getEm() {
 		return em;

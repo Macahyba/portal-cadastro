@@ -34,11 +34,11 @@ public class QuotationController {
 	
 	@GetMapping(value = "inserir")
 	public String inserirGet(Model model) {
-		
-		model.addAttribute("equipments", equipmentService.getAttrList("name"));
-		model.addAttribute("customers", customerService.getAttrList("name"));
-		model.addAttribute("services", serviceService.getAttrList("name"));
-		
+//		
+//		model.addAttribute("equipments", equipmentService.getAttrList("name"));
+//		model.addAttribute("customers", customerService.getAttrList("name"));
+//		model.addAttribute("services", serviceService.getAttrList("name"));
+//		
 		return "quotation/inserir";
 	}
 	
@@ -52,7 +52,7 @@ public class QuotationController {
 	@ResponseBody
 	public List<Quotation> getAll(){
 	
-		return quotationService.getAll();
+		return quotationService.findAll();
 	}
 	
 	@PostMapping(value = "quotations")

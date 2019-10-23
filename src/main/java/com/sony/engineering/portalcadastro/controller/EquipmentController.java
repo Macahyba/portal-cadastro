@@ -28,21 +28,21 @@ public class EquipmentController {
 			@RequestParam(required = false, name = "serialNumber") String serialNumber) {
 		
 		if (StringUtils.hasText(name)) {
-			return equipmentService.getListByAttr("name", name);
+			return equipmentService.findByName(name);
 		}
 		
 		if (StringUtils.hasText(serialNumber)) {
-			return equipmentService.getListByAttr("serialNumber", serialNumber);
+			return equipmentService.findBySerialNumber(serialNumber);
 		}
 
-		return equipmentService.getAll();
+		return equipmentService.findAll();
 		
 	}
 	
 	@GetMapping(value = "equipments/{id}")
 	public Equipment getEquipmentById(@PathVariable("id") Integer id){
 		
-		return equipmentService.getOne(id);
+		return equipmentService.findOne(id);
 	}
 	
 	@PostMapping(value = "equipments")

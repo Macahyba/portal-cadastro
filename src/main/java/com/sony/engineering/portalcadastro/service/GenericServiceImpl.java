@@ -3,82 +3,70 @@ package com.sony.engineering.portalcadastro.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sony.engineering.portalcadastro.repository.GenericDao;
-import com.sony.engineering.portalcadastro.repository.GenericDaoImpl;
 
 @Service
 public abstract class GenericServiceImpl<T> implements GenericService<T> {
 
 	@Autowired
-	private GenericDaoImpl<T> dao;
+	private GenericDao<T> dao;
 	
-	public GenericServiceImpl(GenericDaoImpl<T> dao) {
+	public GenericServiceImpl(GenericDao<T> dao) {
 		this.dao = dao;
 	}
 	
-	public GenericServiceImpl(){
-		
-	}
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public T save(T t) {
-		dao.save(t);
-		return t;
+		return dao.save(t);
 	}
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public void delete(Integer id) {
 
-		dao.delete(id);
+		dao.deleteById(id);
 	}
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public T edit(T t) {
 
-		dao.edit(t);
-		return t;
+		return dao.save(t);
 	}
 
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public T getOne(Integer id) {
+	public T findOne(Integer id) {
 
-		return dao.getOne(id);
+		return dao.findById(id).get();
 	}
 
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public T getOneByAttr(String attribute, String value) {
-
-		return dao.getOneByAttr(attribute, value);
-	}	
+//	@Override
+//	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+//	public T getOneByAttr(String attribute, String value) {
+//
+//		return dao.getOneByAttr(attribute, value);
+//	}	
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public List<T> getAll() {
+	public List<T> findAll() {
 
-		return dao.getAll();
+		return dao.findAll();
 	}
 	
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public List<T> getListByAttr(String attribute, String value) {
-		
-		return dao.getListByAttr(attribute, value);
-	}
-	
-	@Override
-	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
-	public List<T> getAttrList(String attribute) {
-		
-		return dao.getAttrList(attribute);
-	}
+//	@Override
+//	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
+//	public List<T> getListByAttr(String attribute, String value) {
+//		
+//		return dao.getListByAttr(attribute, value);
+//	}
 	
 }

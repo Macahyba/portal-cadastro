@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.sony.engineering.portalcadastro.model.User;
 import com.sony.engineering.portalcadastro.service.UserService;
+import com.sony.engineering.portalcadastro.service.UserServiceImpl;
 
 @Controller
 public class LoginController {

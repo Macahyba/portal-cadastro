@@ -2,9 +2,6 @@ package com.sony.engineering.portalcadastro.service;
 
 import java.util.List;
 
-import org.springframework.stereotype.Service;
-
-@Service
 public interface GenericService<T> {
 
 	T save(T t);
@@ -13,14 +10,8 @@ public interface GenericService<T> {
 	
 	T edit(T t);
 	
-	T getOne(Integer id);
+	T findOne(Integer id);
 	
-	T getOneByAttr(String attribute, String value);
+	List<T> findAll();
 	
-	List<T> getListByAttr(String attribute, String value);
-	
-	List<T> getAll();
-	
-	List<T> getAttrList(String attribute);
-
 }

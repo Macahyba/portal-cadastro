@@ -30,26 +30,26 @@ public class CustomerController {
 		
 		if(StringUtils.hasText(name)) {
 			
-			return customerService.getListByAttr("name", name);
+			return customerService.findByName(name);
 		}
 
 		if(StringUtils.hasText(fullName)) {
 			
-			return customerService.getListByAttr("fullName", fullName);
+			return customerService.findByFullName(fullName);
 		}		
 		
 		if(StringUtils.hasText(cnpj)) {
 			
-			return customerService.getListByAttr("cnpj", cnpj);
+			return customerService.findByCnpj(cnpj);
 		}		
 		
-		return customerService.getAll();
+		return customerService.findAll();
 	}
 	
 	@GetMapping(value = "customers/{id}")
 	public Customer getCustomerById(@PathVariable("id") Integer id) {
 		
-		return customerService.getOne(id);
+		return customerService.findOne(id);
 	}
 	
 	@PostMapping(value = "customers")

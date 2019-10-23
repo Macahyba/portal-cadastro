@@ -1,11 +1,13 @@
 package com.sony.engineering.portalcadastro.service;
 
-import org.springframework.stereotype.Service;
+import java.util.List;
 
 import com.sony.engineering.portalcadastro.model.Equipment;
 
-@Service
-public class EquipmentService extends GenericServiceImpl<Equipment>{
+public interface EquipmentService extends GenericService<Equipment>{
 
-	
+	List<Equipment> findByName(String name);
+
+	List<Equipment> findBySerialNumber(String serialNumber);
+
 }

@@ -28,21 +28,21 @@ public class ServiceController {
 			@RequestParam(required = false, name = "description") String description) {
 		
 		if (StringUtils.hasText(name)) {
-			return serviceService.getListByAttr("name", name);
+			return serviceService.findByName(name);
 		}
 		
 		if (StringUtils.hasText(description)) {
-			return serviceService.getListByAttr("description", description);
+			return serviceService.findByDescription(description);
 		}
 
-		return serviceService.getAll();
+		return serviceService.findAll();
 		
 	}
 	
 	@GetMapping(value = "services/{id}")
 	public Service getServiceById(@PathVariable("id") Integer id){
 		
-		return serviceService.getOne(id);
+		return serviceService.findOne(id);
 	}
 	
 	@PostMapping(value = "services")
