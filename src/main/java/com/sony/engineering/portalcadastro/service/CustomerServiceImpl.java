@@ -1,9 +1,15 @@
 package com.sony.engineering.portalcadastro.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
+import org.hibernate.HibernateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +20,12 @@ import com.sony.engineering.portalcadastro.repository.CustomerDao;
 import com.sony.engineering.portalcadastro.repository.GenericDao;
 //import com.sony.engineering.portalcadastro.repository.GenericDaoImpl;
 
+
 @Service
 public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements CustomerService{
 
+	Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class); 
+	
 	@Autowired
 	private CustomerDao customerDao;
 	
@@ -27,29 +36,24 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 		super(dao);
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRED)
-	public Customer save(Customer customer) {
-	
-//		List<Customer> customers = customerDao.findDistinctByName(customer.getName());
-//		
-//		if (customers.isEmpty()) {
-//			return customerDao.save(customer);
-//		}
-//		
-//		
-//		
-//		Contact contact = contactService.findDistinctByEmail(customer.getContact().getEmail();
-//			
-//		if (contact == null) {
-//			
-//			contact = contactService.save(customer.getContact());
-//			c.setContact(contact);
-//			
-//			return c;
-//		}
-//
-//		return customerDao.save(c);
+	@Transactional(propagation = Propagation.NESTED)
+	public Customer save(Customer customer) {	
+		
+		Set<Contact> contact = customer.getContacts();
+		
+		if (customer.getId() != null) {		
+			
+			try {
+				customer = this.findOne(customer.getId());
+			} catch (NoSuchElementException e) {
+				logger.error("Invalid Id!");
+				return null;	
+			}
+		}
+		customer.setContacts(contact);
+
 		return customerDao.save(customer);
+		// TODO VERIFICAR SE CONTATO EXISTE ANTES DE PERSISTIR
 	}
 
 	@Override
@@ -66,14 +70,12 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 
 	@Override
 	public Customer findOne(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
+		return customerDao.findById(id).get();
 	}
 
 	@Override
 	public List<Customer> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return customerDao.findAll();
 	}
 
 	@Override

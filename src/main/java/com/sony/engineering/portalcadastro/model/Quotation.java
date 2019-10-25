@@ -1,7 +1,7 @@
 package com.sony.engineering.portalcadastro.model;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -14,19 +14,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 public class Quotation {
 
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
 	@Column(columnDefinition = "float default 0")
@@ -52,7 +49,7 @@ public class Quotation {
 	@JoinTable(name = "quotation_equipment", 
 	joinColumns = {@JoinColumn(name = "quotation_id")}, 
 	inverseJoinColumns = {@JoinColumn(name = "equipment_id")})
-	private List<Equipment> equipments;
+	private Set<Equipment> equipments;
 	
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "customer_id")
@@ -63,9 +60,10 @@ public class Quotation {
 	private User approvalUser;
 	
 	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "quotation_service", joinColumns = {@JoinColumn(name = "quotations_id")},
+	@JoinTable(name = "quotation_service", 
+	joinColumns = {@JoinColumn(name = "quotations_id")},
 	inverseJoinColumns = {@JoinColumn(name = "service_id")})
-	private List<Service> services;
+	private Set<Service> services;
 
 	public Integer getId() {
 		return id;
@@ -123,11 +121,11 @@ public class Quotation {
 		this.user = user;
 	}
 
-	public List<Equipment> getEquipments() {
+	public Set<Equipment> getEquipments() {
 		return equipments;
 	}
 
-	public void setEquipments(List<Equipment> equipments) {
+	public void setEquipments(Set<Equipment> equipments) {
 		this.equipments = equipments;
 	}
 
@@ -147,12 +145,14 @@ public class Quotation {
 		this.approvalUser = approvalUser;
 	}
 
-	public List<Service> getServices() {
+	public Set<Service> getServices() {
 		return services;
 	}
 
-	public void setServices(List<Service> services) {
+	public void setServices(Set<Service> services) {
 		this.services = services;
 	}
+
+
 	
 }

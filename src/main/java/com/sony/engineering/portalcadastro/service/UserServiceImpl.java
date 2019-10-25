@@ -22,11 +22,17 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 
 	public User validateLogin(User user) {
 		
-		User u = userDao.findByLogin(user.getLogin());
+		try {
+			User u = userDao.findByLogin(user.getLogin());
 		
-		if(user.getPassword().equals(u.getPassword())) {
+			if(user.getPassword().equals(u.getPassword())) {
+				
+				return u;
+			}
 			
-			return u;
+		} catch (NullPointerException e) {
+			
+			return null;
 		}
 		
 		return null;

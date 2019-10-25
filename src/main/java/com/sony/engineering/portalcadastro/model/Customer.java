@@ -1,25 +1,20 @@
 package com.sony.engineering.portalcadastro.model;
 
 
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = "name"))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "fullName", "cnpj"}))
 public class Customer {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,13 +26,20 @@ public class Customer {
 	
 	private String cnpj;
 	
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-	private List<Contact> contact;
+	@OneToMany(
+			mappedBy = "customer", 
+			cascade = CascadeType.ALL)
+	private Set<Contact> contacts;
 	
+	public void addContact(Contact contact) {
+		contacts.add(contact);
+		contact.setCustomer(this);
+	}
 	
-	@JsonIgnore
-	@OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-	private List<Quotation> quotation;
+	public void removeContact(Contact contact) {
+		contacts.remove(contact);
+		contact.setCustomer(null);
+	}
 	
 	public Integer getId() {
 		return id;
@@ -71,20 +73,19 @@ public class Customer {
 		this.cnpj = cnpj;
 	}
 
-	public List<Contact> getContact() {
-		return contact;
+	public Set<Contact> getContacts() {
+		return contacts;
 	}
 
-	public void setContact(List<Contact> contact) {
-		this.contact = contact;
+	public void setContacts(Set<Contact> contacts) {
+		if (contacts == null) {
+			if(this.contacts != null) {
+				this.contacts.forEach((c) -> {c.setCustomer(null);});
+			}
+		} else {
+			contacts.forEach((c) -> {c.setCustomer(this);});
+		}
+		this.contacts = contacts;
 	}
 
-	public List<Quotation> getQuotation() {
-		return quotation;
-	}
-
-	public void setQuotation(List<Quotation> quotation) {
-		this.quotation = quotation;
-	}
-	
 }

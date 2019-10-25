@@ -1,6 +1,5 @@
 package com.sony.engineering.portalcadastro.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -8,10 +7,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name", "email"}))
 public class Contact {
 
 	@Id
@@ -23,9 +26,9 @@ public class Contact {
 	private String email;
 	
 	private String department;
-	
+
 	@JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 	
@@ -68,5 +71,16 @@ public class Contact {
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
 	}
+	
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Contact )) return false;
+        return id != null && id.equals(((Contact) o).getId());
+    }
+    @Override
+    public int hashCode() {
+        return 31;
+    }	
 	
 }
