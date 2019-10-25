@@ -4,12 +4,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import org.hibernate.HibernateException;
+import javax.management.RuntimeErrorException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,6 @@ import com.sony.engineering.portalcadastro.model.Contact;
 import com.sony.engineering.portalcadastro.model.Customer;
 import com.sony.engineering.portalcadastro.repository.CustomerDao;
 import com.sony.engineering.portalcadastro.repository.GenericDao;
-//import com.sony.engineering.portalcadastro.repository.GenericDaoImpl;
 
 
 @Service
@@ -36,24 +34,59 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 		super(dao);
 	}
 	
-	@Transactional(propagation = Propagation.NESTED)
+	@Transactional(propagation = Propagation.REQUIRED)
 	public Customer save(Customer customer) {	
 		
-		Set<Contact> contact = customer.getContacts();
+		Set<Contact> contacts = customer.getContacts();
 		
 		if (customer.getId() != null) {		
 			
 			try {
 				customer = this.findOne(customer.getId());
 			} catch (NoSuchElementException e) {
-				logger.error("Invalid Id!");
-				return null;	
+				logger.error("Invalid Customer Id!");
+				return null;	// error 500
+			}
+		} else {
+			
+
+			List<Customer> findName = this.findDistinctByName(customer.getName()); 
+			
+			if (!findName.isEmpty()) {
+			
+				customer = findName.get(0);
+			}
+
+		}
+
+		for (Contact c: contacts) {
+			if (c.getId() != null) {
+				
+				try {
+					contacts.clear();
+					contacts.add(contactService.findOne(c.getId()));
+					
+				} catch (NoSuchElementException e){
+					logger.error("Invalid Contact Id!");
+					return null;
+					
+				}				
+			} else {
+				
+				List<Contact> findContact = contactService.findDistinctByNameOrEmail(c.getName(), c.getEmail());
+				
+				if(!findContact.isEmpty()) {
+					
+					contacts.clear();
+					contacts.add(findContact.get(0));
+				}
 			}
 		}
-		customer.setContacts(contact);
 
+		customer.setContacts(contacts);
+		
 		return customerDao.save(customer);
-		// TODO VERIFICAR SE CONTATO EXISTE ANTES DE PERSISTIR
+
 	}
 
 	@Override
@@ -79,20 +112,13 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 	}
 
 	@Override
-	public List<Customer> findByCnpj(String cnpj) {
-		return customerDao.findByCnpj(cnpj);
+	public List<Customer> findDistinctByCnpj(String cnpj) {
+		return customerDao.findDistinctByCnpj(cnpj);
 	}
 
 	@Override
-	public List<Customer> findByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Customer> findDistinctByName(String name) {
+		return customerDao.findDistinctByName(name);
 	}
 
-	@Override
-	public List<Customer> findByFullName(String fullname) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 }

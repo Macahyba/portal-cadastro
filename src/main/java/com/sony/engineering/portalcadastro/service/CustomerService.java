@@ -8,10 +8,8 @@ import com.sony.engineering.portalcadastro.model.Customer;
 
 public interface CustomerService extends GenericService<Customer>{
 	
-	List<Customer> findByCnpj(String cnpj);
+	List<Customer> findDistinctByCnpj(String cnpj);
 	
-	List<Customer> findByName(String name);
+	List<Customer> findDistinctByName(String name);
 
-	List<Customer> findByFullName(String fullname);
-	
 }

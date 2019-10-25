@@ -9,7 +9,7 @@ import com.sony.engineering.portalcadastro.model.Customer;
 @Repository
 public interface CustomerDao extends GenericDao<Customer>{
 
-	List<Customer> findByCnpj(String cnpj);
+	List<Customer> findDistinctByCnpj(String cnpj);
 
 	List<Customer> findDistinctByName(String name);
 

@@ -61,6 +61,7 @@ public abstract class GenericServiceImpl<T> implements GenericService<T> {
 
 		return dao.findAll();
 	}
+
 	
 //	@Override
 //	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)

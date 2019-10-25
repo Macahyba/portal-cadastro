@@ -2,6 +2,7 @@ package com.sony.engineering.portalcadastro.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,7 @@ import com.sony.engineering.portalcadastro.model.Customer;
 import com.sony.engineering.portalcadastro.model.Equipment;
 import com.sony.engineering.portalcadastro.model.Quotation;
 import com.sony.engineering.portalcadastro.model.Service;
+import com.sony.engineering.portalcadastro.model.User;
 import com.sony.engineering.portalcadastro.repository.GenericDao;
 import com.sony.engineering.portalcadastro.repository.QuotationDao;
 
@@ -37,9 +39,27 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 		super(dao);
 	}	
 	
-//	@Override
-//	@Transactional(propagation = Propagation.REQUIRED)
-//	public Quotation save(Quotation quotation) {
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public Quotation save(Quotation quotation) {
+		
+		
+		Customer customer = quotation.getCustomer();
+		
+		Set<Equipment> equipments = quotation.getEquipments();
+		
+		Set<Service> services = quotation.getServices();
+		
+		User user = quotation.getUser();
+		
+		customer = customerService.save(customer);
+		
+		quotation.setCustomer(customer);
+		
+		equipments.forEach(e ->{ equipmentService.save(e);});
+	
+		return quotationDao.save(quotation);
+		
 //		
 //		
 //		quotation.setUser(userService.getOne(quotation.getUser().getId()));
@@ -84,7 +104,7 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 //		
 //		quotationDao.save(quotation);
 //		return quotation;
-//	}
+	}
 
 	public QuotationDao getQuotationDao() {
 		return quotationDao;

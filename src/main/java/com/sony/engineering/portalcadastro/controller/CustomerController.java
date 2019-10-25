@@ -25,22 +25,16 @@ public class CustomerController {
 	@GetMapping(value = "customers")
 	public List<Customer> getAll(
 			@RequestParam(required = false, name = "name") String name,
-			@RequestParam(required = false, name = "fullName") String fullName,
 			@RequestParam(required = false, name = "cnpj") String cnpj){
 		
 		if(StringUtils.hasText(name)) {
 			
-			return customerService.findByName(name);
+			return customerService.findDistinctByName(name);
 		}
-
-		if(StringUtils.hasText(fullName)) {
-			
-			return customerService.findByFullName(fullName);
-		}		
 		
 		if(StringUtils.hasText(cnpj)) {
 			
-			return customerService.findByCnpj(cnpj);
+			return customerService.findDistinctByCnpj(cnpj);
 		}		
 		
 		return customerService.findAll();
@@ -54,7 +48,12 @@ public class CustomerController {
 	
 	@PostMapping(value = "customers")
 	public Customer setCustomer(@RequestBody Customer customer) {
-		return customerService.save(customer);
+
+		try {
+			return customerService.save(customer);
+		} catch (RuntimeException e) {
+			return null;
+		}
 	}
 	
 	@PutMapping(value = "customers/{id}")

@@ -11,4 +11,8 @@ public interface ContactDao extends GenericDao<Contact>{
 
 	List<Contact> findDistinctByEmail(String email);
 
+	List<Contact> findDistinctByName(String name);
+
+	List<Contact> findDistinctByNameOrEmail(String name, String email);
+
 }
