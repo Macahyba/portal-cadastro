@@ -9,8 +9,10 @@ import com.sony.engineering.portalcadastro.model.Equipment;
 @Repository
 public interface EquipmentDao extends GenericDao<Equipment>{
 
-	List<Equipment> findByName(String name);
-
 	List<Equipment> findBySerialNumber(String serialNumber);
+
+	List<Equipment> findDistinctByNameAndSerialNumber(String name, String serialNumber);
+
+	List<Equipment> findDistinctByName(String name);
 
 }

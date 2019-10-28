@@ -28,7 +28,7 @@ public class EquipmentController {
 			@RequestParam(required = false, name = "serialNumber") String serialNumber) {
 		
 		if (StringUtils.hasText(name)) {
-			return equipmentService.findByName(name);
+			return equipmentService.findDistinctByName(name);
 		}
 		
 		if (StringUtils.hasText(serialNumber)) {
@@ -42,7 +42,7 @@ public class EquipmentController {
 	@GetMapping(value = "equipments/{id}")
 	public Equipment getEquipmentById(@PathVariable("id") Integer id){
 		
-		return equipmentService.findOne(id);
+		return equipmentService.findById(id);
 	}
 	
 	@PostMapping(value = "equipments")

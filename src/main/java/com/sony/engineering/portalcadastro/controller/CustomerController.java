@@ -43,7 +43,7 @@ public class CustomerController {
 	@GetMapping(value = "customers/{id}")
 	public Customer getCustomerById(@PathVariable("id") Integer id) {
 		
-		return customerService.findOne(id);
+		return customerService.findById(id);
 	}
 	
 	@PostMapping(value = "customers")

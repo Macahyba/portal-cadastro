@@ -28,11 +28,11 @@ public class ServiceController {
 			@RequestParam(required = false, name = "description") String description) {
 		
 		if (StringUtils.hasText(name)) {
-			return serviceService.findByName(name);
+			return serviceService.findDistinctByName(name);
 		}
 		
 		if (StringUtils.hasText(description)) {
-			return serviceService.findByDescription(description);
+			return serviceService.findDistinctByDescription(description);
 		}
 
 		return serviceService.findAll();
@@ -42,7 +42,7 @@ public class ServiceController {
 	@GetMapping(value = "services/{id}")
 	public Service getServiceById(@PathVariable("id") Integer id){
 		
-		return serviceService.findOne(id);
+		return serviceService.findById(id);
 	}
 	
 	@PostMapping(value = "services")

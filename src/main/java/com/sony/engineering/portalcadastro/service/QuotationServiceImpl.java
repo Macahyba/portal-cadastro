@@ -1,11 +1,10 @@
 package com.sony.engineering.portalcadastro.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
+import javax.management.RuntimeErrorException;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,20 +42,60 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Quotation save(Quotation quotation) {
 		
+		// CUSTOMER INSERTION
 		
 		Customer customer = quotation.getCustomer();
+
+		customer = customerService.save(customer);
 		
-		Set<Equipment> equipments = quotation.getEquipments();
+		if (customer == null) {
+			throw new RuntimeErrorException(null, "Error on creating customer");
+		}
 		
-		Set<Service> services = quotation.getServices();
+		quotation.setCustomer(customer);
+				
+		
+		// USER INSERTION
 		
 		User user = quotation.getUser();
 		
-		customer = customerService.save(customer);
+		user = userService.save(user);
 		
-		quotation.setCustomer(customer);
+		if(user == null) {
+			throw new RuntimeErrorException(null, "Error on creating user");
+		}
 		
-		equipments.forEach(e ->{ equipmentService.save(e);});
+		quotation.setUser(user);
+		
+		// EQUIPMENT INSERTION
+		
+		Set<Equipment> equipments = quotation.getEquipments();
+		
+		equipments = equipmentService.saveAll(equipments);
+		
+		if(equipments.isEmpty()) {
+			throw new RuntimeErrorException(null, "Error on creating equipments");
+		}
+		
+		quotation.setEquipments(equipments);
+		
+		// SERVICE INSERTION
+		
+		Set<Service> services = quotation.getServices();
+		
+		services = serviceService.saveAll(services);
+		
+		if(services.isEmpty()) {
+			throw new RuntimeErrorException(null, "Error on creating services");
+		}	
+		
+		quotation.setServices(services);
+		
+		services.forEach(e ->{ serviceService.save(e);});
+
+		
+
+		
 	
 		return quotationDao.save(quotation);
 		

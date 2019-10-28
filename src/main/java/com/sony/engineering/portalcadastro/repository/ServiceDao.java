@@ -9,8 +9,8 @@ import com.sony.engineering.portalcadastro.model.Service;
 @Repository
 public interface ServiceDao extends GenericDao<Service>{
 
-	List<Service> findByName(String name);
+	List<Service> findDistinctByDescription(String description);
 
-	List<Service> findByDescription(String description);
+	List<Service> findDistinctByName(String name);
 
 }

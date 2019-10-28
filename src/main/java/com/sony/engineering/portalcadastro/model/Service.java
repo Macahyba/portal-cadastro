@@ -1,6 +1,7 @@
 package com.sony.engineering.portalcadastro.model;
 
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,8 +14,10 @@ public class Service {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
+	@Column(unique = true)
 	private String description;
 	
+	@Column(unique = true)
 	private String name;
 	
 	private Float price;

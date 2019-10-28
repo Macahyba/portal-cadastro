@@ -2,6 +2,8 @@ package com.sony.engineering.portalcadastro.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +22,8 @@ import com.sony.engineering.portalcadastro.service.ServiceService;
 @Controller
 public class QuotationController {
 
+	Logger logger = LoggerFactory.getLogger(QuotationController.class); 
+	
 	@Autowired
 	EquipmentService equipmentService;
 	
@@ -58,7 +62,13 @@ public class QuotationController {
 	@PostMapping(value = "quotations")
 	@ResponseBody
 	public Quotation setQuotation(@RequestBody Quotation quotation) {
-		return quotationService.save(quotation);
+		
+		try {
+			return quotationService.save(quotation);
+		} catch (RuntimeException e) {
+			logger.error("Error on creating quotation"); //refine in the future
+			return null;
+		}
 	}
 	
 }

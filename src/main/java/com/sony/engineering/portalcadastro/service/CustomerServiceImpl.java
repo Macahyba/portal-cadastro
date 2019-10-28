@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import javax.management.RuntimeErrorException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +34,7 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 		super(dao);
 	}
 	
-	@Transactional(propagation = Propagation.REQUIRED)
+	@Transactional(propagation = Propagation.REQUIRED, noRollbackFor = UnexpectedRollbackException.class)
 	public Customer save(Customer customer) {	
 		
 		Set<Contact> contacts = customer.getContacts();
@@ -42,13 +42,12 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 		if (customer.getId() != null) {		
 			
 			try {
-				customer = this.findOne(customer.getId());
+				customer = this.findById(customer.getId());
 			} catch (NoSuchElementException e) {
 				logger.error("Invalid Customer Id!");
-				return null;	// error 500
+				throw new NoSuchElementException();
 			}
 		} else {
-			
 
 			List<Customer> findName = this.findDistinctByName(customer.getName()); 
 			
@@ -58,18 +57,17 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 			}
 
 		}
-
-		for (Contact c: contacts) {
+		
+		contacts.forEach(c -> {
 			if (c.getId() != null) {
 				
 				try {
 					contacts.clear();
-					contacts.add(contactService.findOne(c.getId()));
+					contacts.add(contactService.findById(c.getId()));
 					
 				} catch (NoSuchElementException e){
 					logger.error("Invalid Contact Id!");
-					return null;
-					
+					throw new NoSuchElementException();		
 				}				
 			} else {
 				
@@ -81,7 +79,7 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 					contacts.add(findContact.get(0));
 				}
 			}
-		}
+		});
 
 		customer.setContacts(contacts);
 		
@@ -99,11 +97,6 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 	public Customer edit(Customer t) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public Customer findOne(Integer id) {
-		return customerDao.findById(id).get();
 	}
 
 	@Override
