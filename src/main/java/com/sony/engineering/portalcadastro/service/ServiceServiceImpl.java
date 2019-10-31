@@ -77,6 +77,12 @@ public class ServiceServiceImpl extends GenericServiceImpl<Service> implements S
 		
 		return newServices;
 	}
+
+	@Override
+	public Service patch(Service t) {
+		// TODO Auto-generated method stub
+		return null;
+	}	
 	
 	@Override
 	public List<Service> findDistinctByName(String name) {
@@ -87,6 +93,5 @@ public class ServiceServiceImpl extends GenericServiceImpl<Service> implements S
 	public List<Service> findDistinctByDescription(String description) {
 		return serviceDao.findDistinctByDescription(description);
 	}
-
 
 }

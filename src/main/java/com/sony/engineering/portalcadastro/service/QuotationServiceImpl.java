@@ -1,9 +1,15 @@
 package com.sony.engineering.portalcadastro.service;
 
+import java.beans.PropertyDescriptor;
+import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.management.RuntimeErrorException;
 
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,56 +99,31 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 		
 		services.forEach(e ->{ serviceService.save(e);});
 
+		quotation = quotationDao.save(quotation);
+				
+		quotation.setLabel(
+				String.format("%s%s%04d", quotation.returnPrettyCreationDate(), "OS_", quotation.getId()));
 		
+		quotation = quotationDao.save(quotation);
+		
+		return quotation;
 
-		
+	}
 	
-		return quotationDao.save(quotation);
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public Quotation patch(Quotation quotation) {
 		
-//		
-//		
-//		quotation.setUser(userService.getOne(quotation.getUser().getId()));
-//		
-//		Customer customer = customerService.getOneByAttr("name", quotation.getCustomer().getName());
-//		
-//		if (customer == null) {
-//			
-//			customer = customerService.save(quotation.getCustomer());
-//			
-//		}
-//		quotation.setCustomer(customer);
-//		
-//		
-//		List<Equipment> equipments = new ArrayList<Equipment>();
-//		
-//		for(Equipment e: quotation.getEquipments()) {
-//			
-//			Equipment equipment = equipmentService.getOneByAttr("name", e.getName());
-//			
-//			if(equipment == null) {
-//				equipment = equipmentService.save(e);
-//			}
-//			equipments.add(equipment);
-//		}
-//		quotation.setEquipments(equipments);
-//
-//		
-//		List<Service> services = new ArrayList<Service>();
-//		
-//		for(Service s: quotation.getServices()) {
-//			
-//			Service service = serviceService.getOneByAttr("name", s.getName());
-//			
-//			if(service == null) {
-//				service  = serviceService.save(s);
-//			}
-//			services.add(service);
-//		}
-//		quotation.setServices(services);		
-//		
-//		
-//		quotationDao.save(quotation);
-//		return quotation;
+		try {
+			Quotation quotationDb = quotationDao.findById(quotation.getId()).get();
+			merge(quotation, quotationDb);
+			return quotationDao.save(quotationDb);
+		} catch (NoSuchElementException e) {
+			throw new NoSuchElementException("Invalid Quotation Id!");
+		} catch (Exception e) {
+			return null;
+		}
+
 	}
 
 	public QuotationDao getQuotationDao() {
@@ -160,4 +141,23 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 	public void setCustomerService(CustomerService customerService) {
 		this.customerService = customerService;
 	}
+	
+	public static String[] getNullPropertyNames (Object source) {
+	    final BeanWrapper src = new BeanWrapperImpl(source);
+	    PropertyDescriptor[] pds = src.getPropertyDescriptors();
+
+	    Set<String> emptyNames = new HashSet<String>();
+	    for(PropertyDescriptor pd : pds) {
+	        Object srcValue = src.getPropertyValue(pd.getName());
+	        if (srcValue == null) emptyNames.add(pd.getName());
+	    }
+	    String[] result = new String[emptyNames.size()];
+	    return emptyNames.toArray(result);
+	}
+	
+	public static void merge(Object src, Object target) {
+	    BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
+	}
+	
+	
 }

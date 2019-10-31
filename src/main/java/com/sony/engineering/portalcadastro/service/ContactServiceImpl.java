@@ -32,6 +32,12 @@ public class ContactServiceImpl extends GenericServiceImpl<Contact> implements C
 	@Override
 	public List<Contact> findDistinctByNameOrEmail(String name, String email) {
 		return contactDao.findDistinctByNameOrEmail(name, email);
+	}
+
+	@Override
+	public Contact patch(Contact t) {
+		// TODO Auto-generated method stub
+		return null;
 	}	
 	
 }

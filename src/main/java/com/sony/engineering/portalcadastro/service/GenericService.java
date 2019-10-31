@@ -10,6 +10,8 @@ public interface GenericService<T> {
 	
 	T edit(T t);
 	
+	T patch(T t);
+	
 	List<T> findAll();
 
 	T findById(Integer id);

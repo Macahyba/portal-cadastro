@@ -40,6 +40,10 @@ public abstract class GenericServiceImpl<T> implements GenericService<T> {
 	}
 
 	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public abstract T patch(T t);
+
+	@Override
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public T findById(Integer id) {
 

@@ -78,4 +78,18 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 		return null;
 	}
 
+	@Override
+	public User patch(User t) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public UserDao getUserDao() {
+		return userDao;
+	}
+
+	public void setUserDao(UserDao userDao) {
+		this.userDao = userDao;
+	}
+
 }

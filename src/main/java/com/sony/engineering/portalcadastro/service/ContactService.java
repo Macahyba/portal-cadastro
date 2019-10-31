@@ -1,7 +1,6 @@
 package com.sony.engineering.portalcadastro.service;
 
 import java.util.List;
-import java.util.Set;
 
 import com.sony.engineering.portalcadastro.model.Contact;
 

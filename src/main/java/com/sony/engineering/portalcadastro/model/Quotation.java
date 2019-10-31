@@ -1,5 +1,6 @@
 package com.sony.engineering.portalcadastro.model;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -26,6 +27,9 @@ public class Quotation {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
+	@Column(unique = true)
+	private String label;
+	
 	@Column(columnDefinition = "float default 0")
 	private Float totalPrice;
 	
@@ -45,13 +49,13 @@ public class Quotation {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.DETACH)
 	@JoinTable(name = "quotation_equipment", 
 	joinColumns = {@JoinColumn(name = "quotation_id")}, 
 	inverseJoinColumns = {@JoinColumn(name = "equipment_id")})
 	private Set<Equipment> equipments;
 	
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 
@@ -59,9 +63,9 @@ public class Quotation {
 	@JoinColumn(name = "approval_user_id")
 	private User approvalUser;
 	
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.DETACH)
 	@JoinTable(name = "quotation_service", 
-	joinColumns = {@JoinColumn(name = "quotations_id")},
+	joinColumns = {@JoinColumn(name = "quotation_id")},
 	inverseJoinColumns = {@JoinColumn(name = "service_id")})
 	private Set<Service> services;
 
@@ -71,6 +75,14 @@ public class Quotation {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 	public Float getTotalPrice() {
@@ -151,6 +163,13 @@ public class Quotation {
 
 	public void setServices(Set<Service> services) {
 		this.services = services;
+	}
+
+	public String returnPrettyCreationDate() {
+
+		String pattern = "yyyyMMdd";
+		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+		return sdf.format(this.creationDate);
 	}
 
 
