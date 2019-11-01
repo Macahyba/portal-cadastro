@@ -117,7 +117,7 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 		try {
 			Quotation quotationDb = quotationDao.findById(quotation.getId()).get();
 			merge(quotation, quotationDb);
-			return quotationDao.save(quotationDb);
+			return this.save(quotationDb);
 		} catch (NoSuchElementException e) {
 			throw new NoSuchElementException("Invalid Quotation Id!");
 		} catch (Exception e) {

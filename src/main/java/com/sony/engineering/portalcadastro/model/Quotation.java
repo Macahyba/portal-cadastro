@@ -162,6 +162,12 @@ public class Quotation {
 	}
 
 	public void setServices(Set<Service> services) {
+		this.totalPrice = 0.0f;
+		if(services != null) {
+			for (Service s: services) {
+				this.totalPrice += s.getPrice();
+			}
+		}
 		this.services = services;
 	}
 
@@ -171,7 +177,5 @@ public class Quotation {
 		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 		return sdf.format(this.creationDate);
 	}
-
-
 	
 }

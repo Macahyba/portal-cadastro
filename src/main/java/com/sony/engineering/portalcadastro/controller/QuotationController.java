@@ -64,6 +64,7 @@ public class QuotationController {
 	public ResponseEntity<Quotation> setQuotation(@RequestBody Quotation quotation) {
 		
 		try {
+			//SEND ASSYNC MAIL
 			return new ResponseEntity<Quotation>(quotationService.save(quotation), HttpStatus.OK);
 		} catch (RuntimeException e) {
 			logger.error("Error on creating quotation"); //refine in the future
