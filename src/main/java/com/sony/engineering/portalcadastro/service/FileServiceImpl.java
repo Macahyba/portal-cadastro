@@ -1,6 +1,7 @@
 package com.sony.engineering.portalcadastro.service;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -55,16 +56,14 @@ public class FileServiceImpl implements FileService{
     }	
     
     
-    public String generatePdf(Integer id) throws Exception {
+    public String generatePdf(Integer id) throws IOException {
     	
     	Quotation quotation = quotationService.findById(id);
-    	// HANDLE EXCEPTION
     	String src = "<html>\r\n" + 
     			"<head>\r\n" + 
     			"<title>Your Title Here</title>\r\n" + 
     			"</head>\r\n" + 
     			"<body>\r\n" + 
-    			"<center><img src=\"clouds.jpg\" align=\"BOTTOM\" ></img> </center>\r\n" + 
     			"\r\n" + 
     			"<a href=\"http://somegreatsite.com\">Link Name</a>\r\n" + 
     			"is a link to another nifty site\r\n" + 
@@ -90,9 +89,8 @@ public class FileServiceImpl implements FileService{
             
             return quotation.getLabel();
         } catch (Exception e) {
-        	//e.printStackTrace();
+        	throw new IOException(e);
         }
     	
-        return null;
     }
 }

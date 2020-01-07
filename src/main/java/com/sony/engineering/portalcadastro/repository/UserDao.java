@@ -13,4 +13,6 @@ public interface UserDao extends GenericDao<User>{
 	
 	List<User> findDistinctByEmail(String email);
 	
+	List<User> findDistinctByProfileNot(String profile);
+	
 }

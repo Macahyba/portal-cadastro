@@ -157,7 +157,6 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 	
 	public static void merge(Object src, Object target) {
 	    BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
-	}
-	
+	}	
 	
 }

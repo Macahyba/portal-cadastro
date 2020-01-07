@@ -1,7 +1,14 @@
 package com.sony.engineering.portalcadastro.controller;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.sony.engineering.portalcadastro.model.Quotation;
 import com.sony.engineering.portalcadastro.service.CustomerService;
 import com.sony.engineering.portalcadastro.service.EquipmentService;
+import com.sony.engineering.portalcadastro.service.FileService;
+import com.sony.engineering.portalcadastro.service.MailService;
 import com.sony.engineering.portalcadastro.service.QuotationService;
 import com.sony.engineering.portalcadastro.service.ServiceService;
 
@@ -40,6 +49,12 @@ public class QuotationController {
 	
 	@Autowired
 	QuotationService quotationService;
+	
+	@Autowired
+	MailService mailService;
+	
+	@Autowired
+	FileService fileService;
 	
 	@GetMapping(value = "quotations")
 	public ResponseEntity<List<Quotation>> getAll(){
@@ -61,15 +76,32 @@ public class QuotationController {
 	}
 	
 	@PostMapping(value = "quotations")
-	public ResponseEntity<Quotation> setQuotation(@RequestBody Quotation quotation) {
+	public ResponseEntity<?> setQuotation(@RequestBody Quotation quotation) {
 		
 		try {
-			//SEND ASSYNC MAIL
-			return new ResponseEntity<Quotation>(quotationService.save(quotation), HttpStatus.OK);
+			
+			quotationService.save(quotation);
+			fileService.generatePdf(quotation.getId());
+			mailService.sendMailNew(quotation);
+			return new ResponseEntity<Quotation>(quotation, HttpStatus.CREATED);
 		} catch (RuntimeException e) {
-			logger.error("Error on creating quotation"); //refine in the future
+			logger.error("Error on creating quotation"); 
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
+		} catch (IOException e) {
+			logger.error("Error creating pdf: " + e);
+			Map<String, Object> map = new HashMap<String, Object>(){{
+				put("quotation", quotation);
+				put("warning", "Erro ao criar pdf!");
+			}};
+			return new ResponseEntity<Map<String, Object>>(map, HttpStatus.ACCEPTED); 
+		} catch (Exception e) {
+			logger.error("Error sendig email: " + e);
+			Map<String, Object> map = new HashMap<String, Object>(){{
+				put("quotation", quotation);
+				put("warning", "Erro ao enviar e-mail!");
+			}};
+			return new ResponseEntity<Map<String, Object>>(map, HttpStatus.ACCEPTED); 
+		} 
 	}
 	
 	@PutMapping(value = "quotations/{id}")

@@ -51,7 +51,7 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 				}
 				
 			} catch (IncorrectResultSizeDataAccessException e){
-				logger.error("Duplicate user e-mail detected, please chech the DB");
+				logger.error("Duplicate user e-mail detected, please check the DB");
 				throw new IncorrectResultSizeDataAccessException(1);
 			}
 			
@@ -70,7 +70,7 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 				return u.get(0);
 			}
 			
-		} catch (NullPointerException e) {
+		} catch (NullPointerException | IndexOutOfBoundsException e) {
 			
 			return null;
 		}
@@ -90,6 +90,11 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 
 	public void setUserDao(UserDao userDao) {
 		this.userDao = userDao;
+	}
+
+	@Override
+	public List<User> findDistinctByProfileNot(String profile) {
+		return userDao.findDistinctByProfileNot(profile);
 	}
 
 }
