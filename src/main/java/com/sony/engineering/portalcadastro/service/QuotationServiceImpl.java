@@ -18,6 +18,7 @@ import com.sony.engineering.portalcadastro.model.Customer;
 import com.sony.engineering.portalcadastro.model.Equipment;
 import com.sony.engineering.portalcadastro.model.Quotation;
 import com.sony.engineering.portalcadastro.model.Service;
+import com.sony.engineering.portalcadastro.model.Status;
 import com.sony.engineering.portalcadastro.model.User;
 import com.sony.engineering.portalcadastro.repository.GenericDao;
 import com.sony.engineering.portalcadastro.repository.QuotationDao;
@@ -39,6 +40,9 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 	
 	@Autowired
 	private ServiceService serviceService;
+	
+	@Autowired
+	private StatusService statusService;
 		
 	public QuotationServiceImpl(GenericDao<Quotation> dao) {
 		super(dao);
@@ -59,7 +63,10 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 		}
 		
 		quotation.setCustomer(customer);
-				
+		
+		// CONTACT INSERTION
+		
+		quotation.setContact(quotation.getCustomer().getContacts().iterator().next());
 		
 		// USER INSERTION
 		
@@ -72,6 +79,14 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 		}
 		
 		quotation.setUser(user);
+		
+		// STATUS INSERTION
+		
+		Status status = quotation.getStatus();
+		
+		status = statusService.save(status);
+		
+		quotation.setStatus(status);
 		
 		// EQUIPMENT INSERTION
 		
@@ -97,16 +112,16 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 		
 		quotation.setServices(services);
 		
-		services.forEach(e ->{ serviceService.save(e);});
+		// PREPARE TO SAVE
 
 		quotation = quotationDao.save(quotation);
-				
+
 		quotation.setLabel(
-				String.format("%s%s%04d", quotation.returnPrettyCreationDate(), "OS_", quotation.getId()));
+				String.format("%s%04d", quotation.returnPrettyCreationDate(), quotation.getId()));
 		
-		quotation = quotationDao.save(quotation);
+		// SAVE
 		
-		return quotation;
+		return quotationDao.save(quotation);
 
 	}
 	
@@ -116,8 +131,15 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 		
 		try {
 			Quotation quotationDb = quotationDao.findById(quotation.getId()).get();
+			
+			if (quotation.getApprovalUser() != null) {
+				
+				User approvalUser = userService.findById(quotation.getApprovalUser().getId());
+				quotation.setApprovalUser(approvalUser);
+			}
+			
 			merge(quotation, quotationDb);
-			return this.save(quotationDb);
+			return quotationDao.save(quotationDb);
 		} catch (NoSuchElementException e) {
 			throw new NoSuchElementException("Invalid Quotation Id!");
 		} catch (Exception e) {
@@ -132,14 +154,6 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 
 	public void setQuotationDao(QuotationDao quotationDao) {
 		this.quotationDao = quotationDao;
-	}
-
-	public CustomerService getCustomerService() {
-		return customerService;
-	}
-
-	public void setCustomerService(CustomerService customerService) {
-		this.customerService = customerService;
 	}
 	
 	public static String[] getNullPropertyNames (Object source) {

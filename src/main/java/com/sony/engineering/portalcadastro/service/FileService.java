@@ -1,13 +1,14 @@
 package com.sony.engineering.portalcadastro.service;
 
-import java.io.IOException;
 
 import org.springframework.core.io.Resource;
+
+import com.sony.engineering.portalcadastro.exception.PdfGenerationException;
 
 public interface FileService {
 
 	Resource loadFileAsResource(String fileName);
 	
-	String generatePdf(Integer id) throws IOException ;
+	String generatePdf(Integer id) throws PdfGenerationException;
 	
 }

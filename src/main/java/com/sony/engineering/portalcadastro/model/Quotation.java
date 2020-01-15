@@ -2,6 +2,7 @@ package com.sony.engineering.portalcadastro.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -36,7 +37,9 @@ public class Quotation {
 	@Column(columnDefinition = "float default 0")
 	private Float totalDiscount;
 	
-	private String status;
+	@ManyToOne
+	@JoinColumn(name = "status_id")	
+	private Status status;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreationTimestamp
@@ -58,6 +61,10 @@ public class Quotation {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
+
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "contact_id")
+	private Contact contact;
 
 	@ManyToOne
 	@JoinColumn(name = "approval_user_id")
@@ -101,11 +108,11 @@ public class Quotation {
 		this.totalDiscount = totalDiscount;
 	}
 
-	public String getStatus() {
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 
@@ -149,6 +156,14 @@ public class Quotation {
 		this.customer = customer;
 	}
 
+	public Contact getContact() {
+		return contact;
+	}
+
+	public void setContact(Contact contact) {
+		this.contact = contact;
+	}
+
 	public User getApprovalUser() {
 		return approvalUser;
 	}
@@ -175,6 +190,10 @@ public class Quotation {
 
 		String pattern = "yyyyMMdd";
 		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+		
+		if (Objects.isNull(this.creationDate)){
+			return sdf.format(new Date());
+		}
 		return sdf.format(this.creationDate);
 	}
 	

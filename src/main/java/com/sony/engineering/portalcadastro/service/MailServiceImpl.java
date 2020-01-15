@@ -107,7 +107,7 @@ public class MailServiceImpl implements MailService {
         List<User> users = userService.findDistinctByProfileNot("user");
         
         String subject = "Novo orçamento em Portal Orçamento ✔";
-        String bodyText = "Aviso.<br>Novo orcamento em " + request.getRequestURL().toString() + "/" + quotation.getId();
+        String bodyText = "Aviso.<br>Novo orcamento em " + request.getRequestURL().toString();
         List<String> to = new ArrayList<>();
         
         users.forEach(dest ->{

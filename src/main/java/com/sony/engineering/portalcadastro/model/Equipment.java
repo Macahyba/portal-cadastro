@@ -1,10 +1,14 @@
 package com.sony.engineering.portalcadastro.model;
 
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -19,6 +23,21 @@ public class Equipment {
 	private String name;
 	
 	private String serialNumber;
+	
+	@OneToMany(
+			mappedBy = "equipment", 
+			cascade = CascadeType.ALL)
+	private Set<SparePart> spareParts;
+	
+	public void addSparePart(SparePart sparePart) {
+		spareParts.add(sparePart);
+		sparePart.setEquipment(this);
+	}
+	
+	public void removeSparePart(SparePart sparePart) {
+		spareParts.remove(sparePart);
+		sparePart.setEquipment(null);
+	}	
 	
 	public Integer getId() {
 		return id;
@@ -42,6 +61,14 @@ public class Equipment {
 
 	public void setSerialNumber(String serialNumber) {
 		this.serialNumber = serialNumber;
+	}
+
+	public Set<SparePart> getSpareParts() {
+		return spareParts;
+	}
+
+	public void setSpareParts(Set<SparePart> spareParts) {
+		this.spareParts = spareParts;
 	}
 	
 }

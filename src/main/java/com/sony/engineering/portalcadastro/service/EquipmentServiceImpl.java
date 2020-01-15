@@ -74,12 +74,6 @@ public class EquipmentServiceImpl extends GenericServiceImpl<Equipment> implemen
 		
 		return newEquipments;
 	}
-
-	@Override
-	public Equipment patch(Equipment t) {
-		// TODO Auto-generated method stub
-		return null;
-	}	
 	
 	public EquipmentServiceImpl(GenericDao<Equipment> dao) {
 		super(dao);

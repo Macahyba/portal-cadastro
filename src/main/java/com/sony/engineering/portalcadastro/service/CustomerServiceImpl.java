@@ -86,12 +86,6 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 		return customerDao.save(customer);
 
 	}
-	
-	@Override
-	public Customer patch(Customer t) {
-		// TODO Auto-generated method stub
-		return null;
-	}	
 
 	@Override
 	public List<Customer> findAll() {
