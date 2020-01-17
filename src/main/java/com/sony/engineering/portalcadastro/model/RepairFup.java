@@ -1,6 +1,7 @@
 package com.sony.engineering.portalcadastro.model;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -46,7 +47,7 @@ public class RepairFup {
 	@JoinTable(name = "repairFup_spareParts", 
 	joinColumns = {@JoinColumn(name = "repairFup_id")},
 	inverseJoinColumns = {@JoinColumn(name = "part_id")})	
-	private Set<SparePart> spareParts;	
+	private Set<SparePart> spareParts = new HashSet<SparePart>();	
 	
 	public Integer getId() {
 		return id;

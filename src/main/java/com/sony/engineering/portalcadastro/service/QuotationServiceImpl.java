@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sony.engineering.portalcadastro.model.Contact;
 import com.sony.engineering.portalcadastro.model.Customer;
 import com.sony.engineering.portalcadastro.model.Equipment;
 import com.sony.engineering.portalcadastro.model.Quotation;
@@ -32,9 +31,6 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 
 	@Autowired
 	private CustomerService customerService;
-	
-	@Autowired
-	private ContactService contactService;
 	
 	@Autowired
 	private UserService userService;
@@ -133,21 +129,20 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 		if (customer == null) {
 			throw new RuntimeErrorException(null, "Error on creating customer");
 		}
-		
+				
+		customer.addContact(quotation.getContact());
 		customer = customerService.save(customer);
 		quotation.setCustomer(customer);
 	}
 	
 	private void contactInsertion(Quotation quotation) {
 
-		Contact contact = quotation.getContact();
-		
-		if(contact == null) {
-			throw new RuntimeErrorException(null, "Error on creating customer");
+		if (quotation.getCustomer().getContacts().size() > 1) {
+			
+			throw new RuntimeErrorException(null, "Error on creating contact - too many arguments");
 		}
 		
-		contact = contactService.save(contact);
-		quotation.setContact(contact);
+		quotation.setContact(quotation.getCustomer().getContacts().iterator().next());;
 		
 	}
 	

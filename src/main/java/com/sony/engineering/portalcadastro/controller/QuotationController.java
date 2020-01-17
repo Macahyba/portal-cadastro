@@ -89,10 +89,9 @@ public class QuotationController {
 	public ResponseEntity<?> updateQuotation(
 			@RequestBody Quotation quotation, @PathVariable("id") Integer id) {
 		
-		quotation.setId(id);
-		
 		try {
-			
+		
+			quotation.setId(id);
 			quotation = quotationService.edit(quotation);			
 			fileService.generatePdf(quotation.getId());
 			mailService.sendMailNew(quotation);
@@ -153,7 +152,7 @@ public class QuotationController {
 	}
 	
 	@DeleteMapping(value = "quotations/{id}")
-	public ResponseEntity<?> deleteQuotation(@PathVariable("id") Integer id){
+	public ResponseEntity<Quotation> deleteQuotation(@PathVariable("id") Integer id){
 		
 		try {
 			quotationService.delete(id);

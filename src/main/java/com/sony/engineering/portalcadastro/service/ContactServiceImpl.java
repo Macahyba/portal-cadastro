@@ -33,4 +33,5 @@ public class ContactServiceImpl extends GenericServiceImpl<Contact> implements C
 	public List<Contact> findDistinctByNameOrEmail(String name, String email) {
 		return contactDao.findDistinctByNameOrEmail(name, email);
 	}
+
 }

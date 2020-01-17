@@ -1,6 +1,7 @@
 package com.sony.engineering.portalcadastro.model;
 
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotEmpty;
+
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -22,18 +25,21 @@ public class Customer {
 	private Integer id;
 	
 	@Column(unique = true)
+	@NotEmpty
 	private String name;
 	
 	@Column(unique = true)
+	@NotEmpty
 	private String fullName;
 	
 	@Column(unique = true)
+	@NotEmpty
 	private String cnpj;
 	
 	@OneToMany(
 			mappedBy = "customer", 
 			cascade = CascadeType.ALL)
-	private Set<Contact> contacts;
+	private Set<Contact> contacts = new HashSet<Contact>();
 	
 	public void addContact(Contact contact) {
 		contacts.add(contact);

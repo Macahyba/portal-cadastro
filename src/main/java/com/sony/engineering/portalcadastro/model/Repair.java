@@ -1,5 +1,6 @@
 package com.sony.engineering.portalcadastro.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class Repair {
 	@OneToMany(
 			mappedBy = "repair", 
 			cascade = CascadeType.ALL)
-	private List<RepairFup> repairFups;
+	private List<RepairFup> repairFups = new ArrayList<RepairFup>();
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")	

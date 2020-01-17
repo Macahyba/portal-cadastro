@@ -1,10 +1,12 @@
 package com.sony.engineering.portalcadastro.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -47,9 +49,16 @@ public class CustomerController {
 	}
 	
 	@GetMapping(value = "customers/{id}")
-	public Customer getCustomerById(@PathVariable("id") Integer id) {
+	public ResponseEntity<Customer> getCustomerById(@PathVariable("id") Integer id) {
 		
-		return customerService.findById(id);
+		try {
+			return new ResponseEntity<Customer>(customerService.findById(id), HttpStatus.OK);	
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (RuntimeException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 	
 	@PostMapping(value = "customers")
@@ -64,14 +73,32 @@ public class CustomerController {
 	}
 	
 	@PutMapping(value = "customers/{id}")
-	public Customer updateCustomer(@RequestBody Customer customer, @PathVariable("id") Integer id) {
-		customer.setId(id);
-		return customerService.edit(customer);
+	public ResponseEntity<Customer> updateCustomer(@RequestBody Customer customer, @PathVariable("id") Integer id) {
+		
+		try {
+			customer.setId(id);
+			return new ResponseEntity<Customer>(customerService.edit(customer), HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (RuntimeException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 	
 	@DeleteMapping(value = "customers/{id}")
-	public void deleteCustomer(@PathVariable("id") Integer id){
-		customerService.delete(id);
+	public ResponseEntity<Customer> deleteCustomer(@PathVariable("id") Integer id){
+		
+		try {
+			customerService.delete(id);	
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (EmptyResultDataAccessException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);			
+		} catch (RuntimeException e) {
+			logger.error("Error on deleting customer");
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}	
+		
 	}
 
 }

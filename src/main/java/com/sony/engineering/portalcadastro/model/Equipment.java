@@ -1,6 +1,7 @@
 package com.sony.engineering.portalcadastro.model;
 
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -23,8 +25,10 @@ public class Equipment {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
+	@NotEmpty
 	private String name;
 	
+	@NotEmpty
 	private String serialNumber;
 	
 
@@ -32,7 +36,7 @@ public class Equipment {
 	@OneToMany(
 			mappedBy = "equipment", 
 			cascade = CascadeType.ALL)
-	private Set<SparePart> spareParts;
+	private Set<SparePart> spareParts = new HashSet<SparePart>();
 	
 	public void addSparePart(SparePart sparePart) {
 		spareParts.add(sparePart);

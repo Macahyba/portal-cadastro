@@ -51,7 +51,7 @@ public class RepairController {
 	}
 	
 	@PostMapping(value = "repairs")
-	public ResponseEntity<?> postRepair(@RequestBody Repair repair) {
+	public ResponseEntity<Repair> postRepair(@RequestBody Repair repair) {
 		
 		try {
 			
@@ -64,7 +64,7 @@ public class RepairController {
 	}	
 	
 	@PutMapping(value = "repairs/{id}")
-	public ResponseEntity<?> updateRepair(
+	public ResponseEntity<Repair> updateRepair(
 			@RequestBody Repair repair, @PathVariable("id") Integer id) {
 		
 		repair.setId(id);
@@ -83,7 +83,7 @@ public class RepairController {
 	}
 	
 	@PatchMapping(value = "repairs/{id}")
-	public ResponseEntity<?> patchRepair(
+	public ResponseEntity<Repair> patchRepair(
 			@RequestBody Repair repair, @PathVariable("id") Integer id){
 
 		repair.setId(id);
@@ -103,7 +103,7 @@ public class RepairController {
 	}
 	
 	@DeleteMapping(value = "repairs/{id}")
-	public ResponseEntity<Object> deleteRepair(@PathVariable("id") Integer id){
+	public ResponseEntity<Repair> deleteRepair(@PathVariable("id") Integer id){
 		
 		try {
 			repairService.delete(id);

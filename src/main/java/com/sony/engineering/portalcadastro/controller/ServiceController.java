@@ -1,8 +1,13 @@
 package com.sony.engineering.portalcadastro.controller;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,45 +24,83 @@ import com.sony.engineering.portalcadastro.service.ServiceService;
 @RestController
 public class ServiceController {
 
+	Logger logger = LoggerFactory.getLogger(ServiceController.class);
+	
 	@Autowired
 	ServiceService serviceService;
 	
 	@GetMapping(value = "services")
-	public List<Service> getAll(
+	public ResponseEntity<List<Service>> getAll(
 			@RequestParam(required = false, name = "name") String name,
 			@RequestParam(required = false, name = "description") String description) {
 		
 		if (StringUtils.hasText(name)) {
-			return serviceService.findDistinctByName(name);
+			return new ResponseEntity<List<Service>>(serviceService.findDistinctByName(name), HttpStatus.OK);
 		}
 		
 		if (StringUtils.hasText(description)) {
-			return serviceService.findDistinctByDescription(description);
+			return new ResponseEntity<List<Service>>(serviceService.findDistinctByDescription(description), HttpStatus.OK);
 		}
 
-		return serviceService.findAll();
+		return new ResponseEntity<List<Service>>(serviceService.findAll(), HttpStatus.OK);
 		
 	}
 	
 	@GetMapping(value = "services/{id}")
-	public Service getServiceById(@PathVariable("id") Integer id){
+	public ResponseEntity<Service> getServiceById(@PathVariable("id") Integer id){
 		
-		return serviceService.findById(id);
+		try {
+			return new ResponseEntity<Service>(serviceService.findById(id), HttpStatus.OK);	
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (RuntimeException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 	
 	@PostMapping(value = "services")
-	public Service setService(@RequestBody Service service) {
-		return serviceService.save(service);
+	public ResponseEntity<Service> setService(@RequestBody Service service) {
+		
+		try {
+			return new ResponseEntity<Service>(serviceService.save(service), HttpStatus.OK);	
+		} catch (RuntimeException e) {
+			logger.error("Error on creating service: " + e); 
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} 
+		
 	}
 	
 	@PutMapping(value = "services/{id}")
-	public Service updateService(@RequestBody Service service, @PathVariable("id") Integer id) {
-		service.setId(id);
-		return serviceService.edit(service);
+	public ResponseEntity<Service> updateService(@RequestBody Service service, @PathVariable("id") Integer id) {
+		
+		try {
+		
+			service.setId(id);
+			return new ResponseEntity<Service>(serviceService.edit(service), HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);		
+			
+		} catch (RuntimeException e) {
+			logger.error("Error on updating repair: " + e);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 	}
 	
 	@DeleteMapping(value = "services/{id}")
-	public void deleteService(@PathVariable("id") Integer id) {
-		serviceService.delete(id);
+	public ResponseEntity<Service> deleteService(@PathVariable("id") Integer id) {
+		
+		try {
+			
+			serviceService.delete(id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);			
+						
+		} catch (RuntimeException e) {
+			logger.error("Error on patching repair: " + e);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 }

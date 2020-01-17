@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -18,20 +19,27 @@ public class User {
 	private Integer id;
 	
 	@Column(unique = true)
+	@NotEmpty
 	private String login;
 	
+	@NotEmpty
 	private String name;
 	
 	@Column(unique = true)
+	@NotEmpty
 	private String email;
 	
+	@NotEmpty
 	private String profile;
 	
+	@NotEmpty
 	private String role;
 	
+	@NotEmpty
 	private String phone;
 	
 	@JsonIgnore
+	@NotEmpty
 	private String password;
 
 	public Integer getId() {

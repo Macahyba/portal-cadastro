@@ -60,28 +60,30 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 
 		}
 
-		contacts.forEach(c -> {
-			if (c.getId() != null) {
-				
-				try {					
+		if (contacts != null) {
+			contacts.forEach(c -> {
+				if (c.getId() != null) {
 					
-					newContacts.add(contactService.findById(c.getId()));
+					try {					
+						
+						newContacts.add(contactService.findById(c.getId()));
+						
+					} catch (NoSuchElementException e){
+						logger.error("Invalid Contact Id!");
+						throw new NoSuchElementException();		
+					}				
+				} else {
 					
-				} catch (NoSuchElementException e){
-					logger.error("Invalid Contact Id!");
-					throw new NoSuchElementException();		
-				}				
-			} else {
-				
-				List<Contact> findContact = contactService.findDistinctByNameOrEmail(c.getName(), c.getEmail());
-				
-				
-				newContacts.add(!findContact.isEmpty() ?
-									findContact.get(0) :
-									c);	
-
-			}
-		});
+					List<Contact> findContact = contactService.findDistinctByNameOrEmail(c.getName(), c.getEmail());
+					
+					
+					newContacts.add(!findContact.isEmpty() ?
+										findContact.get(0) :
+										c);	
+	
+				}
+			});
+		}
 		
 		customer.setContacts(newContacts);
 		

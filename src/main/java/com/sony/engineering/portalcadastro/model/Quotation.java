@@ -2,6 +2,7 @@ package com.sony.engineering.portalcadastro.model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -56,7 +57,7 @@ public class Quotation {
 	@JoinTable(name = "quotation_equipment", 
 	joinColumns = {@JoinColumn(name = "quotation_id")}, 
 	inverseJoinColumns = {@JoinColumn(name = "equipment_id")})
-	private Set<Equipment> equipments;
+	private Set<Equipment> equipments = new HashSet<Equipment>();
 	
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "customer_id")
@@ -74,7 +75,7 @@ public class Quotation {
 	@JoinTable(name = "quotation_service", 
 	joinColumns = {@JoinColumn(name = "quotation_id")},
 	inverseJoinColumns = {@JoinColumn(name = "service_id")})
-	private Set<Service> services;
+	private Set<Service> services = new HashSet<Service>();
 
 	public Integer getId() {
 		return id;
