@@ -2,7 +2,6 @@ package com.sony.engineering.portalcadastro.model;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -11,8 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
@@ -77,13 +74,7 @@ public class Repair {
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "contact_id")
 	private Contact contact;
-	
-	@ManyToMany(cascade = CascadeType.DETACH)
-	@JoinTable(name = "repair_parts", 
-	joinColumns = {@JoinColumn(name = "repair_id")},
-	inverseJoinColumns = {@JoinColumn(name = "part_id")})	
-	private Set<SparePart> spareParts;
-	
+
 	public void addRepairFup(RepairFup repairFup) {
 		repairFups.add(repairFup);
 		repairFup.setRepair(this);
@@ -95,8 +86,8 @@ public class Repair {
 	}	
 	
 	
-	public void addRepairFups(List<RepairFup> repairFupsList) {
-		repairFups.addAll(repairFupsList);
+	public void addRepairFupsTop(List<RepairFup> repairFupsList) {
+		repairFups.addAll(0,repairFupsList);
 	}
 	
 	public Integer getId() {
@@ -241,15 +232,5 @@ public class Repair {
 	public void setContact(Contact contact) {
 		this.contact = contact;
 	}
-
-	public Set<SparePart> getSpareParts() {
-		return spareParts;
-	}
-
-	public void setSpareParts(Set<SparePart> spareParts) {
-		this.spareParts = spareParts;
-	}
-	
-	
 
 }

@@ -18,11 +18,6 @@ public class LoginController {
 	@Autowired
 	UserService userService;
 	
-	@GetMapping(value="/teste")
-	public String getteste(Model model) {
-		return "quotation/teste";
-	}
-	
 	@GetMapping(value = {"/", "login"})
 	public String loginGet(Model model) {
 		return "quotation/login";

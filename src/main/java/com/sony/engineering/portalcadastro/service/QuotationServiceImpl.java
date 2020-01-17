@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.sony.engineering.portalcadastro.model.Contact;
 import com.sony.engineering.portalcadastro.model.Customer;
 import com.sony.engineering.portalcadastro.model.Equipment;
 import com.sony.engineering.portalcadastro.model.Quotation;
@@ -31,6 +32,9 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 
 	@Autowired
 	private CustomerService customerService;
+	
+	@Autowired
+	private ContactService contactService;
 	
 	@Autowired
 	private UserService userService;
@@ -52,65 +56,19 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Quotation save(Quotation quotation) {
 		
-		// CUSTOMER INSERTION
+		customerInsertion(quotation);
 		
-		Customer customer = quotation.getCustomer();
-
-		customer = customerService.save(customer);
+		contactInsertion(quotation);
 		
-		if (customer == null) {
-			throw new RuntimeErrorException(null, "Error on creating customer");
-		}
+		userInsertion(quotation);
 		
-		quotation.setCustomer(customer);
+		statusInsertion(quotation);
 		
-		// CONTACT INSERTION
+		equipmentInsertion(quotation);
 		
-		quotation.setContact(quotation.getCustomer().getContacts().iterator().next());
+		serviceInsertion(quotation);
 		
-		// USER INSERTION
-		
-		User user = quotation.getUser();
-		
-		user = userService.save(user);
-		
-		if(user == null) {
-			throw new RuntimeErrorException(null, "Error on creating user");
-		}
-		
-		quotation.setUser(user);
-		
-		// STATUS INSERTION
-		
-		Status status = quotation.getStatus();
-		
-		status = statusService.save(status);
-		
-		quotation.setStatus(status);
-		
-		// EQUIPMENT INSERTION
-		
-		Set<Equipment> equipments = quotation.getEquipments();
-		
-		equipments = equipmentService.saveAll(equipments);
-		
-		if(equipments.isEmpty()) {
-			throw new RuntimeErrorException(null, "Error on creating equipments");
-		}
-		
-		quotation.setEquipments(equipments);
-		
-		// SERVICE INSERTION
-		
-		Set<Service> services = quotation.getServices();
-		
-		services = serviceService.saveAll(services);
-		
-		if(services.isEmpty()) {
-			throw new RuntimeErrorException(null, "Error on creating services");
-		}	
-		
-		quotation.setServices(services);
+		approvalUserInsertion(quotation);
 		
 		// PREPARE TO SAVE
 
@@ -124,7 +82,7 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 		return quotationDao.save(quotation);
 
 	}
-	
+
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Quotation patch(Quotation quotation) {
@@ -132,14 +90,8 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 		try {
 			Quotation quotationDb = quotationDao.findById(quotation.getId()).get();
 			
-			if (quotation.getApprovalUser() != null) {
-				
-				User approvalUser = userService.findById(quotation.getApprovalUser().getId());
-				quotation.setApprovalUser(approvalUser);
-			}
-			
 			merge(quotation, quotationDb);
-			return quotationDao.save(quotationDb);
+			return this.save(quotationDb);
 		} catch (NoSuchElementException e) {
 			throw new NoSuchElementException("Invalid Quotation Id!");
 		} catch (Exception e) {
@@ -171,6 +123,101 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 	
 	public static void merge(Object src, Object target) {
 	    BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
+	}	
+	
+	private void customerInsertion(Quotation quotation) {
+
+		
+		Customer customer = quotation.getCustomer();
+		
+		if (customer == null) {
+			throw new RuntimeErrorException(null, "Error on creating customer");
+		}
+		
+		customer = customerService.save(customer);
+		quotation.setCustomer(customer);
+	}
+	
+	private void contactInsertion(Quotation quotation) {
+
+		Contact contact = quotation.getContact();
+		
+		if(contact == null) {
+			throw new RuntimeErrorException(null, "Error on creating customer");
+		}
+		
+		contact = contactService.save(contact);
+		quotation.setContact(contact);
+		
+	}
+	
+	private void userInsertion(Quotation quotation) {
+		
+		User user = quotation.getUser();
+		
+		if(user == null) {
+			throw new RuntimeErrorException(null, "Error on creating user");
+		}
+		
+		user = userService.save(user);
+		quotation.setUser(user);		
+	}
+	
+	private void statusInsertion(Quotation quotation) {
+		
+		Status status = quotation.getStatus();
+		
+		try {
+
+			status = statusService.findById(status.getId());
+		} catch (Exception e) {
+			throw new RuntimeErrorException(null, "Status not found!");
+		}
+	
+		quotation.setStatus(status);
+		
+	}	
+	
+	private void equipmentInsertion(Quotation quotation) {
+		
+		Set<Equipment> equipments = quotation.getEquipments();
+		
+		if(equipments.isEmpty()) {
+			throw new RuntimeErrorException(null, "Error on creating equipments");
+		}
+		
+		equipments = equipmentService.saveAll(equipments);
+		quotation.setEquipments(equipments);
+		
+	}	
+	
+	private void serviceInsertion(Quotation quotation) {
+
+		Set<Service> services = quotation.getServices();
+		
+		if(services.isEmpty()) {
+			throw new RuntimeErrorException(null, "Error on creating services");
+		}	
+		
+		services = serviceService.saveAll(services);
+		quotation.setServices(services);
+		
+	}	
+	
+	private void approvalUserInsertion(Quotation quotation) {
+		
+		if (quotation.getApprovalUser() != null) {
+			
+			try {
+			
+				User approvalUser = userService.findById(quotation.getApprovalUser().getId());
+				quotation.setApprovalUser(approvalUser);
+			} catch (Exception e) {
+				throw new RuntimeErrorException(null, "ApprovalUser not found!");
+			}
+			
+		}
+		
 	}	
 	
 }

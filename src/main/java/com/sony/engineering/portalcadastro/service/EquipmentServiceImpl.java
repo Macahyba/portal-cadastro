@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sony.engineering.portalcadastro.model.Equipment;
+import com.sony.engineering.portalcadastro.model.SparePart;
 import com.sony.engineering.portalcadastro.repository.EquipmentDao;
 import com.sony.engineering.portalcadastro.repository.GenericDao;
 
@@ -25,9 +26,15 @@ public class EquipmentServiceImpl extends GenericServiceImpl<Equipment> implemen
 	@Autowired
 	EquipmentDao equipmentDao;
 	
+	@Autowired
+	SparePartService sparePartService;
+	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Equipment save(Equipment equipment) {
+		
+		Set<SparePart> spareParts = equipment.getSpareParts();
+		Set<SparePart> newSpareParts = new HashSet<SparePart>();
 		
 		if(equipment.getId() != null) {
 			
@@ -51,6 +58,30 @@ public class EquipmentServiceImpl extends GenericServiceImpl<Equipment> implemen
 				throw new IncorrectResultSizeDataAccessException(1);
 			}
 		}
+		
+		if (spareParts != null) {
+			spareParts.forEach(sp ->{
+				
+				if (sp.getId() != null) {
+					try {
+						
+						newSpareParts.add(sparePartService.findById(sp.getId()));
+					} catch (NoSuchElementException e){
+						logger.error("Invalid SparePart Id!");
+						throw new NoSuchElementException();		
+					}
+				} else {
+					
+					List<SparePart> findSparePart = sparePartService.findDistinctByPartNumber(sp.getPartNumber());
+					
+					newSpareParts.add(!findSparePart.isEmpty() ?
+										  findSparePart.get(0) :
+										  sp);
+				}
+			});
+		}
+		
+		equipment.setSpareParts(newSpareParts);
 		
 		return equipmentDao.save(equipment);
 	}

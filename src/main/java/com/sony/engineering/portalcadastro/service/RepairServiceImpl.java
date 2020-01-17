@@ -1,9 +1,19 @@
 package com.sony.engineering.portalcadastro.service;
 
+import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.management.RuntimeErrorException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -21,6 +31,8 @@ import com.sony.engineering.portalcadastro.repository.RepairDao;
 @Service
 public class RepairServiceImpl extends GenericServiceImpl<Repair> implements RepairService{
 
+	Logger logger = LoggerFactory.getLogger(RepairFupServiceImpl.class);
+	
 	@Autowired
 	RepairDao repairDao;
 	
@@ -36,6 +48,9 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 	@Autowired
 	EquipmentService equipmentService;
 	
+	@Autowired
+	RepairFupService repairFupService;
+	
 	public RepairServiceImpl(GenericDao<Repair> dao) {
 		super(dao);
 	}
@@ -44,60 +59,22 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Repair save(Repair repair) {
 		
-		// CUSTOMER INSERTION
+		customerInsertion(repair);
 		
-		Customer customer = repair.getCustomer();
-
-		customer = customerService.save(customer);
+		contactInsertion(repair);
 		
-		if (customer == null) {
-			throw new RuntimeErrorException(null, "Error on creating customer");
-		}
+		userInsertion(repair);
 		
-		repair.setCustomer(customer);
+		statusInsertion(repair);		
 		
-		// CONTACT INSERTION
-		
-		repair.setContact(repair.getCustomer().getContacts().iterator().next());
-		
-		// USER INSERTION
-		
-		User user = repair.getUser();
-		
-		user = userService.save(user);
-		
-		if(user == null) {
-			throw new RuntimeErrorException(null, "Error on creating user");
-		}
-		
-		repair.setUser(user);
-		
-		// STATUS INSERTION
-		
-		Status status = repair.getStatus();
-		
-		status = statusService.save(status);
-		
-		repair.setStatus(status);
-		
-		// EQUIPMENT INSERTION
-		
-		Equipment equipment = repair.getEquipment();
-		
-		equipment = equipmentService.save(equipment);
-		
-		if(equipment == null) {
-			throw new RuntimeErrorException(null, "Error on creating equipment");
-		}
-		
-		repair.setEquipment(equipment);
+		equipmentInsertion(repair);	
 		
 		// SAVE
 		
 		return repairDao.save(repair);
 		
 	}
-	
+
 	public Repair patch(Repair repair) {
 
 		
@@ -105,20 +82,17 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 		
 			Repair repairDb = repairDao.findById(repair.getId()).get();
 			
-			List<RepairFup> repairFups = repair.getRepairFups();
+			repairFupsCheckId(repair);
 			
-			if (!repairFups.isEmpty()) {
-				
-				repairDb.addRepairFups(repairFups);
-			}			
+			repairFupsInsertion(repair, repairDb);
 			
-			return repairDao.save(repairDb);
+			merge(repair, repairDb);
+			return this.save(repairDb);
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			throw new RuntimeErrorException(null, e.getMessage());
 		}
 		
-		return null;
 	}
 
 	public RepairDao getRepairDao() {
@@ -128,5 +102,121 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 	public void setRepairDao(RepairDao repairDao) {
 		this.repairDao = repairDao;
 	}
+	
+	public static String[] getNullPropertyNames (Object source) {
+	    final BeanWrapper src = new BeanWrapperImpl(source);
+	    PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
+	    Set<String> emptyNames = new HashSet<String>();
+	    for(PropertyDescriptor pd : pds) {
+	        Object srcValue = src.getPropertyValue(pd.getName());
+	        if (srcValue == null) emptyNames.add(pd.getName());
+	    }
+	    String[] result = new String[emptyNames.size()];
+	    return emptyNames.toArray(result);
+	}
+	
+	public static void merge(Object src, Object target) {
+	    BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
+	}		
+	
+	private void customerInsertion(Repair repair) {
+
+		
+		Customer customer = repair.getCustomer();
+		
+		if (customer == null) {
+			throw new RuntimeErrorException(null, "Error on creating customer");
+		}
+		
+		customer = customerService.save(customer);
+		repair.setCustomer(customer);
+	}
+	
+	private void contactInsertion(Repair repair) {
+
+		repair.setContact(repair.getCustomer().getContacts().iterator().next());
+	}
+	
+	private void userInsertion(Repair repair) {
+		
+		User user = repair.getUser();
+		
+		if(user == null) {
+			throw new RuntimeErrorException(null, "Error on creating user");
+		}
+		
+		user = userService.save(user);
+		repair.setUser(user);		
+	}
+	
+	private void statusInsertion(Repair repair) {
+		
+		Status status = repair.getStatus();
+		
+		try {
+
+			status = statusService.findById(status.getId());
+		} catch (Exception e) {
+			throw new RuntimeErrorException(null, "Status not found!");
+		}
+	
+		repair.setStatus(status);
+		
+	}	
+	
+	private void equipmentInsertion(Repair repair) {
+		
+		Equipment equipment = repair.getEquipment();
+		
+		if(equipment == null) {
+			throw new RuntimeErrorException(null, "Error on creating equipment");
+		}
+		
+		equipment = equipmentService.save(equipment);
+		repair.setEquipment(equipment);
+		
+	}		
+
+	private void repairFupsInsertion(Repair repair, Repair repairDb) {
+		List<RepairFup> repairFups = repairDb.getRepairFups();
+		
+		repair = addEquipmentToSparePart(repair, repairDb.getEquipment());		
+		
+		if (!repairFups.isEmpty()) {
+			
+			repair.addRepairFupsTop(repairFups);
+		}	
+		
+		repairFupService.saveAll(repair.getRepairFups());
+		
+	}	
+	
+	private Repair addEquipmentToSparePart(Repair repair, Equipment equipment) {
+
+		List<RepairFup> repairFups = repair.getRepairFups();
+		
+		List<RepairFup> newRepairFups = new ArrayList<RepairFup>();
+		
+		for (RepairFup repairFup : repairFups) {
+			
+			newRepairFups.add(repairFupService.addEquipmentToSparePart(repairFup, equipment));
+		}
+		
+		repair.setRepairFups(newRepairFups);		
+		return repair;
+	}
+
+	private void repairFupsCheckId(Repair repair) {
+
+		repair.getRepairFups().forEach(rp ->{
+			
+			if(rp.getId() != null) {
+				logger.error("Not allowed to update follow-up!");
+				throw new NoSuchElementException();	
+			}
+		});
+		
+	}	
+	
 }

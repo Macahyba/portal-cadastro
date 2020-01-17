@@ -1,13 +1,17 @@
 package com.sony.engineering.portalcadastro.model;
 
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -38,6 +42,12 @@ public class RepairFup {
 	@JoinColumn(name = "repair_id")
 	private Repair repair;
 
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "repairFup_spareParts", 
+	joinColumns = {@JoinColumn(name = "repairFup_id")},
+	inverseJoinColumns = {@JoinColumn(name = "part_id")})	
+	private Set<SparePart> spareParts;	
+	
 	public Integer getId() {
 		return id;
 	}
@@ -87,6 +97,14 @@ public class RepairFup {
     @Override
     public int hashCode() {
         return 31;
-    }	
+    }
+
+	public Set<SparePart> getSpareParts() {
+		return spareParts;
+	}
+
+	public void setSpareParts(Set<SparePart> spareParts) {
+		this.spareParts = spareParts;
+	}	
 	
 }

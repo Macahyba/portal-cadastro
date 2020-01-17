@@ -1,5 +1,6 @@
 package com.sony.engineering.portalcadastro.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -36,8 +37,9 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 	
 	@Transactional(propagation = Propagation.REQUIRED, noRollbackFor = UnexpectedRollbackException.class)
 	public Customer save(Customer customer) {	
-		
+
 		Set<Contact> contacts = customer.getContacts();
+		Set<Contact> newContacts = new HashSet<Contact>();		
 		
 		if (customer.getId() != null) {		
 			
@@ -57,13 +59,13 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 			}
 
 		}
-		
+
 		contacts.forEach(c -> {
 			if (c.getId() != null) {
 				
-				try {
-					contacts.clear();
-					contacts.add(contactService.findById(c.getId()));
+				try {					
+					
+					newContacts.add(contactService.findById(c.getId()));
 					
 				} catch (NoSuchElementException e){
 					logger.error("Invalid Contact Id!");
@@ -73,15 +75,15 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 				
 				List<Contact> findContact = contactService.findDistinctByNameOrEmail(c.getName(), c.getEmail());
 				
-				if(!findContact.isEmpty()) {
-					
-					contacts.clear();
-					contacts.add(findContact.get(0));
-				}
+				
+				newContacts.add(!findContact.isEmpty() ?
+									findContact.get(0) :
+									c);	
+
 			}
 		});
-
-		customer.setContacts(contacts);
+		
+		customer.setContacts(newContacts);
 		
 		return customerDao.save(customer);
 

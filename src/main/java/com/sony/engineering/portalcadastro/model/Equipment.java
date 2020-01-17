@@ -12,6 +12,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+
 @Entity
 @Table(uniqueConstraints=@UniqueConstraint(columnNames={"name", "serialNumber"})
     )
@@ -24,6 +27,8 @@ public class Equipment {
 	
 	private String serialNumber;
 	
+
+	@JsonManagedReference
 	@OneToMany(
 			mappedBy = "equipment", 
 			cascade = CascadeType.ALL)
@@ -66,9 +71,16 @@ public class Equipment {
 	public Set<SparePart> getSpareParts() {
 		return spareParts;
 	}
-
-	public void setSpareParts(Set<SparePart> spareParts) {
-		this.spareParts = spareParts;
-	}
 	
+	public void setSpareParts(Set<SparePart> spareParts) {
+		if (spareParts == null) {
+			if(this.spareParts != null) {
+				this.spareParts.forEach((c) -> {c.setEquipment(null);});
+			}
+		} else {
+			spareParts.forEach((c) -> {c.setEquipment(this);});
+		}
+		this.spareParts = spareParts;
+	}	
+
 }
