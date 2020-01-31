@@ -25,10 +25,14 @@ import com.sony.engineering.portalcadastro.service.EquipmentService;
 @RestController
 public class EquipmentController {
 
-	Logger logger = LoggerFactory.getLogger(EquipmentController.class);
-	
+	private Logger logger = LoggerFactory.getLogger(EquipmentController.class);
+
 	@Autowired
-	EquipmentService equipmentService;
+	public EquipmentController(EquipmentService equipmentService) {
+		this.equipmentService = equipmentService;
+	}
+
+	private EquipmentService equipmentService;
 	
 	@GetMapping(value = "equipments")
 	public ResponseEntity<List<Equipment>> getAll(
@@ -36,14 +40,14 @@ public class EquipmentController {
 			@RequestParam(required = false, name = "serialNumber") String serialNumber) {
 		
 		if (StringUtils.hasText(name)) {
-			return new ResponseEntity<List<Equipment>>(equipmentService.findDistinctByName(name), HttpStatus.OK);
+			return new ResponseEntity<>(equipmentService.findDistinctByName(name), HttpStatus.OK);
 		}
 		
 		if (StringUtils.hasText(serialNumber)) {
-			new ResponseEntity<List<Equipment>>(equipmentService.findBySerialNumber(serialNumber), HttpStatus.OK);
+			new ResponseEntity<>(equipmentService.findBySerialNumber(serialNumber), HttpStatus.OK);
 		}
 
-		return new ResponseEntity<List<Equipment>>(equipmentService.findAll(), HttpStatus.OK);
+		return new ResponseEntity<>(equipmentService.findAll(), HttpStatus.OK);
 		
 	}
 	
@@ -52,7 +56,7 @@ public class EquipmentController {
 		
 		try {
 		
-			return new ResponseEntity<Equipment>(equipmentService.findById(id), HttpStatus.OK);
+			return new ResponseEntity<>(equipmentService.findById(id), HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
@@ -64,7 +68,7 @@ public class EquipmentController {
 	public ResponseEntity<Equipment> setEquipment(@RequestBody Equipment equipment) {
 		
 		try {
-			return new ResponseEntity<Equipment>(equipmentService.save(equipment), HttpStatus.OK);	
+			return new ResponseEntity<>(equipmentService.save(equipment), HttpStatus.OK);
 		} catch (RuntimeException e) {
 			logger.error("Error on creating equipment!");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -77,7 +81,7 @@ public class EquipmentController {
 		
 		try {
 			equipment.setId(id);
-			return new ResponseEntity<Equipment>(equipmentService.edit(equipment), HttpStatus.OK);			
+			return new ResponseEntity<>(equipmentService.edit(equipment), HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
@@ -92,9 +96,9 @@ public class EquipmentController {
 			equipmentService.delete(id);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (EmptyResultDataAccessException e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);			
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
-			logger.error("Error on deleting customer");
+			logger.error("Error on deleting equipment!");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		

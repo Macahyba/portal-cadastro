@@ -43,11 +43,16 @@ public class RepairFup {
 	@JoinColumn(name = "repair_id")
 	private Repair repair;
 
-	@ManyToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "repairFup_spareParts", 
+	@ManyToMany(cascade = CascadeType.DETACH)
+	@JoinTable(name = "repairFup_sparePart", 
 	joinColumns = {@JoinColumn(name = "repairFup_id")},
-	inverseJoinColumns = {@JoinColumn(name = "part_id")})	
-	private Set<SparePart> spareParts = new HashSet<SparePart>();	
+	inverseJoinColumns = {@JoinColumn(name = "sparePart_id")})	
+	private Set<SparePart> spareParts = new HashSet<>();
+	
+	@JsonIgnore
+	@ManyToOne
+	@JoinColumn(name = "equipment_id")
+	private Equipment equipment;
 	
 	public Integer getId() {
 		return id;
@@ -106,6 +111,14 @@ public class RepairFup {
 
 	public void setSpareParts(Set<SparePart> spareParts) {
 		this.spareParts = spareParts;
+	}
+
+	public Equipment getEquipment() {
+		return equipment;
+	}
+
+	public void setEquipment(Equipment equipment) {
+		this.equipment = equipment;
 	}	
 	
 }

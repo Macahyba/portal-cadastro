@@ -19,11 +19,16 @@ import com.sony.engineering.portalcadastro.repository.ServiceDao;
 @org.springframework.stereotype.Service
 public class ServiceServiceImpl extends GenericServiceImpl<Service> implements ServiceService{
 
-	Logger logger = LoggerFactory.getLogger(ServiceServiceImpl.class);
-	
+	private Logger logger = LoggerFactory.getLogger(ServiceServiceImpl.class);
+
+	private ServiceDao serviceDao;
+
 	@Autowired
-	ServiceDao serviceDao;
-	
+	public ServiceServiceImpl(GenericDao<Service> dao, ServiceDao serviceDao) {
+		super(dao);
+		this.serviceDao = serviceDao;
+	}
+
 	public ServiceServiceImpl(GenericDao<Service> dao) {
 		super(dao);
 	}
@@ -33,20 +38,19 @@ public class ServiceServiceImpl extends GenericServiceImpl<Service> implements S
 	public Service save(Service service) {
 		
 		if(service.getId() != null) {
-			
-			try {
-				service = serviceDao.findById(service.getId()).get();
-			} catch (NoSuchElementException e) {
+
+			service = serviceDao.findById(service.getId()).orElseThrow(() -> {
 				logger.error("Invalid Service Id!");
 				throw new NoSuchElementException();
-			}
+			});
+
 		} else {
 			try {
 				
-				List<Service> findEquipment = serviceDao.findDistinctByName(service.getName());
+				List<Service> findService = serviceDao.findDistinctByName(service.getName());
 				
-				if(!findEquipment.isEmpty()) {
-					service = findEquipment.get(0);
+				if(!findService.isEmpty()) {
+					service = findService.get(0);
 				}
 				
 			} catch (IncorrectResultSizeDataAccessException e){

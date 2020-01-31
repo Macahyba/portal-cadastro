@@ -24,10 +24,14 @@ import com.sony.engineering.portalcadastro.service.ServiceService;
 @RestController
 public class ServiceController {
 
-	Logger logger = LoggerFactory.getLogger(ServiceController.class);
-	
+	private Logger logger = LoggerFactory.getLogger(ServiceController.class);
+
 	@Autowired
-	ServiceService serviceService;
+	public ServiceController(ServiceService serviceService) {
+		this.serviceService = serviceService;
+	}
+
+	private ServiceService serviceService;
 	
 	@GetMapping(value = "services")
 	public ResponseEntity<List<Service>> getAll(
@@ -35,14 +39,14 @@ public class ServiceController {
 			@RequestParam(required = false, name = "description") String description) {
 		
 		if (StringUtils.hasText(name)) {
-			return new ResponseEntity<List<Service>>(serviceService.findDistinctByName(name), HttpStatus.OK);
+			return new ResponseEntity<>(serviceService.findDistinctByName(name), HttpStatus.OK);
 		}
 		
 		if (StringUtils.hasText(description)) {
-			return new ResponseEntity<List<Service>>(serviceService.findDistinctByDescription(description), HttpStatus.OK);
+			return new ResponseEntity<>(serviceService.findDistinctByDescription(description), HttpStatus.OK);
 		}
 
-		return new ResponseEntity<List<Service>>(serviceService.findAll(), HttpStatus.OK);
+		return new ResponseEntity<>(serviceService.findAll(), HttpStatus.OK);
 		
 	}
 	
@@ -50,7 +54,7 @@ public class ServiceController {
 	public ResponseEntity<Service> getServiceById(@PathVariable("id") Integer id){
 		
 		try {
-			return new ResponseEntity<Service>(serviceService.findById(id), HttpStatus.OK);	
+			return new ResponseEntity<>(serviceService.findById(id), HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
@@ -63,7 +67,7 @@ public class ServiceController {
 	public ResponseEntity<Service> setService(@RequestBody Service service) {
 		
 		try {
-			return new ResponseEntity<Service>(serviceService.save(service), HttpStatus.OK);	
+			return new ResponseEntity<>(serviceService.save(service), HttpStatus.OK);
 		} catch (RuntimeException e) {
 			logger.error("Error on creating service: " + e); 
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -73,16 +77,16 @@ public class ServiceController {
 	
 	@PutMapping(value = "services/{id}")
 	public ResponseEntity<Service> updateService(@RequestBody Service service, @PathVariable("id") Integer id) {
-		
+
 		try {
 		
 			service.setId(id);
-			return new ResponseEntity<Service>(serviceService.edit(service), HttpStatus.OK);
+			return new ResponseEntity<>(serviceService.edit(service), HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);		
 			
 		} catch (RuntimeException e) {
-			logger.error("Error on updating repair: " + e);
+			logger.error("Error on updating service: " + e);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
@@ -98,7 +102,7 @@ public class ServiceController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);			
 						
 		} catch (RuntimeException e) {
-			logger.error("Error on patching repair: " + e);
+			logger.error("Error on patching service: " + e);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		

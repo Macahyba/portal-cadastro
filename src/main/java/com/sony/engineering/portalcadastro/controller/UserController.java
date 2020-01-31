@@ -22,15 +22,19 @@ import com.sony.engineering.portalcadastro.service.UserService;
 @RestController
 public class UserController {
 
-	Logger logger = LoggerFactory.getLogger(UserController.class);
-	
+	private Logger logger = LoggerFactory.getLogger(UserController.class);
+
 	@Autowired
-	UserService userService;
+	public UserController(UserService userService) {
+		this.userService = userService;
+	}
+
+	private UserService userService;
 	
 	@GetMapping(value = "users")
 	public ResponseEntity<List<User>> getAll(){
 
-		return new ResponseEntity<List<User>>(userService.findAll(), HttpStatus.OK);
+		return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
 		
 	}
 	
@@ -38,7 +42,7 @@ public class UserController {
 	public ResponseEntity<User> getEquipmentById(@PathVariable("id") Integer id){
 		
 		try {
-			return new ResponseEntity<User>(userService.findById(id), HttpStatus.OK);
+			return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
@@ -51,7 +55,7 @@ public class UserController {
 	public ResponseEntity<User> setEquipment(@RequestBody User user) {
 		
 		try {
-			return new ResponseEntity<User>(userService.save(user), HttpStatus.OK);
+			return new ResponseEntity<>(userService.save(user), HttpStatus.OK);
 		} catch (RuntimeException e) {
 			logger.error("Error on creating user: " + e); 
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -64,12 +68,12 @@ public class UserController {
 		
 		try {
 			user.setId(id);
-			return new ResponseEntity<User>(userService.edit(user), HttpStatus.OK);
+			return new ResponseEntity<>(userService.edit(user), HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);		
 			
 		} catch (RuntimeException e) {
-			logger.error("Error on updating repair: " + e);
+			logger.error("Error on updating user: " + e);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}		
 	}
@@ -84,7 +88,7 @@ public class UserController {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);			
 						
 		} catch (RuntimeException e) {
-			logger.error("Error on patching repair: " + e);
+			logger.error("Error on deleting user: " + e);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 

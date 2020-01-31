@@ -1,10 +1,11 @@
 package com.sony.engineering.portalcadastro.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import com.sony.engineering.portalcadastro.model.SparePart;
 
 public interface SparePartDao extends GenericDao<SparePart>{
 
-	List<SparePart> findDistinctByPartNumber(String partNumber);
+	Set<SparePart> findDistinctByPartNumber(String partNumber);
 }

@@ -10,14 +10,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.sony.engineering.portalcadastro.model.Customer;
 import com.sony.engineering.portalcadastro.service.CustomerService;
@@ -25,10 +18,14 @@ import com.sony.engineering.portalcadastro.service.CustomerService;
 @RestController
 public class CustomerController {
 
-	Logger logger = LoggerFactory.getLogger(CustomerController.class);
-	
+	private Logger logger = LoggerFactory.getLogger(CustomerController.class);
+
 	@Autowired
-	CustomerService customerService;
+	public CustomerController(CustomerService customerService) {
+		this.customerService = customerService;
+	}
+
+	private CustomerService customerService;
 	
 	@GetMapping(value = "customers")
 	public ResponseEntity<List<Customer>> getAll(
@@ -37,22 +34,22 @@ public class CustomerController {
 		
 		if(StringUtils.hasText(name)) {
 			
-			return new ResponseEntity<List<Customer>>(customerService.findDistinctByName(name), HttpStatus.OK);
+			return new ResponseEntity<>(customerService.findDistinctByName(name), HttpStatus.OK);
 		}
 		
 		if(StringUtils.hasText(cnpj)) {
 			
-			return new ResponseEntity<List<Customer>>(customerService.findDistinctByCnpj(cnpj), HttpStatus.OK);
+			return new ResponseEntity<>(customerService.findDistinctByCnpj(cnpj), HttpStatus.OK);
 		}		
 		
-		return new ResponseEntity<List<Customer>>(customerService.findAll(), HttpStatus.OK);
+		return new ResponseEntity<>(customerService.findAll(), HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "customers/{id}")
 	public ResponseEntity<Customer> getCustomerById(@PathVariable("id") Integer id) {
 		
 		try {
-			return new ResponseEntity<Customer>(customerService.findById(id), HttpStatus.OK);	
+			return new ResponseEntity<>(customerService.findById(id), HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
@@ -65,7 +62,7 @@ public class CustomerController {
 	public ResponseEntity<Customer> setCustomer(@RequestBody Customer customer) {
 
 		try {
-			return new ResponseEntity<Customer>(customerService.save(customer), HttpStatus.OK);
+			return new ResponseEntity<>(customerService.save(customer), HttpStatus.OK);
 		} catch (RuntimeException e) {
 			logger.error("Error on creating customer!");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -74,16 +71,33 @@ public class CustomerController {
 	
 	@PutMapping(value = "customers/{id}")
 	public ResponseEntity<Customer> updateCustomer(@RequestBody Customer customer, @PathVariable("id") Integer id) {
-		
+
+		customer.setId(id);
 		try {
-			customer.setId(id);
-			return new ResponseEntity<Customer>(customerService.edit(customer), HttpStatus.OK);
+			return new ResponseEntity<>(customerService.edit(customer), HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
+	}
+
+	@PatchMapping(value = "customers/{id}")
+	public ResponseEntity<Customer> patchCustomer(@RequestBody Customer customer, @PathVariable("id") Integer id){
+
+		customer.setId(id);
+		try {
+
+			return new ResponseEntity<>(customerService.patch(customer), HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+		} catch (RuntimeException e) {
+			logger.error("Error on patching repair: " + e);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
 	}
 	
 	@DeleteMapping(value = "customers/{id}")
@@ -95,7 +109,7 @@ public class CustomerController {
 		} catch (EmptyResultDataAccessException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);			
 		} catch (RuntimeException e) {
-			logger.error("Error on deleting customer");
+			logger.error("Error on deleting customer!");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}	
 		

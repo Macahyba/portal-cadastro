@@ -19,11 +19,16 @@ import com.sony.engineering.portalcadastro.repository.UserDao;
 @Service
 public class UserServiceImpl extends GenericServiceImpl<User> implements UserService{
 
-	Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
-	
-	@Autowired
+	private Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
+
 	private UserDao userDao;
-	
+
+	@Autowired
+	public UserServiceImpl(GenericDao<User> dao, UserDao userDao) {
+		super(dao);
+		this.userDao = userDao;
+	}
+
 	public UserServiceImpl(GenericDao<User> dao) {
 		super(dao);
 	}
@@ -32,14 +37,12 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 	public User save(User user) {
 		
 		if(user.getId() != null) {
-			
-			try {
-				user = userDao.findById(user.getId()).get();
-			} catch (NoSuchElementException e) {
-				logger.error("Invalid User Id!");
-				throw new NoSuchElementException();
-			}
-			
+
+				user = userDao.findById(user.getId()).orElseThrow(() -> {
+					logger.error("Invalid User Id!");
+					throw new NoSuchElementException();
+				});
+
 		} else {
 			
 			try {
@@ -76,14 +79,6 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 		}
 		
 		return null;
-	}
-
-	public UserDao getUserDao() {
-		return userDao;
-	}
-
-	public void setUserDao(UserDao userDao) {
-		this.userDao = userDao;
 	}
 
 	@Override

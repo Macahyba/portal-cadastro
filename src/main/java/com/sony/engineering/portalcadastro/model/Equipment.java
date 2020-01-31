@@ -9,12 +9,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
-
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
@@ -30,22 +30,15 @@ public class Equipment {
 	
 	@NotEmpty
 	private String serialNumber;
-	
 
-	@JsonManagedReference
-	@OneToMany(
-			mappedBy = "equipment", 
-			cascade = CascadeType.ALL)
-	private Set<SparePart> spareParts = new HashSet<SparePart>();
-	
-	public void addSparePart(SparePart sparePart) {
-		spareParts.add(sparePart);
-		sparePart.setEquipment(this);
-	}
-	
-	public void removeSparePart(SparePart sparePart) {
-		spareParts.remove(sparePart);
-		sparePart.setEquipment(null);
+	@ManyToMany(cascade = CascadeType.DETACH)
+	@JoinTable(name = "equipment_sparePart", 
+	joinColumns = {@JoinColumn(name = "equipment_id")}, 
+	inverseJoinColumns = {@JoinColumn(name = "sparePart_id")})	
+	private Set<SparePart> spareParts = new HashSet<>();
+
+	public void addSparePartsTop(Set<SparePart> sparePartsList) {
+		spareParts.addAll(sparePartsList);
 	}	
 	
 	public Integer getId() {
@@ -77,13 +70,6 @@ public class Equipment {
 	}
 	
 	public void setSpareParts(Set<SparePart> spareParts) {
-		if (spareParts == null) {
-			if(this.spareParts != null) {
-				this.spareParts.forEach((c) -> {c.setEquipment(null);});
-			}
-		} else {
-			spareParts.forEach((c) -> {c.setEquipment(this);});
-		}
 		this.spareParts = spareParts;
 	}	
 

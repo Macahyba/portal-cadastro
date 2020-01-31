@@ -1,19 +1,10 @@
 package com.sony.engineering.portalcadastro.service;
 
-import java.beans.PropertyDescriptor;
-import java.util.ArrayList;
-import java.util.HashSet;
+
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
 
 import javax.management.RuntimeErrorException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -31,26 +22,30 @@ import com.sony.engineering.portalcadastro.repository.RepairDao;
 @Service
 public class RepairServiceImpl extends GenericServiceImpl<Repair> implements RepairService{
 
-	Logger logger = LoggerFactory.getLogger(RepairFupServiceImpl.class);
-	
+	private RepairDao repairDao;
+	private CustomerService customerService;
+	private UserService userService;
+	private StatusService statusService;
+	private EquipmentService equipmentService;
+	private RepairFupService repairFupService;
+
 	@Autowired
-	RepairDao repairDao;
-	
-	@Autowired
-	CustomerService customerService;
-	
-	@Autowired
-	UserService userService;
-	
-	@Autowired
-	StatusService statusService;
-	
-	@Autowired
-	EquipmentService equipmentService;
-	
-	@Autowired
-	RepairFupService repairFupService;
-	
+	public RepairServiceImpl(GenericDao<Repair> dao,
+							 RepairDao repairDao,
+							 CustomerService customerService,
+							 UserService userService,
+							 StatusService statusService,
+							 EquipmentService equipmentService,
+							 RepairFupService repairFupService) {
+		super(dao);
+		this.repairDao = repairDao;
+		this.customerService = customerService;
+		this.userService = userService;
+		this.statusService = statusService;
+		this.equipmentService = equipmentService;
+		this.repairFupService = repairFupService;
+	}
+
 	public RepairServiceImpl(GenericDao<Repair> dao) {
 		super(dao);
 	}
@@ -60,31 +55,43 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 	public Repair save(Repair repair) {
 		
 		customerInsertion(repair);
-		
 		contactInsertion(repair);
-		
 		userInsertion(repair);
-		
-		statusInsertion(repair);		
-		
-		equipmentInsertion(repair);	
+		statusInsertion(repair);
+		repairFupsInsertion(repair);
+		equipmentInsertion(repair);
 		
 		// SAVE
 		
 		return repairDao.save(repair);
-		
 	}
 
+	@Override
 	public Repair patch(Repair repair) {
 
 		
 		try {
-		
-			Repair repairDb = repairDao.findById(repair.getId()).get();
+					
+			Repair repairDb = findById(repair.getId());
 			
-			repairFupsCheckId(repair);
+			Equipment equipment = repairDb.getEquipment();
 			
-			repairFupsInsertion(repair, repairDb);
+			repairFupService.repairFupsCheckId(repair);
+			
+			repairFupService.addEquipmentToRepairFups(repair.getRepairFups(), equipment);
+						
+			for (RepairFup rf : repair.getRepairFups()) {
+				
+				equipment.addSparePartsTop(rf.getSpareParts());
+			}
+
+			
+			repair.setEquipment(equipment);
+			
+			if (!repairDb.getRepairFups().isEmpty()) {
+				
+				repair.addRepairFupsTop(repairDb.getRepairFups());
+			}				
 			
 			merge(repair, repairDb);
 			return this.save(repairDb);
@@ -94,31 +101,6 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 		}
 		
 	}
-
-	public RepairDao getRepairDao() {
-		return repairDao;
-	}
-
-	public void setRepairDao(RepairDao repairDao) {
-		this.repairDao = repairDao;
-	}
-	
-	public static String[] getNullPropertyNames (Object source) {
-	    final BeanWrapper src = new BeanWrapperImpl(source);
-	    PropertyDescriptor[] pds = src.getPropertyDescriptors();
-
-	    Set<String> emptyNames = new HashSet<String>();
-	    for(PropertyDescriptor pd : pds) {
-	        Object srcValue = src.getPropertyValue(pd.getName());
-	        if (srcValue == null) emptyNames.add(pd.getName());
-	    }
-	    String[] result = new String[emptyNames.size()];
-	    return emptyNames.toArray(result);
-	}
-	
-	public static void merge(Object src, Object target) {
-	    BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
-	}		
 	
 	private void customerInsertion(Repair repair) {
 
@@ -129,12 +111,18 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 			throw new RuntimeErrorException(null, "Error on creating customer");
 		}
 		
+		customer.addContact(repair.getContact());
 		customer = customerService.save(customer);
 		repair.setCustomer(customer);
 	}
 	
 	private void contactInsertion(Repair repair) {
 
+		if (repair.getCustomer().getContacts().size() > 1) {
+			
+			throw new RuntimeErrorException(null, "Error on creating contact - too many arguments");
+		}
+		
 		repair.setContact(repair.getCustomer().getContacts().iterator().next());
 	}
 	
@@ -156,7 +144,7 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 		
 		try {
 
-			status = statusService.findById(status.getId());
+			status = statusService.save(status);
 		} catch (Exception e) {
 			throw new RuntimeErrorException(null, "Status not found!");
 		}
@@ -177,46 +165,16 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 		repair.setEquipment(equipment);
 		
 	}		
-
-	private void repairFupsInsertion(Repair repair, Repair repairDb) {
-		List<RepairFup> repairFups = repairDb.getRepairFups();
-		
-		repair = addEquipmentToSparePart(repair, repairDb.getEquipment());		
-		
-		if (!repairFups.isEmpty()) {
-			
-			repair.addRepairFupsTop(repairFups);
-		}	
-		
-		repairFupService.saveAll(repair.getRepairFups());
-		
-	}	
 	
-	private Repair addEquipmentToSparePart(Repair repair, Equipment equipment) {
-
+	private void repairFupsInsertion(Repair repair) {
+		
 		List<RepairFup> repairFups = repair.getRepairFups();
 		
-		List<RepairFup> newRepairFups = new ArrayList<RepairFup>();
-		
-		for (RepairFup repairFup : repairFups) {
+		if (repairFups != null && !repairFups.isEmpty()) {
 			
-			newRepairFups.add(repairFupService.addEquipmentToSparePart(repairFup, equipment));
+			repairFups = repairFupService.saveAll(repairFups);
+			repair.setRepairFups(repairFups);
 		}
-		
-		repair.setRepairFups(newRepairFups);		
-		return repair;
 	}
-
-	private void repairFupsCheckId(Repair repair) {
-
-		repair.getRepairFups().forEach(rp ->{
-			
-			if(rp.getId() != null) {
-				logger.error("Not allowed to update follow-up!");
-				throw new NoSuchElementException();	
-			}
-		});
-		
-	}	
 	
 }

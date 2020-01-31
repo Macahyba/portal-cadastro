@@ -33,21 +33,25 @@ import com.sony.engineering.portalcadastro.service.QuotationService;
 @Controller
 public class QuotationController {
 
-	Logger logger = LoggerFactory.getLogger(QuotationController.class); 
-	
+	private Logger logger = LoggerFactory.getLogger(QuotationController.class);
+
 	@Autowired
-	QuotationService quotationService;
-	
-	@Autowired
-	MailService mailService;
-	
-	@Autowired
-	FileService fileService;
+	public QuotationController(QuotationService quotationService,
+							   MailService mailService,
+							   FileService fileService) {
+		this.quotationService = quotationService;
+		this.mailService = mailService;
+		this.fileService = fileService;
+	}
+
+	private QuotationService quotationService;
+	private MailService mailService;
+	private FileService fileService;
 	
 	@GetMapping(value = "quotations")
 	public ResponseEntity<List<Quotation>> getQuotationAll(){
 	
-		return new ResponseEntity<List<Quotation>>(quotationService.findAll(), HttpStatus.OK);
+		return new ResponseEntity<>(quotationService.findAll(), HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "quotations/{id}")
@@ -55,7 +59,7 @@ public class QuotationController {
 		
 		try {
 			
-			return new ResponseEntity<Quotation>(quotationService.findById(id), HttpStatus.OK);
+			return new ResponseEntity<>(quotationService.findById(id), HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
@@ -69,18 +73,21 @@ public class QuotationController {
 		try {
 			
 			quotationService.save(quotation);
-			//mailService.sendMailNew(quotation);
-			return new ResponseEntity<Quotation>(quotation, HttpStatus.CREATED);
+			mailService.sendMailNew(quotation);
+			return new ResponseEntity<>(quotation, HttpStatus.CREATED);
 			
-//		} catch (MessagingException | GeneralSecurityException | IOException e) {
-//			logger.error("Error sendig email: " + e);
-//			Map<String, Object> map = new HashMap<String, Object>();
-//			map.put("quotation", quotation);
-//			map.put("warning", "Erro ao enviar e-mail!");			
-//			return new ResponseEntity<Map<String, Object>>(map, HttpStatus.ACCEPTED); 	
+		} catch (MessagingException | GeneralSecurityException | IOException e) {
+
+			Map<String, Object> map = mailErrorHandling(quotation, e);
+			return new ResponseEntity<>(map, HttpStatus.ACCEPTED);
 			
+		} catch (IllegalArgumentException e) {
+
+			logger.error("Bad credentials for Gmail: " + e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (RuntimeException e) {
-			logger.error("Error on creating quotation: " + e); 
+
+			logger.error("Error on creating quotation: " + e);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} 
 	}
@@ -95,22 +102,18 @@ public class QuotationController {
 			quotation = quotationService.edit(quotation);			
 			fileService.generatePdf(quotation.getId());
 			mailService.sendMailNew(quotation);
-			return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
+			return new ResponseEntity<>(quotation, HttpStatus.OK);
 		} catch (PdfGenerationException e) {
-			logger.error("Error creating pdf: " + e);
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("quotation", quotation);
-			map.put("warning", "Erro ao criar pdf!");			
-			return new ResponseEntity<Map<String, Object>>(map, HttpStatus.ACCEPTED); 			
+
+			Map<String, Object> map = pdfErrorHandling(quotation, e);
+			return new ResponseEntity<>(map, HttpStatus.ACCEPTED);
 		} catch (NoSuchElementException e) {
+
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			
 		} catch (MessagingException | GeneralSecurityException | IOException e) {
-			logger.error("Error sendig email: " + e);
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("quotation", quotation);
-			map.put("warning", "Erro ao enviar e-mail!");			
-			return new ResponseEntity<Map<String, Object>>(map, HttpStatus.ACCEPTED); 			
+
+			Map<String, Object> map = mailErrorHandling(quotation, e);
+			return new ResponseEntity<>(map, HttpStatus.ACCEPTED);
 			
 		} catch (RuntimeException e) {
 			logger.error("Error on updating quotation: " + e);
@@ -128,27 +131,40 @@ public class QuotationController {
 			
 			quotation = quotationService.patch(quotation);			
 			fileService.generatePdf(quotation.getId());
-			//mailService.sendMailUpdate(quotation);
-			return new ResponseEntity<Quotation>(quotation, HttpStatus.OK);
+			mailService.sendMailUpdate(quotation);
+			return new ResponseEntity<>(quotation, HttpStatus.OK);
 		} catch (PdfGenerationException e) {
-			logger.error("Error creating pdf: " + e);
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("quotation", quotation);
-			map.put("warning", "Erro ao criar pdf!");
-			return new ResponseEntity<Map<String, Object>>(map, HttpStatus.ACCEPTED); 			
+
+			Map<String, Object> map = pdfErrorHandling(quotation, e);
+			return new ResponseEntity<>(map, HttpStatus.ACCEPTED);
 		} catch (NoSuchElementException e) {
+
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-			
-//		} catch (MessagingException | GeneralSecurityException | IOException e) {
-//			logger.error("Error sendig email: " + e);
-//			Map<String, Object> map = new HashMap<String, Object>();
-//			map.put("quotation", quotation);
-//			map.put("warning", "Erro ao enviar e-mail!");
-//			return new ResponseEntity<Map<String, Object>>(map, HttpStatus.ACCEPTED); 						
+		} catch (MessagingException | GeneralSecurityException | IOException e) {
+
+			Map<String, Object> map = mailErrorHandling(quotation, e);
+			return new ResponseEntity<>(map, HttpStatus.ACCEPTED);
 		} catch (RuntimeException e) {
+
 			logger.error("Error on patching quotation: " + e);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}		
+	}
+
+	private Map<String, Object> pdfErrorHandling(Quotation quotation, Throwable e){
+		logger.error("Error creating pdf: " + e);
+		Map<String, Object> map = new HashMap<>();
+		map.put("quotation", quotation);
+		map.put("warning", "Erro ao criar pdf!");
+		return map;
+	}
+
+	private Map<String, Object> mailErrorHandling(Quotation quotation, Throwable e){
+		logger.error("Error sendig email: " + e);
+		Map<String, Object> map = new HashMap<>();
+		map.put("quotation", quotation);
+		map.put("warning", "Erro ao enviar e-mail!");
+		return map;
 	}
 	
 	@DeleteMapping(value = "quotations/{id}")

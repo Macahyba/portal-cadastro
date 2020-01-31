@@ -57,7 +57,7 @@ public class Quotation {
 	@JoinTable(name = "quotation_equipment", 
 	joinColumns = {@JoinColumn(name = "quotation_id")}, 
 	inverseJoinColumns = {@JoinColumn(name = "equipment_id")})
-	private Set<Equipment> equipments = new HashSet<Equipment>();
+	private Set<Equipment> equipments = new HashSet<>();
 	
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "customer_id")
@@ -75,7 +75,7 @@ public class Quotation {
 	@JoinTable(name = "quotation_service", 
 	joinColumns = {@JoinColumn(name = "quotation_id")},
 	inverseJoinColumns = {@JoinColumn(name = "service_id")})
-	private Set<Service> services = new HashSet<Service>();
+	private Set<Service> services = new HashSet<>();
 
 	public Integer getId() {
 		return id;

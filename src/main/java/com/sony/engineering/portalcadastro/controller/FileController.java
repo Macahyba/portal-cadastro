@@ -24,11 +24,14 @@ public class FileController {
     private Logger logger = LoggerFactory.getLogger(FileController.class);
 
     @Autowired
-    private FileService fileService;	
+	public FileController(FileService fileService) {
+		this.fileService = fileService;
+	}
+
+	private FileService fileService;
 	
 	@GetMapping(value = "pdf/{id}")
-	public ResponseEntity<Resource> generatePdf(@PathVariable("id") Integer id, HttpServletRequest request)
-			throws IOException {
+	public ResponseEntity<Resource> generatePdf(@PathVariable("id") Integer id, HttpServletRequest request) {
 		
 		try {
 			
@@ -38,7 +41,7 @@ public class FileController {
 				
 				Resource resource = fileService.loadFileAsResource(fileName);
 				
-		        String contentType = null;
+		        String contentType;
 
 	            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
 	

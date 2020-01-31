@@ -1,9 +1,6 @@
 package com.sony.engineering.portalcadastro.service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,34 +18,41 @@ import com.sony.engineering.portalcadastro.repository.GenericDao;
 @Service
 public class EquipmentServiceImpl extends GenericServiceImpl<Equipment> implements EquipmentService{
 
-	Logger logger = LoggerFactory.getLogger(EquipmentServiceImpl.class);
-	
+	private Logger logger = LoggerFactory.getLogger(EquipmentServiceImpl.class);
+
 	@Autowired
-	EquipmentDao equipmentDao;
-	
-	@Autowired
-	SparePartService sparePartService;
+	public EquipmentServiceImpl(GenericDao<Equipment> dao,
+								EquipmentDao equipmentDao,
+								SparePartService sparePartService) {
+		super(dao);
+		this.equipmentDao = equipmentDao;
+		this.sparePartService = sparePartService;
+	}
+
+	private EquipmentDao equipmentDao;
+	private SparePartService sparePartService;
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Equipment save(Equipment equipment) {
 		
-		Set<SparePart> spareParts = equipment.getSpareParts();
-		Set<SparePart> newSpareParts = new HashSet<SparePart>();
+		Set<SparePart> spareParts = equipment.getSpareParts();	
 		
 		if(equipment.getId() != null) {
-			
-			try {
-				equipment = equipmentDao.findById(equipment.getId()).get();
-			} catch (NoSuchElementException e) {
-				logger.error("Invalid Equipment Id!");
-				throw new NoSuchElementException();
-			}
+
+			equipment = equipmentDao.findById(equipment.getId())
+							.orElseThrow(() -> {
+									logger.error("Invalid Equipment Id!");
+									throw new NoSuchElementException();
+							});
+
 		} else {
 			try {
 				
-				List<Equipment> findEquipment = equipmentDao.findDistinctByNameAndSerialNumber(equipment.getName(), equipment.getSerialNumber());
-				
+				List<Equipment> findEquipment = equipmentDao.
+						findDistinctByNameAndSerialNumber(equipment.getName(),
+						equipment.getSerialNumber());
+
 				if(!findEquipment.isEmpty()) {
 					equipment = findEquipment.get(0);
 				}
@@ -57,32 +61,12 @@ public class EquipmentServiceImpl extends GenericServiceImpl<Equipment> implemen
 				logger.error("Duplicate equipment detected, please chech the DB");
 				throw new IncorrectResultSizeDataAccessException(1);
 			}
+		}	
+		
+		if (spareParts != null && !spareParts.isEmpty()) {
+			spareParts = sparePartService.saveAll(spareParts);
+			equipment.setSpareParts(spareParts);
 		}
-		
-		if (spareParts != null) {
-			spareParts.forEach(sp ->{
-				
-				if (sp.getId() != null) {
-					try {
-						
-						newSpareParts.add(sparePartService.findById(sp.getId()));
-					} catch (NoSuchElementException e){
-						logger.error("Invalid SparePart Id!");
-						throw new NoSuchElementException();		
-					}
-				} else {
-					
-					List<SparePart> findSparePart = sparePartService.findDistinctByPartNumber(sp.getPartNumber());
-					
-					newSpareParts.add(!findSparePart.isEmpty() ?
-										  findSparePart.get(0) :
-										  sp);
-				}
-			});
-		}
-		
-		equipment.setSpareParts(newSpareParts);
-		
 		return equipmentDao.save(equipment);
 	}
 	

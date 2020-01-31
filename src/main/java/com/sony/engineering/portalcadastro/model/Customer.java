@@ -39,7 +39,7 @@ public class Customer {
 	@OneToMany(
 			mappedBy = "customer", 
 			cascade = CascadeType.ALL)
-	private Set<Contact> contacts = new HashSet<Contact>();
+	private Set<Contact> contacts = new HashSet<>();
 	
 	public void addContact(Contact contact) {
 		contacts.add(contact);
@@ -90,10 +90,10 @@ public class Customer {
 	public void setContacts(Set<Contact> contacts) {
 		if (contacts == null) {
 			if(this.contacts != null) {
-				this.contacts.forEach((c) -> {c.setCustomer(null);});
+				this.contacts.forEach((c) -> c.setCustomer(null));
 			}
 		} else {
-			contacts.forEach((c) -> {c.setCustomer(this);});
+			contacts.forEach((c) -> c.setCustomer(this));
 		}
 		this.contacts = contacts;
 	}

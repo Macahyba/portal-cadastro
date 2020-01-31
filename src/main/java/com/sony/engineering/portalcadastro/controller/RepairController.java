@@ -25,15 +25,19 @@ import com.sony.engineering.portalcadastro.service.RepairService;
 @Controller
 public class RepairController {
 
-	Logger logger = LoggerFactory.getLogger(RepairController.class); 
-	
+	private Logger logger = LoggerFactory.getLogger(RepairController.class);
+
 	@Autowired
-	RepairService repairService;
+	public RepairController(RepairService repairService) {
+		this.repairService = repairService;
+	}
+
+	private RepairService repairService;
 	
 	@GetMapping(value = "repairs")
 	public ResponseEntity<List<Repair>> getRepairAll(){		
 		
-		return new ResponseEntity<List<Repair>>(repairService.findAll(), HttpStatus.OK);
+		return new ResponseEntity<>(repairService.findAll(), HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "repairs/{id}")
@@ -41,7 +45,7 @@ public class RepairController {
 		
 		try {
 			
-			return new ResponseEntity<Repair>(repairService.findById(id), HttpStatus.OK);
+			return new ResponseEntity<>(repairService.findById(id), HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {
@@ -56,7 +60,7 @@ public class RepairController {
 		try {
 			
 			repairService.save(repair);
-			return new ResponseEntity<Repair>(repair, HttpStatus.CREATED);
+			return new ResponseEntity<>(repair, HttpStatus.CREATED);
 		} catch (RuntimeException e) {
 			logger.error("Error on creating repair: " + e); 
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -72,7 +76,7 @@ public class RepairController {
 		try {
 			
 			repair = repairService.edit(repair);			
-			return new ResponseEntity<Repair>(repair, HttpStatus.OK);		
+			return new ResponseEntity<>(repair, HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);		
 			
@@ -90,9 +94,8 @@ public class RepairController {
 		
 		try {
 			
-			repair = repairService.patch(repair);			
-
-			return new ResponseEntity<Repair>(repair, HttpStatus.OK);			
+			repair = repairService.patch(repair);
+			return new ResponseEntity<>(repair, HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);			
 						

@@ -13,8 +13,13 @@ import com.sony.engineering.portalcadastro.repository.GenericDao;
 public class ContactServiceImpl extends GenericServiceImpl<Contact> implements ContactService{
 
 	@Autowired
-	ContactDao contactDao;
-	
+	public ContactServiceImpl(GenericDao<Contact> dao, ContactDao contactDao) {
+		super(dao);
+		this.contactDao = contactDao;
+	}
+
+	private ContactDao contactDao;
+
 	public ContactServiceImpl(GenericDao<Contact> dao) {
 		super(dao);
 	}

@@ -1,7 +1,7 @@
 package com.sony.engineering.portalcadastro.service;
 
 import java.util.HashSet;
-import java.util.List;
+
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sony.engineering.portalcadastro.model.Equipment;
+
 import com.sony.engineering.portalcadastro.model.SparePart;
 import com.sony.engineering.portalcadastro.repository.GenericDao;
 import com.sony.engineering.portalcadastro.repository.SparePartDao;
@@ -21,17 +21,22 @@ import com.sony.engineering.portalcadastro.repository.SparePartDao;
 @Service
 public class SparePartServiceImpl extends GenericServiceImpl<SparePart> implements SparePartService{
 	
-	Logger logger = LoggerFactory.getLogger(SparePartServiceImpl.class);
-	
+	private Logger logger = LoggerFactory.getLogger(SparePartServiceImpl.class);
+
+	private SparePartDao sparePartDao;
+
 	@Autowired
-	SparePartDao sparePartDao;
-	
+	public SparePartServiceImpl(GenericDao<SparePart> dao, SparePartDao sparePartDao) {
+		super(dao);
+		this.sparePartDao = sparePartDao;
+	}
+
 	public SparePartServiceImpl(GenericDao<SparePart> dao) {
 		super(dao);
 	}
 
 	@Override
-	public List<SparePart> findDistinctByPartNumber(String partNumber) {
+	public Set<SparePart> findDistinctByPartNumber(String partNumber) {
 		return sparePartDao.findDistinctByPartNumber(partNumber);
 	}
 
@@ -40,22 +45,20 @@ public class SparePartServiceImpl extends GenericServiceImpl<SparePart> implemen
 	public SparePart save(SparePart sparePart) {
 
 		if(sparePart.getId() != null) {
-			
-			try {
-				sparePart = sparePartDao.findById(sparePart.getId()).get();
-			} catch (NoSuchElementException e) {
+
+			sparePart = sparePartDao.findById(sparePart.getId()).orElseThrow(() -> {
 				logger.error("Invalid SparePart Id!");
 				throw new NoSuchElementException();
-			}
-			
+			});
+
 		} else {
 			
 			try {
 
-				List<SparePart> findSparePart = sparePartDao.findDistinctByPartNumber(sparePart.getPartNumber());
+				Set<SparePart> findSparePart = sparePartDao.findDistinctByPartNumber(sparePart.getPartNumber());
 				
 				if(!findSparePart.isEmpty()) {
-					sparePart = findSparePart.get(0);
+					sparePart = findSparePart.iterator().next();
 				}
 				
 			} catch (IncorrectResultSizeDataAccessException e){
@@ -77,7 +80,7 @@ public class SparePartServiceImpl extends GenericServiceImpl<SparePart> implemen
 			try {
 			
 				newSpareParts.add(this.save(eq));
-			} catch (RuntimeException e) {
+			} catch (RuntimeException e) {				
 				logger.error("Error persisting spareParts");	
 				throw new RuntimeException();
 			}
@@ -85,13 +88,6 @@ public class SparePartServiceImpl extends GenericServiceImpl<SparePart> implemen
 		});
 		
 		return newSpareParts;
-	}
-
-	@Override
-	public SparePart addEquipmentToSparePart(SparePart sparePart, Equipment equipment) {
-
-		sparePart.setEquipment(equipment);
-		return sparePart;
 	}
 
 }

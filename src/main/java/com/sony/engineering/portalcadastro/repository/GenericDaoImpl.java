@@ -1,11 +1,13 @@
 package com.sony.engineering.portalcadastro.repository;
 
+import org.springframework.context.annotation.Primary;
+
 import java.lang.reflect.ParameterizedType;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-
+@Primary
 public abstract class GenericDaoImpl<T> implements GenericDao<T>{
 
 	@PersistenceContext

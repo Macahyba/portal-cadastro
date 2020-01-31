@@ -23,12 +23,18 @@ import com.sony.engineering.portalcadastro.repository.GenericDao;
 @Service
 public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements CustomerService{
 
-	Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class); 
-	
+	private Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);
+
 	@Autowired
+	public CustomerServiceImpl(GenericDao<Customer> dao,
+							   CustomerDao customerDao,
+							   ContactService contactService) {
+		super(dao);
+		this.customerDao = customerDao;
+		this.contactService = contactService;
+	}
+
 	private CustomerDao customerDao;
-	
-	@Autowired
 	private ContactService contactService;
 
 	public CustomerServiceImpl(GenericDao<Customer> dao) {
@@ -39,7 +45,7 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 	public Customer save(Customer customer) {	
 
 		Set<Contact> contacts = customer.getContacts();
-		Set<Contact> newContacts = new HashSet<Contact>();		
+		Set<Contact> newContacts = new HashSet<>();
 		
 		if (customer.getId() != null) {		
 			
@@ -75,12 +81,10 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 				} else {
 					
 					List<Contact> findContact = contactService.findDistinctByNameOrEmail(c.getName(), c.getEmail());
-					
-					
+
 					newContacts.add(!findContact.isEmpty() ?
 										findContact.get(0) :
-										c);	
-	
+										c);
 				}
 			});
 		}
@@ -89,6 +93,15 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 		
 		return customerDao.save(customer);
 
+	}
+
+	public Customer patch(Customer customer){
+
+		Customer customerDb = customerDao.findById(customer.getId())
+				.orElseThrow(() -> new NoSuchElementException("Invalid Quotation Id!"));
+
+		merge(customer, customerDb);
+		return customerDao.save(customerDb);
 	}
 
 	@Override

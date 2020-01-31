@@ -14,11 +14,16 @@ import com.sony.engineering.portalcadastro.repository.StatusDao;
 @Service
 public class StatusServiceImpl extends GenericServiceImpl<Status> implements StatusService{
 
+	private Logger logger = LoggerFactory.getLogger(EquipmentServiceImpl.class);
+
+	private StatusDao statusDao;
+
 	@Autowired
-	StatusDao statusDao;
-	
-	Logger logger = LoggerFactory.getLogger(EquipmentServiceImpl.class);
-	
+	public StatusServiceImpl(GenericDao<Status> dao, StatusDao statusDao) {
+		super(dao);
+		this.statusDao = statusDao;
+	}
+
 	public StatusServiceImpl(GenericDao<Status> dao) {
 		super(dao);
 	}
@@ -27,14 +32,12 @@ public class StatusServiceImpl extends GenericServiceImpl<Status> implements Sta
 	public Status save(Status status) {
 		
 		if(status.getId() != null) {
-			
-			try {
-				status = statusDao.findById(status.getId()).get();
-			} catch (NoSuchElementException e) {
+
+			status = statusDao.findById(status.getId()).orElseThrow(() -> {
 				logger.error("Invalid Status Id!");
 				throw new NoSuchElementException();
-			}
-			
+			});
+
 		} else {
 
 			status = statusDao.findDistinctByStatus(status.getStatus());

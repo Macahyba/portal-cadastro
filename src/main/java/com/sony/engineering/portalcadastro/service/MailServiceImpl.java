@@ -52,25 +52,29 @@ public class MailServiceImpl implements MailService {
 	private String username;
 	private static String tokenDir;
 	private static String credentials;
-	
-	@Autowired
+
 	private UserService userService;
+	private FileStorageProperties fsp;
+	private HttpServletRequest request;
+
+	@Autowired
+	public MailServiceImpl(MailProperties mailProperties,
+						   UserService userService,
+						   FileStorageProperties fsp,
+						   HttpServletRequest request) {
+		this.userService = userService;
+		this.fsp = fsp;
+		this.request = request;
+		this.username = mailProperties.getUsername();
+		tokenDir = mailProperties.getTokenDir();
+		credentials = mailProperties.getCredentials();
+	}
 
 	private static final String APPLICATION_NAME = "portalOrcamento";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     
     private static final List<String> SCOPES = Collections.singletonList(GmailScopes.GMAIL_COMPOSE);
-	
-    @Autowired
-    private FileStorageProperties fsp;
-    
-    @Autowired
-    private HttpServletRequest request;
-    
-	static Properties mailServerProperties;
-	static Session getMailSession;
-	static MimeMessage generateMailMessage;	
-	
+
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
         InputStream in = MailServiceImpl.class.getResourceAsStream(credentials);
@@ -88,13 +92,6 @@ public class MailServiceImpl implements MailService {
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
-    
-    @Autowired
-	public MailServiceImpl(MailProperties mailProperties) {
-		this.username = mailProperties.getUsername();
-		tokenDir = mailProperties.getTokenDir();
-		credentials = mailProperties.getCredentials();
-	}
 	
 	@Override
     public void sendMailNew(Quotation quotation) throws IOException, GeneralSecurityException, MessagingException {
@@ -110,9 +107,7 @@ public class MailServiceImpl implements MailService {
         String bodyText = "Aviso.<br>Novo orcamento em " + request.getRequestURL().toString();
         List<String> to = new ArrayList<>();
         
-        users.forEach(dest ->{
-        	to.add(dest.getEmail());
-        });
+        users.forEach(dest -> to.add(dest.getEmail()));
         to.add(username);
         MimeMessage mail = createEmail(to, username, subject, bodyText);
         sendMessage(service, username, mail);
@@ -136,34 +131,45 @@ public class MailServiceImpl implements MailService {
         String bodyText = "Aviso.<br>Orcamento aprovado em";
         List<String> to = new ArrayList<>();
         
-        users.forEach(dest ->{
-        	to.add(dest.getEmail());
-        });
+        users.forEach(dest ->to.add(dest.getEmail()));
         to.add(username);
         MimeMessage mail = createEmailWithAttachment(to, username, subject, bodyText, file);
         sendMessage(service, username, mail);
 		
 	}
 	
-	
+
+	private static MimeMessage prepareEmail(List<String> to,
+								            String from,
+								            String subject)
+					            		throws MessagingException {
+
+		Properties props = new Properties();
+		Session session = Session.getDefaultInstance(props, null);
+
+		MimeMessage email = new MimeMessage(session);
+
+		email.setFrom(new InternetAddress(from));
+
+		for (String dest : to) {
+			email.addRecipient(javax.mail.Message.RecipientType.TO,
+					new InternetAddress(dest));
+		}
+
+		email.setSubject(subject);
+		
+		return email;
+
+	}
+
+
     private static MimeMessage createEmail(List<String> to,
 						            String from,
 						            String subject,
 						            String bodyText)
             		throws MessagingException {
-		Properties props = new Properties();
-		Session session = Session.getDefaultInstance(props, null);
 		
-		MimeMessage email = new MimeMessage(session);
-		
-		email.setFrom(new InternetAddress(from));
-		
-		for (String dest : to) {
-			email.addRecipient(javax.mail.Message.RecipientType.TO,
-					new InternetAddress(dest));			
-		}
-
-		email.setSubject(subject);
+		MimeMessage email = prepareEmail(to, from, subject);
 		
 		MimeBodyPart mimeBodyPart = new MimeBodyPart();
 		mimeBodyPart.setContent(bodyText, "text/html");
@@ -180,18 +186,8 @@ public class MailServiceImpl implements MailService {
 											            String subject,
 											            String bodyText,
 											            File file)
-							            			throws MessagingException, IOException {
-		Properties props = new Properties();
-		Session session = Session.getDefaultInstance(props, null);
-		
-		MimeMessage email = new MimeMessage(session);
-		
-		email.setFrom(new InternetAddress(from));
-		for (String dest : to) {
-			email.addRecipient(javax.mail.Message.RecipientType.TO,
-					new InternetAddress(dest));			
-		}
-		email.setSubject(subject);
+							            			throws MessagingException {
+		MimeMessage email = prepareEmail(to, from, subject);    	
 		
 		MimeBodyPart mimeBodyPart = new MimeBodyPart();
 		mimeBodyPart.setContent(bodyText, "text/html");
@@ -222,16 +218,13 @@ public class MailServiceImpl implements MailService {
         return message;
     }   
     
-    private static Message sendMessage(Gmail service,
+    private static void sendMessage(Gmail service,
 	            String userId,
 	            MimeMessage emailContent)
 					throws MessagingException, IOException {
 		Message message = createMessageWithEmail(emailContent);
-		message = service.users().messages().send(userId, message).execute();
-		
-//		System.out.println("Message id: " + message.getId());
-//		System.out.println(message.toPrettyString());
-		return message;
+		service.users().messages().send(userId, message).execute();
+
 	}    
 
 }

@@ -15,5 +15,9 @@ public interface GenericService<T> {
 	List<T> findAll();
 
 	T findById(Integer id);
-	
+
+	String[] getNullPropertyNames (Object source);
+
+	void merge(Object src, Object target);
+
 }

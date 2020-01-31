@@ -56,8 +56,8 @@ public class Repair {
 	
 	@OneToMany(
 			mappedBy = "repair", 
-			cascade = CascadeType.ALL)
-	private List<RepairFup> repairFups = new ArrayList<RepairFup>();
+			cascade = CascadeType.DETACH)
+	private List<RepairFup> repairFups = new ArrayList<>();
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")	
@@ -85,8 +85,7 @@ public class Repair {
 		repairFups.remove(repairFup);
 		repairFup.setRepair(null);
 	}	
-	
-	
+
 	public void addRepairFupsTop(List<RepairFup> repairFupsList) {
 		repairFups.addAll(0,repairFupsList);
 	}
@@ -194,10 +193,10 @@ public class Repair {
 	public void setRepairFups(List<RepairFup> repairFups) {
 		if (repairFups == null) {
 			if(this.repairFups != null) {
-				this.repairFups.forEach((c) -> {c.setRepair(null);});
+				this.repairFups.forEach((c) -> c.setRepair(null));
 			}
 		} else {
-			repairFups.forEach((c) -> {c.setRepair(this);});
+			repairFups.forEach((c) -> c.setRepair(this));
 		}
 		this.repairFups = repairFups;
 	}

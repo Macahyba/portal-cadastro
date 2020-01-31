@@ -1,7 +1,6 @@
 package com.sony.engineering.portalcadastro.service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -14,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.sony.engineering.portalcadastro.model.Equipment;
+import com.sony.engineering.portalcadastro.model.Repair;
 import com.sony.engineering.portalcadastro.model.RepairFup;
 import com.sony.engineering.portalcadastro.model.SparePart;
 import com.sony.engineering.portalcadastro.repository.GenericDao;
@@ -26,16 +26,19 @@ public class RepairFupServiceImpl extends GenericServiceImpl<RepairFup> implemen
 		super(dao);
 	}
 
-	Logger logger = LoggerFactory.getLogger(RepairFupService.class);
-	
-	@Autowired
-	RepairFupDao repairFupDao;
-	
-	@Autowired
-	SparePartService sparePartService;
+	private Logger logger = LoggerFactory.getLogger(RepairFupService.class);
+	private RepairFupDao repairFupDao;
+	private SparePartService sparePartService;
 
 	@Autowired
-	EquipmentService equipmentService;
+	public RepairFupServiceImpl(GenericDao<RepairFup> dao,
+								RepairFupDao repairFupDao,
+								SparePartService sparePartService) {
+		super(dao);
+		this.repairFupDao = repairFupDao;
+		this.sparePartService = sparePartService;
+	}
+
 	
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
@@ -44,13 +47,11 @@ public class RepairFupServiceImpl extends GenericServiceImpl<RepairFup> implemen
 		Set<SparePart> spareParts = repairFup.getSpareParts();
 		
 		if(repairFup.getId() != null) {
-			
-			try {
-				repairFup = repairFupDao.findById(repairFup.getId()).get();
-			} catch (NoSuchElementException e) {
+
+			repairFup = repairFupDao.findById(repairFup.getId()).orElseThrow(() -> {
 				logger.error("Invalid RepairFup Id!");
 				throw new NoSuchElementException();
-			}
+			});
 		} 	
 		
 		spareParts = sparePartService.saveAll(spareParts);
@@ -77,20 +78,22 @@ public class RepairFupServiceImpl extends GenericServiceImpl<RepairFup> implemen
 		
 		return newRepairFups;
 	}
+	
+	public void repairFupsCheckId(Repair repair) {
 
-	@Override
-	public RepairFup addEquipmentToSparePart(RepairFup repairFup, Equipment equipment) {
-		
-		Set<SparePart> spareParts = repairFup.getSpareParts();
-		Set<SparePart> newSpareParts = new HashSet<SparePart>();
-		
-		for (SparePart sparePart : spareParts) {
+		repair.getRepairFups().forEach(rp ->{
 			
-			newSpareParts.add(sparePartService.addEquipmentToSparePart(sparePart, equipment));
-		}
+			if(rp.getId() != null) {
+				logger.error("Not allowed to update follow-up!");
+				throw new NoSuchElementException();	
+			}
+		});
 		
-		repairFup.setSpareParts(newSpareParts);
-		return repairFup;
+	}		
+	
+	@Override
+	public void addEquipmentToRepairFups(List<RepairFup> repairFups, Equipment equipment) {
+		repairFups.forEach(rp-> rp.setEquipment(equipment));
 	}
 
 }

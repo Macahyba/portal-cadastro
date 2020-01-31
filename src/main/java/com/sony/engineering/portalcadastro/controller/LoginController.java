@@ -16,10 +16,14 @@ import com.sony.engineering.portalcadastro.service.UserService;
 public class LoginController {
 
 	@Autowired
-	UserService userService;
+	public LoginController(UserService userService) {
+		this.userService = userService;
+	}
+
+	private UserService userService;
 	
 	@GetMapping(value = {"/", "login"})
-	public String loginGet(Model model) {
+	public String loginGet() {
 		return "quotation/login";
 	}
 	
@@ -39,12 +43,12 @@ public class LoginController {
 	}	
 	
 	@GetMapping(value = "home")
-	public String home(Model model) {
+	public String home() {
 		return "/quotation/home";
 	}		
 	
 	@GetMapping(value = "logout")
-	public String logout(Model model) {
+	public String logout() {
 		
 		return "redirect:/";
 	}

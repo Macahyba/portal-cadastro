@@ -1,15 +1,10 @@
 package com.sony.engineering.portalcadastro.service;
 
-import java.beans.PropertyDescriptor;
-import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.management.RuntimeErrorException;
 
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.BeanWrapper;
-import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,24 +21,30 @@ import com.sony.engineering.portalcadastro.repository.QuotationDao;
 @org.springframework.stereotype.Service
 public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implements QuotationService{
 
-	@Autowired
 	private QuotationDao quotationDao;
+	private CustomerService customerService;
+	private UserService userService;
+	private EquipmentService equipmentService;
+	private ServiceService serviceService;
+	private StatusService statusService;
 
 	@Autowired
-	private CustomerService customerService;
-	
-	@Autowired
-	private UserService userService;
-	
-	@Autowired
-	private EquipmentService equipmentService;
-	
-	@Autowired
-	private ServiceService serviceService;
-	
-	@Autowired
-	private StatusService statusService;
-		
+	public QuotationServiceImpl(GenericDao<Quotation> dao,
+								QuotationDao quotationDao,
+								CustomerService customerService,
+								UserService userService,
+								EquipmentService equipmentService,
+								ServiceService serviceService,
+								StatusService statusService) {
+		super(dao);
+		this.quotationDao = quotationDao;
+		this.customerService = customerService;
+		this.userService = userService;
+		this.equipmentService = equipmentService;
+		this.serviceService = serviceService;
+		this.statusService = statusService;
+	}
+
 	public QuotationServiceImpl(GenericDao<Quotation> dao) {
 		super(dao);
 	}	
@@ -53,17 +54,11 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 	public Quotation save(Quotation quotation) {
 		
 		customerInsertion(quotation);
-		
 		contactInsertion(quotation);
-		
 		userInsertion(quotation);
-		
 		statusInsertion(quotation);
-		
 		equipmentInsertion(quotation);
-		
 		serviceInsertion(quotation);
-		
 		approvalUserInsertion(quotation);
 		
 		// PREPARE TO SAVE
@@ -82,44 +77,15 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Quotation patch(Quotation quotation) {
-		
-		try {
-			Quotation quotationDb = quotationDao.findById(quotation.getId()).get();
-			
-			merge(quotation, quotationDb);
-			return this.save(quotationDb);
-		} catch (NoSuchElementException e) {
-			throw new NoSuchElementException("Invalid Quotation Id!");
-		} catch (Exception e) {
-			return null;
-		}
+
+		Quotation quotationDb = quotationDao.findById(quotation.getId()).orElseThrow(() ->
+			new NoSuchElementException("Invalid Quotation Id!")
+		);
+
+		merge(quotation, quotationDb);
+		return this.save(quotationDb);
 
 	}
-
-	public QuotationDao getQuotationDao() {
-		return quotationDao;
-	}
-
-	public void setQuotationDao(QuotationDao quotationDao) {
-		this.quotationDao = quotationDao;
-	}
-	
-	public static String[] getNullPropertyNames (Object source) {
-	    final BeanWrapper src = new BeanWrapperImpl(source);
-	    PropertyDescriptor[] pds = src.getPropertyDescriptors();
-
-	    Set<String> emptyNames = new HashSet<String>();
-	    for(PropertyDescriptor pd : pds) {
-	        Object srcValue = src.getPropertyValue(pd.getName());
-	        if (srcValue == null) emptyNames.add(pd.getName());
-	    }
-	    String[] result = new String[emptyNames.size()];
-	    return emptyNames.toArray(result);
-	}
-	
-	public static void merge(Object src, Object target) {
-	    BeanUtils.copyProperties(src, target, getNullPropertyNames(src));
-	}	
 	
 	private void customerInsertion(Quotation quotation) {
 
@@ -142,7 +108,7 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 			throw new RuntimeErrorException(null, "Error on creating contact - too many arguments");
 		}
 		
-		quotation.setContact(quotation.getCustomer().getContacts().iterator().next());;
+		quotation.setContact(quotation.getCustomer().getContacts().iterator().next());
 		
 	}
 	
