@@ -11,8 +11,6 @@ public class PortalCadastroApplicationTests {
 
 	@Test
 	public void contextLoads() {
+
 	}
-
-		
-
 }

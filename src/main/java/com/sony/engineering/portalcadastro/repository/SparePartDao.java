@@ -1,6 +1,5 @@
 package com.sony.engineering.portalcadastro.repository;
 
-import java.util.List;
 import java.util.Set;
 
 import com.sony.engineering.portalcadastro.model.SparePart;
