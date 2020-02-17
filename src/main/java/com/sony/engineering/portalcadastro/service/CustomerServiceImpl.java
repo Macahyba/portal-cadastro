@@ -42,13 +42,11 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 	}
 	
 	@Transactional(propagation = Propagation.REQUIRED, noRollbackFor = UnexpectedRollbackException.class)
-	public Customer save(Customer customer) {	
-
+	public Customer save(Customer customer) {
 		Set<Contact> contacts = customer.getContacts();
 		Set<Contact> newContacts = new HashSet<>();
-		
-		if (customer.getId() != null) {		
-			
+
+		if (customer.getId() != null) {
 			try {
 				customer = this.findById(customer.getId());
 			} catch (NoSuchElementException e) {
@@ -56,14 +54,11 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 				throw new NoSuchElementException();
 			}
 		} else {
-
 			List<Customer> findName = this.findDistinctByName(customer.getName()); 
 			
-			if (!findName.isEmpty()) {
-			
+			if (!findName.isEmpty()) {			
 				customer = findName.get(0);
 			}
-
 		}
 
 		if (contacts != null) {
@@ -92,9 +87,9 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 		customer.setContacts(newContacts);
 		
 		return customerDao.save(customer);
-
 	}
 
+	@Override
 	public Customer patch(Customer customer){
 
 		Customer customerDb = customerDao.findById(customer.getId())
