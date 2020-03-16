@@ -53,7 +53,7 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Repair save(Repair repair) {
-		
+
 		customerInsertion(repair);
 		contactInsertion(repair);
 		userInsertion(repair);

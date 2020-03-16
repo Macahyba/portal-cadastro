@@ -5,16 +5,11 @@ import java.util.Set;
 
 import javax.management.RuntimeErrorException;
 
+import com.sony.engineering.portalcadastro.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sony.engineering.portalcadastro.model.Customer;
-import com.sony.engineering.portalcadastro.model.Equipment;
-import com.sony.engineering.portalcadastro.model.Quotation;
-import com.sony.engineering.portalcadastro.model.Service;
-import com.sony.engineering.portalcadastro.model.Status;
-import com.sony.engineering.portalcadastro.model.User;
 import com.sony.engineering.portalcadastro.repository.GenericDao;
 import com.sony.engineering.portalcadastro.repository.QuotationDao;
 
@@ -138,20 +133,20 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 		quotation.setStatus(status);
 		
 	}	
-	
+
 	private void equipmentInsertion(Quotation quotation) {
-		
-		Set<Equipment> equipments = quotation.getEquipments();
-		
-		if(equipments.isEmpty()) {
-			throw new RuntimeErrorException(null, "Error on creating equipments");
+
+		Equipment equipment = quotation.getEquipment();
+
+		if(equipment == null) {
+			throw new RuntimeErrorException(null, "Error on creating equipment");
 		}
-		
-		equipments = equipmentService.saveAll(equipments);
-		quotation.setEquipments(equipments);
-		
-	}	
-	
+
+		equipment = equipmentService.save(equipment);
+		quotation.setEquipment(equipment);
+
+	}
+
 	private void serviceInsertion(Quotation quotation) {
 
 		Set<Service> services = quotation.getServices();

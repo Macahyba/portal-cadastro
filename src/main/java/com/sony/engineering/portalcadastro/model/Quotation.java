@@ -53,11 +53,14 @@ public class Quotation {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-	@ManyToMany(cascade = CascadeType.DETACH)
-	@JoinTable(name = "quotation_equipment", 
-	joinColumns = {@JoinColumn(name = "quotation_id")}, 
-	inverseJoinColumns = {@JoinColumn(name = "equipment_id")})
-	private Set<Equipment> equipments = new HashSet<>();
+//	@ManyToMany(cascade = CascadeType.DETACH)
+//	@JoinTable(name = "quotation_equipment",
+//	joinColumns = {@JoinColumn(name = "quotation_id")},
+//	inverseJoinColumns = {@JoinColumn(name = "equipment_id")})
+//	private Set<Equipment> equipments = new HashSet<>();
+	@ManyToOne
+	@JoinColumn(name = "equipment_id")
+	private Equipment equipment;
 	
 	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "customer_id")
@@ -141,12 +144,12 @@ public class Quotation {
 		this.user = user;
 	}
 
-	public Set<Equipment> getEquipments() {
-		return equipments;
+	public Equipment getEquipment(){
+		return equipment;
 	}
 
-	public void setEquipments(Set<Equipment> equipments) {
-		this.equipments = equipments;
+	public void setEquipment(Equipment equipment) {
+		this.equipment = equipment;
 	}
 
 	public Customer getCustomer() {
@@ -178,12 +181,6 @@ public class Quotation {
 	}
 
 	public void setServices(Set<Service> services) {
-		this.totalPrice = 0.0f;
-		if(services != null) {
-			for (Service s: services) {
-				this.totalPrice += s.getPrice();
-			}
-		}
 		this.services = services;
 	}
 
