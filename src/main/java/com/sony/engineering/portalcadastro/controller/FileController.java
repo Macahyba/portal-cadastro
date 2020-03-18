@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.sony.engineering.portalcadastro.exception.PdfGenerationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,11 @@ public class FileController {
 			}
 			
 		} catch (IOException ex) {
-            logger.info("Could not determine file type.");
+			logger.info("Could not determine file type.");
+
+		} catch (PdfGenerationException e){
+
+			logger.info("Approval User not found!");
 		} catch (Exception e) {
 			logger.info("Quotation not found!");
 		}

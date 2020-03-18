@@ -35,6 +35,8 @@ public class QuotationController {
 
 	private Logger logger = LoggerFactory.getLogger(QuotationController.class);
 
+	public final static String APROVADO = "APROVADO";
+
 	@Autowired
 	public QuotationController(QuotationService quotationService,
 							   MailService mailService,
@@ -129,9 +131,11 @@ public class QuotationController {
 		
 		try {
 			
-			quotation = quotationService.patch(quotation);			
-			fileService.generatePdf(quotation.getId());
-			mailService.sendMailUpdate(quotation);
+			quotation = quotationService.patch(quotation);
+			if (quotation.getStatus().getStatus().equals(APROVADO)) {
+				fileService.generatePdf(quotation.getId());
+				mailService.sendMailUpdate(quotation);
+			}
 			return new ResponseEntity<>(quotation, HttpStatus.OK);
 		} catch (PdfGenerationException e) {
 

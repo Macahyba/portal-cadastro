@@ -1,5 +1,6 @@
 package com.sony.engineering.portalcadastro.service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
@@ -49,6 +50,11 @@ public class StatusServiceImpl extends GenericServiceImpl<Status> implements Sta
 	@Override
 	public Status findDistinctByStatus(String status) {
 		return statusDao.findDistinctByStatus(status);
+	}
+
+	@Override
+	public List<Status> findAllByOrderByIdAsc() {
+		return statusDao.findAllByOrderByIdAsc();
 	}
 
 }

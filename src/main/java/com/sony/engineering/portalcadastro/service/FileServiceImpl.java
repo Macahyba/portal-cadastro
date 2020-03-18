@@ -74,15 +74,16 @@ public class FileServiceImpl implements FileService{
     	    throw new PdfGenerationException("Approval User not found!", new Throwable());
         }
     	
-    	String serverPath = request.getScheme() + "://" + request.getLocalName() + ":" + 
+//    	String serverPath = request.getScheme() + "://" + request.getLocalName() + ":" +
+//    						request.getLocalPort() + request.getContextPath();
+
+        String serverPath = request.getScheme() + "://localhost:" +
     						request.getLocalPort() + request.getContextPath();
-    	
+
     	String dataAtual = DateTimeFormatter.ofPattern("DD/MM/YYYY")
     										.format(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")));
     	
     	Float valorDesconto = quotation.getTotalPrice()* (quotation.getTotalDiscount()/100);
-    	
-    	Float valorLiquido = quotation.getTotalPrice() * (1 - quotation.getTotalDiscount()/100);
     	
     	int numOrdem = 1;
 
@@ -147,7 +148,7 @@ public class FileServiceImpl implements FileService{
                     .append("                               <td>").append(service.getDescription()).append("</td>")
                     .append("                               <td>").append(String.format("%.2f", service.getPrice())).append("</td>")
                     .append("                               <td>").append(String.format("%.2f", quotation.getTotalDiscount())).append("%</td>")
-                    .append("                               <td>").append(String.format("%.2f", valorLiquido)).append("</td>")
+                    .append("                               <td>").append(String.format("%.2f", this.getValorLiquido(service.getPrice(), quotation.getTotalDiscount()))).append("</td>")
                     .append("                           </tr>");
                 numOrdem++;
     		}
@@ -160,7 +161,7 @@ public class FileServiceImpl implements FileService{
                 .append("                               <td>Valor total R$</td>")
                 .append("                               <td>").append(String.format("%.2f", quotation.getTotalPrice())).append("</td>")
                 .append("                               <td>").append(String.format("%.2f", valorDesconto)).append("</td>")
-                .append("                               <td>").append(String.format("%.2f", valorLiquido)).append("</td>")
+                .append("                               <td>").append(String.format("%.2f", this.getValorLiquido(quotation.getTotalPrice(), quotation.getTotalDiscount()))).append("</td>")
                 .append("                           </tr>")
                 .append("                       </tfoot>")
                 .append("                   </table>")
@@ -186,7 +187,7 @@ public class FileServiceImpl implements FileService{
                 .append("                   	<ul class=\"list-unstyled\">")
                 .append("                       	<li>Valor Total Nacional - R$ ").append(String.format("%.2f", quotation.getTotalPrice())).append("</li>")
                 .append("                       	<li>Desconto Especial - R$ ").append(String.format("%.2f", valorDesconto)).append("</li>")
-                .append("                       	<li>Valor Total Liquido - R$ ").append(String.format("%.2f", valorLiquido)).append("</li>")
+                .append("                       	<li>Valor Total Liquido - R$ ").append(String.format("%.2f", this.getValorLiquido(quotation.getTotalPrice(), quotation.getTotalDiscount()))).append("</li>")
                 .append("                   	</ul>")
                 .append("               	</div>")
                 .append("               </div>")
@@ -216,7 +217,7 @@ public class FileServiceImpl implements FileService{
                 .append("       </div>")
                 .append("   </body>")
                 .append("</html>");
-    	
+
     	String dest = this.fileStorageLocation.resolve(quotation.getLabel() + EXTENSION).toString();
     	
         try {
@@ -231,5 +232,9 @@ public class FileServiceImpl implements FileService{
         	throw new PdfGenerationException(e);
         }
     	
+    }
+
+    private Float getValorLiquido(Float valor, Float discount){
+        return valor * (1 - discount/100);
     }
 }
