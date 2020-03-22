@@ -118,11 +118,6 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 	
 	private void contactInsertion(Repair repair) {
 
-		if (repair.getCustomer().getContacts().size() > 1) {
-			
-			throw new RuntimeErrorException(null, "Error on creating contact - too many arguments");
-		}
-		
 		repair.setContact(repair.getCustomer().getContacts().iterator().next());
 	}
 	

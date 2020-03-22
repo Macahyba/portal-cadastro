@@ -98,11 +98,6 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 	
 	private void contactInsertion(Quotation quotation) {
 
-//		if (quotation.getCustomer().getContacts().size() > 1) {
-//
-//			throw new RuntimeErrorException(null, "Error on creating contact - too many arguments");
-//		}
-		
 		quotation.setContact(quotation.getCustomer().getContacts().iterator().next());
 		
 	}

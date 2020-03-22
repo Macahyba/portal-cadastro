@@ -44,7 +44,7 @@ public class RepairController {
 	public ResponseEntity<Repair> getRepairOne(@PathVariable("id") Integer id){
 		
 		try {
-			
+
 			return new ResponseEntity<>(repairService.findById(id), HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);

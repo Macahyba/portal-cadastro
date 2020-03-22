@@ -4,21 +4,12 @@ package com.sony.engineering.portalcadastro.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 
 
 @Entity
-@Table(uniqueConstraints=@UniqueConstraint(columnNames={"name", "serialNumber"})
+@Table(uniqueConstraints=@UniqueConstraint(columnNames={"name", "serial_number"})
     )
 public class Equipment {
 
@@ -29,12 +20,13 @@ public class Equipment {
 	private String name;
 	
 	@NotEmpty
+	@Column(name = "serial_number")
 	private String serialNumber;
 
 	@ManyToMany(cascade = CascadeType.DETACH)
-	@JoinTable(name = "equipment_sparePart", 
+	@JoinTable(name = "equipment_spare_part",
 	joinColumns = {@JoinColumn(name = "equipment_id")}, 
-	inverseJoinColumns = {@JoinColumn(name = "sparePart_id")})	
+	inverseJoinColumns = {@JoinColumn(name = "spare_part_id")})
 	private Set<SparePart> spareParts = new HashSet<>();
 
 	public void addSparePartsTop(Set<SparePart> sparePartsList) {

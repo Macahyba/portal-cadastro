@@ -4,24 +4,14 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
+@Table(name = "repair_fup")
 public class RepairFup {
 
 	@Id
@@ -44,9 +34,9 @@ public class RepairFup {
 	private Repair repair;
 
 	@ManyToMany(cascade = CascadeType.DETACH)
-	@JoinTable(name = "repairFup_sparePart", 
-	joinColumns = {@JoinColumn(name = "repairFup_id")},
-	inverseJoinColumns = {@JoinColumn(name = "sparePart_id")})	
+	@JoinTable(name = "repair_fup_spare_part",
+	joinColumns = {@JoinColumn(name = "repair_fup_id")},
+	inverseJoinColumns = {@JoinColumn(name = "spare_part_id")})
 	private Set<SparePart> spareParts = new HashSet<>();
 	
 	@JsonIgnore
