@@ -93,25 +93,4 @@ public class CustomerServiceImplTests {
         service.save(customerStub);
     }
 
-    @Test()
-    @DisplayName("Should return the saved customer.")
-    public void save_ValidCustomer_TheUpdatedCustomer() {
-        // Arrange
-        Customer customerStub = getCustomerStub();
-        customerStub.setName("New Name");
-        customerStub.setContacts(null);
-
-        Customer dbCustomerStub = getCustomerStub();
-        when(genericDao.findById(1)).thenReturn(Optional.of(dbCustomerStub));
-
-        when(customerDao.save(any(Customer.class)))
-            .thenAnswer(AdditionalAnswers.returnsFirstArg());
-
-        // Act
-        CustomerServiceImpl service = this.createCustomerServiceImpl();
-        Customer updatedCustomer = service.save(customerStub);
-
-        assertEquals("New Name", updatedCustomer.getName());
-    }
-
 }

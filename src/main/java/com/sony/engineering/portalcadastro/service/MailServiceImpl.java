@@ -41,8 +41,8 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.GmailScopes;
 import com.google.api.services.gmail.model.Message;
-import com.sony.engineering.portalcadastro.FileStorageProperties;
-import com.sony.engineering.portalcadastro.MailProperties;
+import com.sony.engineering.portalcadastro.config.FileStorageProperties;
+import com.sony.engineering.portalcadastro.config.MailProperties;
 import com.sony.engineering.portalcadastro.model.Quotation;
 import com.sony.engineering.portalcadastro.model.User;
 

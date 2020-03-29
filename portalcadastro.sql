@@ -33,7 +33,7 @@ CREATE TABLE `contact` (
   UNIQUE KEY `UK_8egib4wq2lnsm6u7noysivln2` (`name`),
   KEY `FKckoarj5a5jmet3b3smgdhaopw` (`customer_id`),
   CONSTRAINT `FKckoarj5a5jmet3b3smgdhaopw` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,6 @@ CREATE TABLE `contact` (
 
 LOCK TABLES `contact` WRITE;
 /*!40000 ALTER TABLE `contact` DISABLE KEYS */;
-INSERT INTO `contact` VALUES (10,'engenharia','joao@mailsac.com','Joao',8);
 /*!40000 ALTER TABLE `contact` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -62,7 +61,7 @@ CREATE TABLE `customer` (
   UNIQUE KEY `UK_r1qk8etno2r2pkt919v3vs9qa` (`cnpj`),
   UNIQUE KEY `UK_8ptfah84oidw5hqc2t0k5nf29` (`full_name`),
   UNIQUE KEY `UK_crkjmjk1oj8gb6j6t5kt7gcxm` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +70,6 @@ CREATE TABLE `customer` (
 
 LOCK TABLES `customer` WRITE;
 /*!40000 ALTER TABLE `customer` DISABLE KEYS */;
-INSERT INTO `customer` VALUES (8,'cnpj','CLIENTE LTDA','Cliente');
 /*!40000 ALTER TABLE `customer` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -87,8 +85,8 @@ CREATE TABLE `equipment` (
   `name` varchar(255) DEFAULT NULL,
   `serial_number` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UKblo027e7c8fqb8anw5fc6xv0i` (`name`,`serial_number`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `UKql211pwcgdawxb4rdlxsn1vl7` (`name`,`serial_number`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,7 +95,6 @@ CREATE TABLE `equipment` (
 
 LOCK TABLES `equipment` WRITE;
 /*!40000 ALTER TABLE `equipment` DISABLE KEYS */;
-INSERT INTO `equipment` VALUES (2,'camera','12345'),(1,'Teste','12345');
 /*!40000 ALTER TABLE `equipment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -115,7 +112,7 @@ CREATE TABLE `equipment_spare_part` (
   KEY `FKgb05rem70i87dna7fr5xsreoi` (`spare_part_id`),
   CONSTRAINT `FKgb05rem70i87dna7fr5xsreoi` FOREIGN KEY (`spare_part_id`) REFERENCES `spare_part` (`id`),
   CONSTRAINT `FKrteui9oicnssse9feta55r2dg` FOREIGN KEY (`equipment_id`) REFERENCES `equipment` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -144,6 +141,7 @@ CREATE TABLE `quotation` (
   `approval_user_id` int(11) DEFAULT NULL,
   `contact_id` int(11) DEFAULT NULL,
   `customer_id` int(11) DEFAULT NULL,
+  `equipment_id` int(11) DEFAULT NULL,
   `status_id` int(11) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -151,14 +149,16 @@ CREATE TABLE `quotation` (
   KEY `FKradurokk0s1xm34o65nid9qrc` (`approval_user_id`),
   KEY `FKhun8mn52en78via8y3ccagt7c` (`contact_id`),
   KEY `FKlf5ti8fw77uew5ivt1rh1dlrd` (`customer_id`),
+  KEY `FK3gadvhn9uy0kaqgkptvv69ba9` (`equipment_id`),
   KEY `FKti90serek6afv1alamcwt7ipv` (`status_id`),
   KEY `FKo7tw1pxuf4nai3kgk7hh7x935` (`user_id`),
+  CONSTRAINT `FK3gadvhn9uy0kaqgkptvv69ba9` FOREIGN KEY (`equipment_id`) REFERENCES `equipment` (`id`),
   CONSTRAINT `FKhun8mn52en78via8y3ccagt7c` FOREIGN KEY (`contact_id`) REFERENCES `contact` (`id`),
   CONSTRAINT `FKlf5ti8fw77uew5ivt1rh1dlrd` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`),
   CONSTRAINT `FKo7tw1pxuf4nai3kgk7hh7x935` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `FKradurokk0s1xm34o65nid9qrc` FOREIGN KEY (`approval_user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `FKti90serek6afv1alamcwt7ipv` FOREIGN KEY (`status_id`) REFERENCES `status` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -167,35 +167,7 @@ CREATE TABLE `quotation` (
 
 LOCK TABLES `quotation` WRITE;
 /*!40000 ALTER TABLE `quotation` DISABLE KEYS */;
-INSERT INTO `quotation` VALUES (1,NULL,'2020-02-09 23:24:30','202002090001',0,100,NULL,10,8,1,1),(2,NULL,'2020-02-09 23:29:40','202002090002',0,100,1,10,8,2,1);
 /*!40000 ALTER TABLE `quotation` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `quotation_equipment`
---
-
-DROP TABLE IF EXISTS `quotation_equipment`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
- SET character_set_client = utf8mb4 ;
-CREATE TABLE `quotation_equipment` (
-  `quotation_id` int(11) NOT NULL,
-  `equipment_id` int(11) NOT NULL,
-  PRIMARY KEY (`quotation_id`,`equipment_id`),
-  KEY `FK5itt5ib4u1y7uy2etyboj86fv` (`equipment_id`),
-  CONSTRAINT `FK5itt5ib4u1y7uy2etyboj86fv` FOREIGN KEY (`equipment_id`) REFERENCES `equipment` (`id`),
-  CONSTRAINT `FKfqsxmxogi5jgsmunbikmf7scl` FOREIGN KEY (`quotation_id`) REFERENCES `quotation` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `quotation_equipment`
---
-
-LOCK TABLES `quotation_equipment` WRITE;
-/*!40000 ALTER TABLE `quotation_equipment` DISABLE KEYS */;
-INSERT INTO `quotation_equipment` VALUES (1,2),(2,2);
-/*!40000 ALTER TABLE `quotation_equipment` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -212,7 +184,7 @@ CREATE TABLE `quotation_service` (
   KEY `FKop8p2de740s6qqfx1ye5mt9lh` (`service_id`),
   CONSTRAINT `FKheesi17qucthynx8vla0t9nno` FOREIGN KEY (`quotation_id`) REFERENCES `quotation` (`id`),
   CONSTRAINT `FKop8p2de740s6qqfx1ye5mt9lh` FOREIGN KEY (`service_id`) REFERENCES `service` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -221,7 +193,6 @@ CREATE TABLE `quotation_service` (
 
 LOCK TABLES `quotation_service` WRITE;
 /*!40000 ALTER TABLE `quotation_service` DISABLE KEYS */;
-INSERT INTO `quotation_service` VALUES (1,1),(2,1);
 /*!40000 ALTER TABLE `quotation_service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -260,7 +231,7 @@ CREATE TABLE `repair` (
   CONSTRAINT `FKjgskdm5a8tcx17ood1vshp3ed` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `FKkg23vsw8gbox0uira4af4effq` FOREIGN KEY (`contact_id`) REFERENCES `contact` (`id`),
   CONSTRAINT `FKs492o3a20go94q78s6b8091nl` FOREIGN KEY (`customer_id`) REFERENCES `customer` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -293,7 +264,7 @@ CREATE TABLE `repair_fup` (
   CONSTRAINT `FK9t47t4kwy515yq2glcof88kdk` FOREIGN KEY (`equipment_id`) REFERENCES `equipment` (`id`),
   CONSTRAINT `FKbrce28yf087yn3i1aik5lxi0s` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `FKsco5b69chlcytv8r0v16seovx` FOREIGN KEY (`repair_id`) REFERENCES `repair` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -319,7 +290,7 @@ CREATE TABLE `repair_fup_spare_part` (
   KEY `FKe4fec1ypgojn1kf9gvquhosdy` (`spare_part_id`),
   CONSTRAINT `FK2ghrvrcm3wx3lnmuw787vgtbj` FOREIGN KEY (`repair_fup_id`) REFERENCES `repair_fup` (`id`),
   CONSTRAINT `FKe4fec1ypgojn1kf9gvquhosdy` FOREIGN KEY (`spare_part_id`) REFERENCES `spare_part` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -346,7 +317,7 @@ CREATE TABLE `service` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_njew1c9fl5n5u2fmteo291087` (`description`),
   UNIQUE KEY `UK_adgojnrwwx9c3y3qa2q08uuqp` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -355,7 +326,6 @@ CREATE TABLE `service` (
 
 LOCK TABLES `service` WRITE;
 /*!40000 ALTER TABLE `service` DISABLE KEYS */;
-INSERT INTO `service` VALUES (1,'update','UPD',100);
 /*!40000 ALTER TABLE `service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -371,7 +341,7 @@ CREATE TABLE `spare_part` (
   `part_number` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_438tqaa2a21w82qrvpdt6vjxa` (`part_number`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -395,7 +365,7 @@ CREATE TABLE `status` (
   `status` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_kxaj0dvn13fwjuimg3y2j0oa2` (`status`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -404,7 +374,7 @@ CREATE TABLE `status` (
 
 LOCK TABLES `status` WRITE;
 /*!40000 ALTER TABLE `status` DISABLE KEYS */;
-INSERT INTO `status` VALUES (2,'APROVADO'),(4,'CANCELADO'),(1,'NOVO'),(3,'REPROVADO');
+INSERT INTO `status` VALUES (2,'APROVADO'),(4,'CANCELADO'),(1,'NOVO'),(3,'REJEITADO');
 /*!40000 ALTER TABLE `status` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -418,16 +388,16 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(255) DEFAULT NULL,
-  `login` varchar(255) DEFAULT NULL,
-  `name` varchar(255) DEFAULT NULL,
+  `full_name` varchar(255) DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `phone` varchar(255) DEFAULT NULL,
   `profile` varchar(255) DEFAULT NULL,
   `role` varchar(255) DEFAULT NULL,
+  `username` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_ob8kqyqqgmefl0aco34akdtpe` (`email`),
-  UNIQUE KEY `UK_ew1hvam8uwaknuaellwhqchhb` (`login`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `UK_sb8bbouer5wak8vyiiy4pf2bx` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -436,7 +406,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'admin1234@mailsac.com','admin','admin','admin','21','admin','boss');
+INSERT INTO `user` VALUES (1,'portalinvoice@gmail.com','Administrador do Sistema','$2a$10$CJSRuzOgYMT5v/yPSOZ75uMVksUvlrPppAFnnefeKkW5q8yLh4Dda','+55','admin','Administrator','admin');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -449,4 +419,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-02-16 23:13:05
+-- Dump completed on 2020-03-28 23:44:19

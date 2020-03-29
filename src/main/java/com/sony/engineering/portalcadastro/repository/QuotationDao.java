@@ -7,4 +7,6 @@ import com.sony.engineering.portalcadastro.model.Quotation;
 @Repository
 public interface QuotationDao extends GenericDao<Quotation> {
 
+    Quotation findFirstByOrderByIdDesc();
+
 }

@@ -47,38 +47,43 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 			
 			try {
 
-				List<User> findUser = userDao.findDistinctByEmail(user.getEmail());
-				
-				if(!findUser.isEmpty()) {
-					user = findUser.get(0);
+				User findUser = userDao.findDistinctByUsername(user.getUsername());
+
+				if (findUser != null){
+					user = findUser;
 				}
 				
-			} catch (IncorrectResultSizeDataAccessException e){
-				logger.error("Duplicate user e-mail detected, please check the DB");
+			} catch (IncorrectResultSizeDataAccessException e) {
+				logger.error("Duplicate username detected, please check the DB");
 				throw new IncorrectResultSizeDataAccessException(1);
 			}
-			
+
 		}
 
 		return userDao.save(user);
 	}
-	
-	public User validateLogin(User user) {
-		
-		try {
-			List<User> u = userDao.findDistinctByLogin(user.getLogin());
-		
-			if(user.getPassword().equals(u.get(0).getPassword())) {
-				
-				return u.get(0);
-			}
-			
-		} catch (NullPointerException | IndexOutOfBoundsException e) {
-			
-			return null;
-		}
-		
-		return null;
+
+	@Override
+	public User patch(User user){
+
+		User userDb = userDao.findById(user.getId())
+				.orElseThrow(() -> new NoSuchElementException("Invalid User Id!"));
+
+		merge(user, userDb);
+		return userDao.save(userDb);
+	}
+
+	@Override
+	public User findById(Integer id){
+
+		return userDao.findById(id).orElseThrow(() -> {
+			logger.error("Invalid User Id!");
+			throw new NoSuchElementException();
+		});
+	}
+
+	public User findDistinctByUsername(String username){
+		return userDao.findDistinctByUsername((username));
 	}
 
 	@Override

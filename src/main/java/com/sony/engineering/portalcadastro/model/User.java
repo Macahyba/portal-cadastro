@@ -3,12 +3,11 @@ package com.sony.engineering.portalcadastro.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-import java.util.Collection;
+import org.springframework.stereotype.Component;
 
 @Entity
+@Component
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
 
@@ -18,10 +17,10 @@ public class User {
 	
 	@Column(unique = true)
 	@NotEmpty
-	private String login;
+	private String username;
 	
 	@NotEmpty
-	private String name;
+	private String fullName;
 	
 	@Column(unique = true)
 	@NotEmpty
@@ -35,8 +34,7 @@ public class User {
 	
 	@NotEmpty
 	private String phone;
-	
-	@JsonIgnore
+
 	@NotEmpty
 	private String password;
 
@@ -48,20 +46,20 @@ public class User {
 		this.id = id;
 	}
 
-	public String getLogin() {
-		return login;
+	public String getUsername() {
+		return username;
 	}
 
-	public void setLogin(String login) {
-		this.login = login;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
-	public String getName() {
-		return name;
+	public String getFullName() {
+		return fullName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFullName(String name) {
+		this.fullName = name;
 	}
 
 	public String getEmail() {

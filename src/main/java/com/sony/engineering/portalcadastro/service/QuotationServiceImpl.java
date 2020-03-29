@@ -47,7 +47,8 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 	@Override
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Quotation save(Quotation quotation) {
-		
+
+		labelInsertion(quotation);
 		customerInsertion(quotation);
 		contactInsertion(quotation);
 		userInsertion(quotation);
@@ -55,16 +56,7 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 		equipmentInsertion(quotation);
 		serviceInsertion(quotation);
 		approvalUserInsertion(quotation);
-		
-		// PREPARE TO SAVE
 
-		quotation = quotationDao.save(quotation);
-
-		quotation.setLabel(
-				String.format("%s%04d", quotation.returnPrettyCreationDate(), quotation.getId()));
-		
-		// SAVE
-		
 		return quotationDao.save(quotation);
 
 	}
@@ -169,6 +161,15 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 			
 		}
 		
-	}	
+	}
+
+	private void labelInsertion(Quotation quotation){
+
+		if (quotation.getLabel() == null){
+			final Quotation last = quotationDao.findFirstByOrderByIdDesc();
+			quotation.setLabel(
+					String.format("%s%04d", quotation.returnPrettyCreationDate(), last.getId()+1));
+		}
+	}
 	
 }

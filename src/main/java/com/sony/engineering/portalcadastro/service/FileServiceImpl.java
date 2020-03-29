@@ -13,13 +13,14 @@ import java.time.format.DateTimeFormatter;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.openhtmltopdf.util.XRLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
 
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
-import com.sony.engineering.portalcadastro.FileStorageProperties;
+import com.sony.engineering.portalcadastro.config.FileStorageProperties;
 import com.sony.engineering.portalcadastro.exception.PdfGenerationException;
 import com.sony.engineering.portalcadastro.model.Quotation;
 import com.sony.engineering.portalcadastro.model.Service;
@@ -67,7 +68,8 @@ public class FileServiceImpl implements FileService{
     
     
     public String generatePdf(Integer id) throws PdfGenerationException {
-    	
+
+        XRLog.setLoggingEnabled(false);
     	Quotation quotation = quotationService.findById(id);
 
     	if(quotation.getApprovalUser() == null){
@@ -197,7 +199,7 @@ public class FileServiceImpl implements FileService{
                 .append("	            	<div class=\"left\">")
                 .append("   	            	<ul class=\"list-unstyled\">")
                 .append("       	                <li>_____________________________________________________________</li>")
-                .append("           	            <li>").append(quotation.getApprovalUser().getName()).append("</li>")
+                .append("           	            <li>").append(quotation.getApprovalUser().getFullName()).append("</li>")
                 .append("               	        <li>Professional Solutions Brasil | ").append(quotation.getApprovalUser().getRole()).append("</li>")
                 .append("                   	    <li>Ph. ").append(quotation.getApprovalUser().getPhone()).append("</li>")
                 .append("                  		 </ul>")
@@ -219,7 +221,7 @@ public class FileServiceImpl implements FileService{
                 .append("</html>");
 
     	String dest = this.fileStorageLocation.resolve(quotation.getLabel() + EXTENSION).toString();
-    	
+
         try {
         	OutputStream os = new FileOutputStream(dest);
             PdfRendererBuilder builder = new PdfRendererBuilder();
