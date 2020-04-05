@@ -132,6 +132,24 @@ public class UserController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 
-	}	
+	}
+
+	@PatchMapping(value = "reset/{id}")
+	public ResponseEntity<?> resetPassword(@PathVariable("id") Integer id){
+		try {
+			if ((authUser.getProfile() != null) &&
+				(authUser.getProfile().equals("admin") || Objects.equals(authUser.getId(), id))) {
+					userService.resetPassword(id);
+					return new ResponseEntity<>(HttpStatus.OK);
+			} else {
+				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+			}
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (RuntimeException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+	}
+
 	
 }

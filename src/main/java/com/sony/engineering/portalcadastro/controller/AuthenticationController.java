@@ -52,7 +52,9 @@ public class AuthenticationController {
 
         try {
             if (authUser.getProfile() != null && authUser.getProfile().equals("admin")) {
-                return ResponseEntity.ok(userDetailsService.save(user));
+                User newUser = userDetailsService.save(user);
+                newUser.setPassword("");
+                return ResponseEntity.ok(newUser);
             } else {
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }

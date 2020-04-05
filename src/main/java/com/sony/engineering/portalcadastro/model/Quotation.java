@@ -43,7 +43,6 @@ public class Quotation {
 	private Status status;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@CreationTimestamp
 	private Date creationDate;
 	
 	@Temporal(TemporalType.TIMESTAMP)
@@ -53,11 +52,6 @@ public class Quotation {
 	@JoinColumn(name = "user_id")
 	private User user;
 
-//	@ManyToMany(cascade = CascadeType.DETACH)
-//	@JoinTable(name = "quotation_equipment",
-//	joinColumns = {@JoinColumn(name = "quotation_id")},
-//	inverseJoinColumns = {@JoinColumn(name = "equipment_id")})
-//	private Set<Equipment> equipments = new HashSet<>();
 	@ManyToOne
 	@JoinColumn(name = "equipment_id")
 	private Equipment equipment;

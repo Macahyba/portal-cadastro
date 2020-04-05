@@ -1,9 +1,6 @@
 package com.sony.engineering.portalcadastro.service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 
 import org.slf4j.Logger;

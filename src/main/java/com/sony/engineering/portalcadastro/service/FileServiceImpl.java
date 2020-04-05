@@ -82,7 +82,7 @@ public class FileServiceImpl implements FileService{
         String serverPath = request.getScheme() + "://localhost:" +
     						request.getLocalPort() + request.getContextPath();
 
-    	String dataAtual = DateTimeFormatter.ofPattern("DD/MM/YYYY")
+    	String dataAtual = DateTimeFormatter.ofPattern("dd/MM/YYYY")
     										.format(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")));
     	
     	Float valorDesconto = quotation.getTotalPrice()* (quotation.getTotalDiscount()/100);
@@ -105,7 +105,7 @@ public class FileServiceImpl implements FileService{
             .append("<div class=\"container-fluid small \">")
             .append("           <div class=\"row mb-3\">")
             .append("               <div class=\"col\">")
-            .append("                   <img src=\"").append(serverPath).append("/img/logo.png\"></img>")
+            .append("                   <img src=\"").append(serverPath).append("/images/logo.png\"></img>")
             .append("                   <h6 class=\"font-weight-bold\">Sony Brasil Ltda.</h6>")
             .append("                   <ul class=\"list-unstyled\">")
             .append("                       <li>Rua Werner Siemens, 111 | Condomínio e-Business Park | Prédio 1</li>")

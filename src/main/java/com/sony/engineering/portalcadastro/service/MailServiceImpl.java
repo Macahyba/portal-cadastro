@@ -18,10 +18,7 @@ import javax.activation.FileDataSource;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,6 +73,10 @@ public class MailServiceImpl implements MailService {
     private static final List<String> SCOPES = Collections.singletonList(GmailScopes.GMAIL_COMPOSE);
 
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+
+		final java.util.logging.Logger buggyLogger = java.util.logging.Logger.getLogger(FileDataStoreFactory.class.getName());
+		buggyLogger.setLevel(java.util.logging.Level.SEVERE);
+
         // Load client secrets.
         InputStream in = MailServiceImpl.class.getResourceAsStream(credentials);
         if (in == null) {
@@ -124,20 +125,40 @@ public class MailServiceImpl implements MailService {
                 .build();
 
         File file = new File(fsp.getDir() + "/" + quotation.getLabel() + ".pdf");
-        
-        List<User> users = userService.findDistinctByProfileNot("user");
+
+        User userAprov = quotation.getApprovalUser();
+        User user = quotation.getUser();
         
         String subject = "Orcamento aprovado em Portal Orçamento ✔";
         String bodyText = "Aviso.<br>Orcamento aprovado em";
         List<String> to = new ArrayList<>();
         
-        users.forEach(dest ->to.add(dest.getEmail()));
+        //users.forEach(dest ->to.add(dest.getEmail()));
+		to.add(userAprov.getEmail());
+		to.add(user.getEmail());
         to.add(username);
         MimeMessage mail = createEmailWithAttachment(to, username, subject, bodyText, file);
         sendMessage(service, username, mail);
 		
 	}
-	
+
+	@Override
+	public void sendMailReset(User user) throws IOException, GeneralSecurityException, AddressException, MessagingException {
+		final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+		Gmail service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+				.setApplicationName(APPLICATION_NAME)
+				.build();
+
+		String subject = "Reset de senha ✔";
+		String bodyText = "Aviso.<br>Sua senha foi resetada para <b>" + user.getPassword() + "</b>" +
+				"<br>Favor alterar após o login";
+		List<String> to = new ArrayList<>();
+
+		to.add(user.getEmail());
+		MimeMessage mail = createEmail(to, username, subject, bodyText);
+		sendMessage(service, username, mail);
+	}
+
 
 	private static MimeMessage prepareEmail(List<String> to,
 								            String from,

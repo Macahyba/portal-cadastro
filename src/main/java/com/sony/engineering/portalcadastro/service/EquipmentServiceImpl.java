@@ -69,7 +69,17 @@ public class EquipmentServiceImpl extends GenericServiceImpl<Equipment> implemen
 		}
 		return equipmentDao.save(equipment);
 	}
-	
+
+	@Override
+	public Equipment patch(Equipment equipment){
+
+		Equipment equipmentDb = equipmentDao.findById(equipment.getId())
+				.orElseThrow(() -> new NoSuchElementException("Invalid Equipment Id!"));
+
+		merge(equipment, equipmentDb);
+		return equipmentDao.save(equipmentDb);
+	}
+
 	@Override
 	public Set<Equipment> saveAll(Set<Equipment> equipments){
 		

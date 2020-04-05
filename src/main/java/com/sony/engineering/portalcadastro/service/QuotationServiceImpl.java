@@ -55,6 +55,7 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 		statusInsertion(quotation);
 		equipmentInsertion(quotation);
 		serviceInsertion(quotation);
+		priceInsertion(quotation);
 		approvalUserInsertion(quotation);
 
 		return quotationDao.save(quotation);
@@ -166,9 +167,23 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 	private void labelInsertion(Quotation quotation){
 
 		if (quotation.getLabel() == null){
-			final Quotation last = quotationDao.findFirstByOrderByIdDesc();
+			Quotation last = quotationDao.findFirstByOrderByIdDesc();
+			if (last == null) {
+				last = new Quotation();
+				last.setId(0);
+			}
 			quotation.setLabel(
 					String.format("%s%04d", quotation.returnPrettyCreationDate(), last.getId()+1));
+		}
+	}
+
+	private void priceInsertion(Quotation quotation){
+
+		if (quotation.getTotalPrice() == null){
+			Float tPrice = quotation.getServices().stream()
+					.map(s -> s.getPrice())
+					.reduce(0f, (a, b) -> a + b);
+			quotation.setTotalPrice(tPrice);
 		}
 	}
 	

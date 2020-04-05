@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import com.sony.engineering.portalcadastro.model.Equipment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +82,17 @@ public class ServiceServiceImpl extends GenericServiceImpl<Service> implements S
 		
 		return newServices;
 	}
-	
+
+	@Override
+	public Service patch(Service service){
+
+		Service serviceDb = serviceDao.findById(service.getId())
+				.orElseThrow(() -> new NoSuchElementException("Invalid Service Id!"));
+
+		merge(service, serviceDb);
+		return serviceDao.save(serviceDb);
+	}
+
 	@Override
 	public List<Service> findDistinctByName(String name) {
 		return serviceDao.findDistinctByName(name);

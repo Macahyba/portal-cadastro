@@ -3,20 +3,14 @@ package com.sony.engineering.portalcadastro.controller;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import com.sony.engineering.portalcadastro.model.Equipment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.sony.engineering.portalcadastro.model.Service;
 import com.sony.engineering.portalcadastro.service.ServiceService;
@@ -90,7 +84,21 @@ public class ServiceController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 	}
-	
+
+	@PatchMapping(value = "services/{id}")
+	public ResponseEntity<Service> patchService(@RequestBody Service service, @PathVariable("id") Integer id) {
+
+		try {
+			service.setId(id);
+			return new ResponseEntity<>(serviceService.patch(service), HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (RuntimeException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+	}
+
 	@DeleteMapping(value = "services/{id}")
 	public ResponseEntity<Service> deleteService(@PathVariable("id") Integer id) {
 		

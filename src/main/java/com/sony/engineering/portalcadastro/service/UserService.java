@@ -10,6 +10,8 @@ public interface UserService extends GenericService<User>{
 
 	User findById(Integer id);
 
+	void resetPassword(Integer id);
+
 	List<User> findAll();
 
 	List<User> findDistinctByProfileNot(String profile);

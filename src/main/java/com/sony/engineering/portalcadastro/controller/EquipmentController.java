@@ -10,14 +10,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.sony.engineering.portalcadastro.model.Equipment;
 import com.sony.engineering.portalcadastro.service.EquipmentService;
@@ -89,7 +82,21 @@ public class EquipmentController {
 		}
 
 	}
-	
+
+	@PatchMapping(value = "equipments/{id}")
+	public ResponseEntity<Equipment> patchEquipment(@RequestBody Equipment equipment, @PathVariable("id") Integer id) {
+
+		try {
+			equipment.setId(id);
+			return new ResponseEntity<>(equipmentService.patch(equipment), HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (RuntimeException e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+
+	}
+
 	@DeleteMapping(value = "equipments/{id}")
 	public ResponseEntity<Equipment> deleteEquipment(@PathVariable("id") Integer id) {
 		try {
