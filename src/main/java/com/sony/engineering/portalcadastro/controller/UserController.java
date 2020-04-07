@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import com.sony.engineering.portalcadastro.model.JwtUserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,10 @@ import com.sony.engineering.portalcadastro.service.UserService;
 @RestController
 public class UserController {
 
-	private Logger logger = LoggerFactory.getLogger(UserController.class);
+	private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
 	@Autowired
-	User authUser;
+	JwtUserDetails authUser;
 
 	@Autowired
 	public UserController(UserService userService) {
@@ -134,22 +135,4 @@ public class UserController {
 
 	}
 
-	@PatchMapping(value = "reset/{id}")
-	public ResponseEntity<?> resetPassword(@PathVariable("id") Integer id){
-		try {
-			if ((authUser.getProfile() != null) &&
-				(authUser.getProfile().equals("admin") || Objects.equals(authUser.getId(), id))) {
-					userService.resetPassword(id);
-					return new ResponseEntity<>(HttpStatus.OK);
-			} else {
-				return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-			}
-		} catch (NoSuchElementException e) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		} catch (RuntimeException e) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-	}
-
-	
 }

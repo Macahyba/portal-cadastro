@@ -1,5 +1,6 @@
 package com.sony.engineering.portalcadastro.auth;
 
+import com.sony.engineering.portalcadastro.model.JwtUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

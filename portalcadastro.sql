@@ -125,6 +125,34 @@ LOCK TABLES `equipment_spare_part` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `jwt_user_details`
+--
+
+DROP TABLE IF EXISTS `jwt_user_details`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+ SET character_set_client = utf8mb4 ;
+CREATE TABLE `jwt_user_details` (
+  `password` varchar(255) DEFAULT NULL,
+  `profile` varchar(255) DEFAULT NULL,
+  `username` varchar(255) DEFAULT NULL,
+  `user_id` int(11) NOT NULL,
+  PRIMARY KEY (`user_id`),
+  UNIQUE KEY `UK_44d2t4do1prs0fn62chim5vap` (`username`),
+  CONSTRAINT `FKko98k4cqopfdph1b0aff2y9hr` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `jwt_user_details`
+--
+
+LOCK TABLES `jwt_user_details` WRITE;
+/*!40000 ALTER TABLE `jwt_user_details` DISABLE KEYS */;
+INSERT INTO `jwt_user_details` VALUES ('$2a$10$hRdUcB7b4ug60DqKfCQjQup428vYthAnx63dyjUB78hn4WvcmtszO','admin','admin',1);
+/*!40000 ALTER TABLE `jwt_user_details` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `quotation`
 --
 
@@ -365,7 +393,7 @@ CREATE TABLE `status` (
   `status` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_kxaj0dvn13fwjuimg3y2j0oa2` (`status`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -374,7 +402,7 @@ CREATE TABLE `status` (
 
 LOCK TABLES `status` WRITE;
 /*!40000 ALTER TABLE `status` DISABLE KEYS */;
-INSERT INTO `status` VALUES (2,'APROVADO'),(4,'CANCELADO'),(1,'NOVO'),(3,'REJEITADO');
+INSERT INTO `status` VALUES (2,'APROVADO'),(4,'CANCELADO'),(5,'FINALIZADO'),(1,'NOVO'),(3,'REJEITADO');
 /*!40000 ALTER TABLE `status` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -389,9 +417,7 @@ CREATE TABLE `user` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(255) DEFAULT NULL,
   `full_name` varchar(255) DEFAULT NULL,
-  `password` varchar(255) DEFAULT NULL,
   `phone` varchar(255) DEFAULT NULL,
-  `profile` varchar(255) DEFAULT NULL,
   `role` varchar(255) DEFAULT NULL,
   `username` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -406,7 +432,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'portalinvoice@gmail.com','Administrador do Sistema','$2a$10$CJSRuzOgYMT5v/yPSOZ75uMVksUvlrPppAFnnefeKkW5q8yLh4Dda','+55','admin','Administrator','admin');
+INSERT INTO `user` VALUES (1,'portalinvoice@gmail.com','Administrador do Sistema','+552121872318','admin','admin');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -419,4 +445,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-03-28 23:44:19
+-- Dump completed on 2020-04-07 15:30:41

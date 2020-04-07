@@ -1,6 +1,6 @@
 package com.sony.engineering.portalcadastro.auth;
 
-import com.sony.engineering.portalcadastro.model.User;
+import com.sony.engineering.portalcadastro.model.JwtUserDetails;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,7 +21,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private JwtUserDetailsService jwtUserDetailsService;
     private JwtTokenUtil jwtTokenUtil;
-    public User user;
+    public JwtUserDetails user;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
@@ -78,7 +78,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     @Autowired
-    public void setUser(User user) {
+    public void setUser(JwtUserDetails user) {
         this.user = user;
     }
 }

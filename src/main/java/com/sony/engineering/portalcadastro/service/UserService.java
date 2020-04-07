@@ -6,14 +6,7 @@ import com.sony.engineering.portalcadastro.model.User;
 
 public interface UserService extends GenericService<User>{
 
-	User findDistinctByUsername(String username);
-
 	User findById(Integer id);
 
-	void resetPassword(Integer id);
-
 	List<User> findAll();
-
-	List<User> findDistinctByProfileNot(String profile);
-	 
 }

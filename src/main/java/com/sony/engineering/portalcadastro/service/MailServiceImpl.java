@@ -21,6 +21,8 @@ import javax.mail.Session;
 import javax.mail.internet.*;
 import javax.servlet.http.HttpServletRequest;
 
+import com.sony.engineering.portalcadastro.model.JwtUserDetails;
+import com.sony.engineering.portalcadastro.auth.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,18 +52,21 @@ public class MailServiceImpl implements MailService {
 	private static String tokenDir;
 	private static String credentials;
 
-	private UserService userService;
+	private JwtUserDetailsService userService;
 	private FileStorageProperties fsp;
 	private HttpServletRequest request;
+	private JwtUserDetails authUser;
 
 	@Autowired
 	public MailServiceImpl(MailProperties mailProperties,
-						   UserService userService,
+						   JwtUserDetailsService userService,
 						   FileStorageProperties fsp,
-						   HttpServletRequest request) {
+						   HttpServletRequest request,
+						   JwtUserDetails authUser) {
 		this.userService = userService;
 		this.fsp = fsp;
 		this.request = request;
+		this.authUser = authUser;
 		this.username = mailProperties.getUsername();
 		tokenDir = mailProperties.getTokenDir();
 		credentials = mailProperties.getCredentials();
@@ -102,13 +107,13 @@ public class MailServiceImpl implements MailService {
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
-        List<User> users = userService.findDistinctByProfileNot("user");
+        List<JwtUserDetails> users = userService.findDistinctByProfileNot("user");
         
         String subject = "Novo orçamento em Portal Orçamento ✔";
         String bodyText = "Aviso.<br>Novo orcamento em " + request.getRequestURL().toString();
         List<String> to = new ArrayList<>();
         
-        users.forEach(dest -> to.add(dest.getEmail()));
+        users.forEach(dest -> to.add(dest.getUser().getEmail()));
         to.add(username);
         MimeMessage mail = createEmail(to, username, subject, bodyText);
         sendMessage(service, username, mail);
@@ -143,7 +148,7 @@ public class MailServiceImpl implements MailService {
 	}
 
 	@Override
-	public void sendMailReset(User user) throws IOException, GeneralSecurityException, AddressException, MessagingException {
+	public void sendMailReset(JwtUserDetails user) throws IOException, GeneralSecurityException, AddressException, MessagingException {
 		final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 		Gmail service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
 				.setApplicationName(APPLICATION_NAME)
@@ -154,7 +159,7 @@ public class MailServiceImpl implements MailService {
 				"<br>Favor alterar após o login";
 		List<String> to = new ArrayList<>();
 
-		to.add(user.getEmail());
+		to.add(user.getUser().getEmail());
 		MimeMessage mail = createEmail(to, username, subject, bodyText);
 		sendMessage(service, username, mail);
 	}

@@ -1,7 +1,8 @@
 package com.sony.engineering.portalcadastro.controller;
 
 import com.sony.engineering.portalcadastro.auth.*;
-import com.sony.engineering.portalcadastro.model.User;
+import com.sony.engineering.portalcadastro.model.JwtUserDetails;
+import com.sony.engineering.portalcadastro.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @RestController
 public class AuthenticationController {
@@ -26,7 +30,10 @@ public class AuthenticationController {
     private JwtUserDetailsService userDetailsService;
 
     @Autowired
-    private User authUser;
+    private UserService userService;
+
+    @Autowired
+    private JwtUserDetails authUser;
 
     @PostMapping(value = "/authenticate")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody JwtRequest authenticationRequest) {
@@ -48,13 +55,11 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/register")
-    public ResponseEntity<?> saveUser(@RequestBody User user) throws DataIntegrityViolationException {
+    public ResponseEntity<?> saveUser(@RequestBody JwtUserDetails user) throws DataIntegrityViolationException {
 
         try {
             if (authUser.getProfile() != null && authUser.getProfile().equals("admin")) {
-                User newUser = userDetailsService.save(user);
-                newUser.setPassword("");
-                return ResponseEntity.ok(newUser);
+                return ResponseEntity.ok(userDetailsService.save(user).getUser());
             } else {
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
@@ -65,6 +70,101 @@ public class AuthenticationController {
             return new ResponseEntity<>(back, HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PatchMapping(value = "reset/{id}")
+    public ResponseEntity<?> resetPassword(@PathVariable("id") Integer id){
+        try {
+            if ((authUser.getProfile() != null) &&
+                    (authUser.getProfile().equals("admin") || Objects.equals(authUser.getId(), id))) {
+                userDetailsService.resetPassword(id);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/usersdetails")
+    public ResponseEntity<?> getUsers() {
+        try {
+            if ((authUser.getProfile() != null) && (authUser.getProfile().equals("admin"))) {
+
+                List<JwtUserDetails> users = userDetailsService.getUsers();
+
+                users.forEach(u -> u.setPassword(""));
+
+                return new ResponseEntity<>(users, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping(value = "/usersdetails/{id}")
+    public ResponseEntity<?> getOneUser(@PathVariable("id") Integer id) {
+        try {
+            if ((authUser.getProfile() != null) &&
+                    (authUser.getProfile().equals("admin") || Objects.equals(authUser.getId(), id))) {
+
+                JwtUserDetails user = userDetailsService.findOneUser(id);
+                user.setPassword("");
+
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    @PostMapping(value = "/usersdetails")
+    private ResponseEntity<?> postUserDetail(@RequestBody JwtUserDetails userDetails) {
+        try {
+            if ((authUser.getProfile() != null) && (authUser.getProfile().equals("admin"))) {
+                userDetailsService.save(userDetails);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PatchMapping(value = "/usersdetails/{id}")
+    public ResponseEntity<?> patchUserDetails(@RequestBody JwtUserDetails user, @PathVariable("id") Integer id){
+        try {
+            if ((authUser.getProfile() != null) &&
+                    (authUser.getProfile().equals("admin") || Objects.equals(authUser.getId(), id))) {
+
+                user.setId(id);
+                user.getUser().setId(id);
+                userDetailsService.patch(user);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     private void authenticate(String username, String password) throws Exception {
         try {
