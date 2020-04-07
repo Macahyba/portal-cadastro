@@ -110,14 +110,15 @@ public class MailServiceImpl implements MailService {
         List<JwtUserDetails> users = userService.findDistinctByProfileNot("user");
         
         String subject = "Novo orçamento em Portal Orçamento ✔";
-        String bodyText = "Aviso.<br>Novo orcamento em " + request.getRequestURL().toString();
+        String bodyText = "Aviso.<br>Novo orcamento <b>" + quotation.getLabel()+ "</b> em http://" +
+									request.getServerName() +".";
         List<String> to = new ArrayList<>();
         
         users.forEach(dest -> to.add(dest.getUser().getEmail()));
         to.add(username);
         MimeMessage mail = createEmail(to, username, subject, bodyText);
         sendMessage(service, username, mail);
-        
+
     }
 
 
@@ -135,16 +136,16 @@ public class MailServiceImpl implements MailService {
         User user = quotation.getUser();
         
         String subject = "Orcamento aprovado em Portal Orçamento ✔";
-        String bodyText = "Aviso.<br>Orcamento aprovado em";
+        String bodyText = "Aviso.<br>Orcamento <b>" + quotation.getLabel()+ "</b> aprovado em http://" +
+								request.getServerName() +".";
         List<String> to = new ArrayList<>();
-        
-        //users.forEach(dest ->to.add(dest.getEmail()));
+
 		to.add(userAprov.getEmail());
 		to.add(user.getEmail());
         to.add(username);
         MimeMessage mail = createEmailWithAttachment(to, username, subject, bodyText, file);
         sendMessage(service, username, mail);
-		
+
 	}
 
 	@Override
