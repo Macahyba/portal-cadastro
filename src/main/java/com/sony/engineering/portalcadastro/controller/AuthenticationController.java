@@ -148,8 +148,8 @@ public class AuthenticationController {
     @PatchMapping(value = "/usersdetails/{id}")
     public ResponseEntity<?> patchUserDetails(@RequestBody JwtUserDetails user, @PathVariable("id") Integer id){
         try {
-            if ((authUser.getProfile() != null) &&
-                    (authUser.getProfile().equals("admin") || Objects.equals(authUser.getId(), id))) {
+            if ((authUser.getProfile() != null) && (user.getProfile() == null) && Objects.equals(authUser.getId(), id)
+                    || (Objects.equals(authUser.getProfile(), "admin"))) {
 
                 user.setId(id);
                 user.getUser().setId(id);

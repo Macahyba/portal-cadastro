@@ -53,7 +53,7 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 			
 			try {
 
-				User findUser = userDao.findDistinctByUsername(user.getUsername());
+				User findUser = userDao.findDistinctByEmail(user.getEmail());
 
 				if (findUser != null){
 					user = findUser;
@@ -82,7 +82,7 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 	private Map<String, Object> mailErrorHandling(User user, Throwable e){
 		logger.error("Error sendig email: " + e);
 		Map<String, Object> map = new HashMap<>();
-		map.put("quotation", user.getUsername());
+		map.put("quotation", user.getEmail());
 		map.put("warning", "Erro ao enviar e-mail!");
 		return map;
 	}

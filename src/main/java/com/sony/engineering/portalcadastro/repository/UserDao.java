@@ -7,5 +7,5 @@ import com.sony.engineering.portalcadastro.model.User;
 @Repository
 public interface UserDao extends GenericDao<User>{
 
-	User findDistinctByUsername(String username);
+	User findDistinctByEmail(String email);
 }

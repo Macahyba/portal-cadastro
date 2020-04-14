@@ -63,11 +63,86 @@ public class FileController {
 
 		} catch (PdfGenerationException e){
 
-			logger.info("Approval User not found!");
+			logger.info("Error generating pdf!");
 		} catch (Exception e) {
 			logger.info("Quotation not found!");
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
+    @GetMapping(value = "/quotations-csv")
+    public ResponseEntity<Resource> getQuotationsCsv(HttpServletRequest request) throws IOException {
+
+		try {
+
+			String fileName = fileService.generateQuotationsCsv();
+
+			if (fileName != null){
+
+				Resource resource = fileService.loadFileAsResource(fileName);
+
+				String contentType;
+
+				contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+
+				// Fallback to the default content type if type could not be determined
+				if(contentType == null) {
+					contentType = "application/octet-stream";
+				}
+
+				return ResponseEntity.ok()
+						.contentType(MediaType.parseMediaType(contentType))
+						.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+						.body(resource);
+
+			}
+
+		} catch (IOException ex) {
+			logger.info("Could not determine file type.");
+
+		} catch (Exception e) {
+			logger.info("Quotation not found!");
+		}
+
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+
+// TODO
+//	@GetMapping(value = "/repairs-csv")
+//	public ResponseEntity<Resource> getRepairsCsv(HttpServletRequest request) throws IOException {
+//
+//		try {
+//
+//			String fileName = fileService.generateRepairsCsv();
+//
+//			if (fileName != null){
+//
+//				Resource resource = fileService.loadFileAsResource(fileName);
+//
+//				String contentType;
+//
+//				contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+//
+//				// Fallback to the default content type if type could not be determined
+//				if(contentType == null) {
+//					contentType = "application/octet-stream";
+//				}
+//
+//				return ResponseEntity.ok()
+//						.contentType(MediaType.parseMediaType(contentType))
+//						.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+//						.body(resource);
+//
+//			}
+//
+//		} catch (IOException ex) {
+//			logger.info("Could not determine file type.");
+//
+//		} catch (Exception e) {
+//			logger.info("Quotation not found!");
+//		}
+//
+//		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//	}
 
 }

@@ -1,6 +1,23 @@
 @page {
 	size: a4 landscape;
-	margin: 0px;
+	margin-bottom: -2cm;
+    margin-top: 2cm;
+    margin-left: 0cm;
+    margin-right: 0cm;
+}
+
+@page:first {
+    size: a4 landscape;
+    margin-bottom: 1cm;
+    margin-top: 0cm;
+    margin-left: 0cm;
+    margin-right: 0cm;
+    padding-bottom: -1.5cm;
+}
+
+.low {
+    margin-bottom: -1cm;
+    padding-bottom: -1cm;
 }
 
 html {
@@ -58,12 +75,12 @@ h6 {
 }
 
 .container-fluid {
-    width: 28.1cm;
-    height: 19.2cm;
-    padding-right: 0.4cm;
-    padding-left: 0.4cm;
-    display: inline-block;
-    margin: 0.80cm;
+    /*width: 28.1cm;*/
+    /*height: 19.2cm;*/
+    /*padding-right: 0.4cm;*/
+    /*padding-left: 0.4cm;*/
+    /*display: inline-block;*/
+    /*margin: 0cm;*/
 }
 
 .font-weight-bold {
