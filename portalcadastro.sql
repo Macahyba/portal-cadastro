@@ -419,10 +419,8 @@ CREATE TABLE `user` (
   `full_name` varchar(255) DEFAULT NULL,
   `phone` varchar(255) DEFAULT NULL,
   `role` varchar(255) DEFAULT NULL,
-  `username` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_ob8kqyqqgmefl0aco34akdtpe` (`email`),
-  UNIQUE KEY `UK_sb8bbouer5wak8vyiiy4pf2bx` (`username`)
+  UNIQUE KEY `UK_ob8kqyqqgmefl0aco34akdtpe` (`email`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -432,7 +430,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'portalinvoice@gmail.com','Administrador do Sistema','+552121872318','admin','admin');
+INSERT INTO `user` VALUES (1,'portalinvoice@gmail.com','Administrador do Sistema','+552121872318','admin');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
