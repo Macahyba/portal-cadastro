@@ -1,6 +1,8 @@
 package com.sony.engineering.portalcadastro.service;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 import org.slf4j.Logger;
@@ -41,7 +43,8 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 	@Transactional(propagation = Propagation.REQUIRED, noRollbackFor = UnexpectedRollbackException.class)
 	public Customer save(Customer customer) {
 		Set<Contact> contacts = customer.getContacts();
-		Set<Contact> newContacts = new HashSet<>();
+
+		contacts = this.saveAndFetchAll(contacts, customer);
 
 		if (customer.getId() != null) {
 			try {
@@ -58,30 +61,7 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 			}
 		}
 
-		if (contacts != null) {
-			contacts.forEach(c -> {
-				if (c.getId() != null) {
-					
-					try {					
-						
-						newContacts.add(contactService.findById(c.getId()));
-						
-					} catch (NoSuchElementException e){
-						logger.error("Invalid Contact Id!");
-						throw new NoSuchElementException();		
-					}				
-				} else {
-					
-					List<Contact> findContact = contactService.findDistinctByNameOrEmail(c.getName(), c.getEmail());
-
-					newContacts.add(!findContact.isEmpty() ?
-										findContact.get(0) :
-										c);
-				}
-			});
-		}
-		
-		customer.setContacts(newContacts);
+		customer.setContacts(contacts);
 		
 		return customerDao.save(customer);
 	}
@@ -109,6 +89,20 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 	@Override
 	public List<Customer> findDistinctByName(String name) {
 		return customerDao.findDistinctByName(name);
+	}
+
+	private Set<Contact> saveAndFetchAll(Set<Contact> contacts, Customer customer) {
+
+		contacts = contactService.saveAll(contacts);
+		Set<Contact> oldContacts = new HashSet<>();
+
+		List<Customer> customers = findDistinctByName(customer.getName());
+
+		customers.forEach(c -> oldContacts.addAll(c.getContacts()) );
+
+		contacts.addAll(oldContacts);
+
+		return contacts;
 	}
 
 }

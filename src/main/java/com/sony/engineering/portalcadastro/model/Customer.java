@@ -4,13 +4,7 @@ package com.sony.engineering.portalcadastro.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 
 
@@ -35,20 +29,21 @@ public class Customer {
 	@Column(unique = true)
 	@NotEmpty
 	private String cnpj;
-	
-	@OneToMany(
-			mappedBy = "customer", 
-			cascade = CascadeType.ALL)
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "customer_contact",
+			joinColumns = {@JoinColumn(name = "customer_id")},
+			inverseJoinColumns = {@JoinColumn(name = "contact_id")})
 	private Set<Contact> contacts = new HashSet<>();
-	
+
 	public void addContact(Contact contact) {
 		contacts.add(contact);
-		contact.setCustomer(this);
+//		contact.setCustomer(this);
 	}
-	
+
 	public void removeContact(Contact contact) {
 		contacts.remove(contact);
-		contact.setCustomer(null);
+//		contact.setCustomer(null);
 	}
 	
 	public Integer getId() {
@@ -87,14 +82,18 @@ public class Customer {
 		return contacts;
 	}
 
+//	public void setContacts(Set<Contact> contacts) {
+//		if (contacts == null) {
+//			if(this.contacts != null) {
+//				this.contacts.forEach((c) -> c.setCustomer(null));
+//			}
+//		} else {
+//			contacts.forEach((c) -> c.setCustomer(this));
+//		}
+//		this.contacts = contacts;
+//	}
+
 	public void setContacts(Set<Contact> contacts) {
-		if (contacts == null) {
-			if(this.contacts != null) {
-				this.contacts.forEach((c) -> c.setCustomer(null));
-			}
-		} else {
-			contacts.forEach((c) -> c.setCustomer(this));
-		}
 		this.contacts = contacts;
 	}
 
