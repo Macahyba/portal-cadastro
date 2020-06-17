@@ -74,6 +74,9 @@ public class Quotation {
 	inverseJoinColumns = {@JoinColumn(name = "service_id")})
 	private Set<Service> services = new HashSet<>();
 
+	@Column(name = "active", nullable = false, columnDefinition = "bit default 1")
+	private Boolean active;
+
 	public Integer getId() {
 		return id;
 	}
@@ -176,6 +179,14 @@ public class Quotation {
 
 	public void setServices(Set<Service> services) {
 		this.services = services;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 
 	public String returnPrettyCreationDate() {
