@@ -1,6 +1,8 @@
 package com.sony.engineering.portalcadastro.service;
 
 
+import java.sql.Timestamp;
+import java.time.Duration;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -59,11 +61,11 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 		contactInsertion(repair);
 		userInsertion(repair);
 		statusInsertion(repair);
+		endDateInsertion(repair);
+		tatInsertion(repair);
 		repairFupsInsertion(repair);
 		equipmentInsertion(repair);
-		
-		// SAVE
-		
+
 		return repairDao.save(repair);
 	}
 
@@ -170,6 +172,25 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 			
 			repairFups = repairFupService.saveAll(repairFups);
 			repair.setRepairFups(repairFups);
+		}
+	}
+
+	private void endDateInsertion(Repair repair){
+
+		if (repair.getStatus().getStatus().equals("FINALIZADO") && repair.getEndDate() == null) {
+			repair.setEndDate(new Timestamp(System.currentTimeMillis()));
+		} else if (!repair.getStatus().getStatus().equals("FINALIZADO")){
+			repair.setEndDate(null);
+		}
+	}
+
+	private void tatInsertion(Repair repair){
+
+		if (repair.getEndDate() != null && repair.getTat() == null) {
+			Duration diff = Duration.between(repair.getCreationDate().toInstant(), repair.getEndDate().toInstant());
+			repair.setTat(Float.valueOf(diff.toDays()));
+		} else if (repair.getEndDate() == null){
+			repair.setTat(null);
 		}
 	}
 
