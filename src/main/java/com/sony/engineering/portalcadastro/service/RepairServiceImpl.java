@@ -2,6 +2,7 @@ package com.sony.engineering.portalcadastro.service;
 
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.management.RuntimeErrorException;
 
@@ -171,5 +172,14 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 			repair.setRepairFups(repairFups);
 		}
 	}
-	
+
+	@Override
+	public List<Repair> findAllActive() {
+		return repairDao.findByActiveEquals(true);
+	}
+
+	@Override
+	public Repair findByIdActive(Integer id) {
+		return repairDao.findByIdAndActiveEquals(id, true).orElseThrow(NoSuchElementException::new);
+	}
 }

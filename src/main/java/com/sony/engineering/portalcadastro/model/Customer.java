@@ -21,8 +21,7 @@ public class Customer {
 	@Column(unique = true)
 	@NotEmpty
 	private String name;
-	
-	@Column(unique = true)
+
 	@NotEmpty
 	private String fullName;
 	

@@ -1,5 +1,6 @@
 package com.sony.engineering.portalcadastro.service;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -186,5 +187,9 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 			quotation.setTotalPrice(tPrice);
 		}
 	}
-	
+
+	@Override
+	public List<Quotation> findAllActive() {
+		return quotationDao.findByActiveEquals(true);
+	}
 }

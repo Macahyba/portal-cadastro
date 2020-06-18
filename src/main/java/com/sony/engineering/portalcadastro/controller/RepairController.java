@@ -30,7 +30,7 @@ public class RepairController {
 	@GetMapping(value = "repairs")
 	public ResponseEntity<List<Repair>> getRepairAll(){		
 		
-		return new ResponseEntity<>(repairService.findAll(), HttpStatus.OK);
+		return new ResponseEntity<>(repairService.findAllActive(), HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "repairs/{id}")
@@ -38,7 +38,7 @@ public class RepairController {
 		
 		try {
 
-			return new ResponseEntity<>(repairService.findById(id), HttpStatus.OK);
+			return new ResponseEntity<>(repairService.findByIdActive(id), HttpStatus.OK);
 		} catch (NoSuchElementException e) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (RuntimeException e) {

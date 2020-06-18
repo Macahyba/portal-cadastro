@@ -4,17 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -45,6 +35,9 @@ public class Repair {
 	private Date partArrivalDate;
 	
 	private Float tat;
+
+	@Column(name = "active", nullable = false, columnDefinition = "bit default 1")
+	private Boolean active;
 	
 	@ManyToOne
 	@JoinColumn(name = "status_id")	
@@ -160,6 +153,14 @@ public class Repair {
 
 	public void setTat(Float tat) {
 		this.tat = tat;
+	}
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
 	}
 
 	public Status getStatus() {

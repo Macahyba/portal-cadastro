@@ -46,7 +46,7 @@ public class QuotationController {
 	@GetMapping(value = "quotations")
 	public ResponseEntity<List<Quotation>> getQuotationAll(){
 	
-		return new ResponseEntity<>(quotationService.findAll(), HttpStatus.OK);
+		return new ResponseEntity<>(quotationService.findAllActive(), HttpStatus.OK);
 	}
 	
 	@GetMapping(value = "quotations/{id}")
