@@ -19,7 +19,6 @@ public class RepairFup {
 	private Integer id;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@CreationTimestamp	
 	private Date updateDate;
 	
 	private String description;

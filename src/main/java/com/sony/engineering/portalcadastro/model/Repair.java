@@ -16,7 +16,6 @@ public class Repair {
 	private Integer id;
 	
 	@Temporal(TemporalType.TIMESTAMP)
-	@CreationTimestamp
 	private Date creationDate;
 	
 	@Temporal(TemporalType.TIMESTAMP)
