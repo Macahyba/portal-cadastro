@@ -70,7 +70,7 @@ public class CustomerServiceImpl extends GenericServiceImpl<Customer> implements
 	public Customer patch(Customer customer){
 
 		Customer customerDb = customerDao.findById(customer.getId())
-				.orElseThrow(() -> new NoSuchElementException("Invalid Quotation Id!"));
+				.<NoSuchElementException>orElseThrow(() -> new NoSuchElementException("Invalid Quotation Id!"));
 
 		merge(customer, customerDb);
 		return customerDao.save(customerDb);

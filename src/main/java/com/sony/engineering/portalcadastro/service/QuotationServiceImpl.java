@@ -67,7 +67,7 @@ public class QuotationServiceImpl extends GenericServiceImpl<Quotation> implemen
 	@Transactional(propagation = Propagation.REQUIRED)
 	public Quotation patch(Quotation quotation) {
 
-		Quotation quotationDb = quotationDao.findById(quotation.getId()).orElseThrow(() ->
+		Quotation quotationDb = quotationDao.findById(quotation.getId()).<NoSuchElementException>orElseThrow(() ->
 			new NoSuchElementException("Invalid Quotation Id!")
 		);
 

@@ -40,7 +40,7 @@ public class ServiceServiceImpl extends GenericServiceImpl<Service> implements S
 		
 		if(service.getId() != null) {
 
-			service = serviceDao.findById(service.getId()).orElseThrow(() -> {
+			service = serviceDao.findById(service.getId()).<NoSuchElementException>orElseThrow(() -> {
 				logger.error("Invalid Service Id!");
 				throw new NoSuchElementException();
 			});
@@ -87,7 +87,7 @@ public class ServiceServiceImpl extends GenericServiceImpl<Service> implements S
 	public Service patch(Service service){
 
 		Service serviceDb = serviceDao.findById(service.getId())
-				.orElseThrow(() -> new NoSuchElementException("Invalid Service Id!"));
+				.<NoSuchElementException>orElseThrow(() -> new NoSuchElementException("Invalid Service Id!"));
 
 		merge(service, serviceDb);
 		return serviceDao.save(serviceDb);

@@ -57,7 +57,7 @@ public abstract class GenericServiceImpl<T> implements GenericService<T> {
 	@Transactional(propagation = Propagation.REQUIRED, readOnly = true)
 	public T findById(Integer id) {
 
-		return dao.findById(id).orElseThrow(NoSuchElementException::new);
+		return dao.findById(id).<NoSuchElementException>orElseThrow(NoSuchElementException::new);
 	}	
 	
 	@Override

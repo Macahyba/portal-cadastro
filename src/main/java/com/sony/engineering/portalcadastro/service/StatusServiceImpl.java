@@ -34,7 +34,7 @@ public class StatusServiceImpl extends GenericServiceImpl<Status> implements Sta
 		
 		if(status.getId() != null) {
 
-			status = statusDao.findById(status.getId()).orElseThrow(() -> {
+			status = statusDao.findById(status.getId()).<NoSuchElementException>orElseThrow(() -> {
 				logger.error("Invalid Status Id!");
 				throw new NoSuchElementException();
 			});

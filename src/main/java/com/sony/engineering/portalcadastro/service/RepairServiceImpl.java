@@ -201,6 +201,6 @@ public class RepairServiceImpl extends GenericServiceImpl<Repair> implements Rep
 
 	@Override
 	public Repair findByIdActive(Integer id) {
-		return repairDao.findByIdAndActiveEquals(id, true).orElseThrow(NoSuchElementException::new);
+		return repairDao.findByIdAndActiveEquals(id, true).<NoSuchElementException>orElseThrow(NoSuchElementException::new);
 	}
 }

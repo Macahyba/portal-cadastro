@@ -44,7 +44,7 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 		
 		if(user.getId() != null) {
 
-				user = userDao.findById(user.getId()).orElseThrow(() -> {
+				user = userDao.findById(user.getId()).<NoSuchElementException>orElseThrow(() -> {
 					logger.error("Invalid User Id!");
 					throw new NoSuchElementException();
 				});
@@ -73,7 +73,7 @@ public class UserServiceImpl extends GenericServiceImpl<User> implements UserSer
 	public User patch(User user){
 
 		User userDb = userDao.findById(user.getId())
-				.orElseThrow(() -> new NoSuchElementException("Invalid User Id!"));
+				.<NoSuchElementException>orElseThrow(() -> new NoSuchElementException("Invalid User Id!"));
 
 		merge(user, userDb);
 		return userDao.save(userDb);

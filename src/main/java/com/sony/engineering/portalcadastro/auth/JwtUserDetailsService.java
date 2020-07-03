@@ -65,7 +65,7 @@ public class JwtUserDetailsService extends GenericServiceImpl<JwtUserDetails> im
     @Override
     public JwtUserDetails findById(Integer id){
 
-        return jwtUserDetailsDao.findById(id).orElseThrow(() -> {
+        return jwtUserDetailsDao.findById(id).<NoSuchElementException>orElseThrow(() -> {
             logger.error("Invalid UserDetail Id!");
             throw new NoSuchElementException();
         });
@@ -77,7 +77,7 @@ public class JwtUserDetailsService extends GenericServiceImpl<JwtUserDetails> im
     }
 
     public JwtUserDetails findOneUser(Integer id){
-        return jwtUserDetailsDao.findById(id).orElseThrow(() -> {
+        return jwtUserDetailsDao.findById(id).<NoSuchElementException>orElseThrow(() -> {
             logger.error("Invalid UserDetail Id!");
             throw new NoSuchElementException();
         });
@@ -106,7 +106,7 @@ public class JwtUserDetailsService extends GenericServiceImpl<JwtUserDetails> im
     }
 
     public JwtUserDetails patch(JwtUserDetails user){
-        JwtUserDetails userDb = jwtUserDetailsDao.findById(user.getId()).orElseThrow(() ->
+        JwtUserDetails userDb = jwtUserDetailsDao.findById(user.getId()).<NoSuchElementException>orElseThrow(() ->
                 new NoSuchElementException("Invalid UserDetails Id!")
         );
 

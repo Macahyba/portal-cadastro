@@ -48,7 +48,7 @@ public class RepairFupServiceImpl extends GenericServiceImpl<RepairFup> implemen
 		
 		if(repairFup.getId() != null) {
 
-			repairFup = repairFupDao.findById(repairFup.getId()).orElseThrow(() -> {
+			repairFup = repairFupDao.findById(repairFup.getId()).<NoSuchElementException>orElseThrow(() -> {
 				logger.error("Invalid RepairFup Id!");
 				throw new NoSuchElementException();
 			});

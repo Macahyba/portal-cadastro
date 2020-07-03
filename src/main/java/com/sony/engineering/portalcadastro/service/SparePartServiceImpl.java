@@ -46,7 +46,7 @@ public class SparePartServiceImpl extends GenericServiceImpl<SparePart> implemen
 
 		if(sparePart.getId() != null) {
 
-			sparePart = sparePartDao.findById(sparePart.getId()).orElseThrow(() -> {
+			sparePart = sparePartDao.findById(sparePart.getId()).<NoSuchElementException>orElseThrow(() -> {
 				logger.error("Invalid SparePart Id!");
 				throw new NoSuchElementException();
 			});

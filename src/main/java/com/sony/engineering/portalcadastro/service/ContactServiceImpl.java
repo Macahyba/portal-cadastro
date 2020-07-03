@@ -49,7 +49,7 @@ public class ContactServiceImpl extends GenericServiceImpl<Contact> implements C
 
 		if (contact.getId() != null) {
 
-			contactDao.findById(contact.getId()).orElseThrow(() -> {
+			contactDao.findById(contact.getId()).<NoSuchElementException>orElseThrow(() -> {
 				logger.error("Invalid Contact Id!");
 				throw new NoSuchElementException();
 			});

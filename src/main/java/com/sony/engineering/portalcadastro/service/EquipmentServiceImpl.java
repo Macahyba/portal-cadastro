@@ -41,7 +41,7 @@ public class EquipmentServiceImpl extends GenericServiceImpl<Equipment> implemen
 		if(equipment.getId() != null) {
 
 			equipment = equipmentDao.findById(equipment.getId())
-							.orElseThrow(() -> {
+							.<NoSuchElementException>orElseThrow(() -> {
 									logger.error("Invalid Equipment Id!");
 									throw new NoSuchElementException();
 							});
@@ -74,7 +74,7 @@ public class EquipmentServiceImpl extends GenericServiceImpl<Equipment> implemen
 	public Equipment patch(Equipment equipment){
 
 		Equipment equipmentDb = equipmentDao.findById(equipment.getId())
-				.orElseThrow(() -> new NoSuchElementException("Invalid Equipment Id!"));
+				.<NoSuchElementException>orElseThrow(() -> new NoSuchElementException("Invalid Equipment Id!"));
 
 		merge(equipment, equipmentDb);
 		return equipmentDao.save(equipmentDb);
