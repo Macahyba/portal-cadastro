@@ -195,7 +195,11 @@ public class MailServiceImpl implements MailService {
 						            String subject,
 						            String bodyText)
             		throws MessagingException {
-		
+
+		if (from == null ) {
+			throw new MessagingException("'from' field is undefined.");
+		}
+
 		MimeMessage email = prepareEmail(to, from, subject);
 		
 		MimeBodyPart mimeBodyPart = new MimeBodyPart();
@@ -214,6 +218,11 @@ public class MailServiceImpl implements MailService {
 											            String bodyText,
 											            File file)
 							            			throws MessagingException {
+
+		if (from == null ) {
+			throw new MessagingException("'from' field is undefined.");
+		}
+
 		MimeMessage email = prepareEmail(to, from, subject);    	
 		
 		MimeBodyPart mimeBodyPart = new MimeBodyPart();

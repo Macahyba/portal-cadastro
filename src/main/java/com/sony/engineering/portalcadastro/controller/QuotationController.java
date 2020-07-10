@@ -157,7 +157,7 @@ public class QuotationController {
 	}
 
 	private Map<String, Object> mailErrorHandling(Quotation quotation, Throwable e){
-		logger.error("Error sendig email: " + e);
+		logger.warn("Error sendig email: " + e);
 		Map<String, Object> map = new HashMap<>();
 		map.put("quotation", quotation);
 		map.put("warning", "Erro ao enviar e-mail!");
