@@ -1,5 +1,10 @@
 ## Portal Cadastro
 
+![java](https://img.shields.io/badge/java-8-blue)
+![spring](https://img.shields.io/badge/spring%20boot-2.2.1-blue)
+![mysql](https://img.shields.io/badge/mysql-8-blue)
+
+
 Application responsible for managing the repair workflow and invoice issuing for a service workshop.  
 
 Backend developed using `Java 8` and Spring `Boot 2.2.1` exposing a REST Api. Database of choice was `MySQL 8.0`
