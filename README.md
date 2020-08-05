@@ -1,13 +1,22 @@
-## Portal Cadastro
+<h1 align="center">Welcome to Portal Cadastro 👋</h1>
+<p>
+  <img alt="Version" src="https://img.shields.io/badge/version-1.1-blue.svg?cacheSeconds=2592000" />
+  <a href="https://www.oracle.com/java/technologies/javase/javase-jdk8-downloads.html" target="_blank">
+    <img alt="Java" src="https://img.shields.io/badge/java-8-blue" />
+  </a>
+  <a href="https://spring.io/projects/spring-boot" target="_blank">
+    <img alt="Spring" src="https://img.shields.io/badge/spring%20boot-2.2.1-blue" />  
+  </a>
+  <a href="https://www.mysql.com/" target="_blank">
+    <img alt="Mysql" src="https://img.shields.io/badge/mysql-8-blue" />  
+  </a>  
+  <a href="https://twitter.com/macahyba" target="_blank">
+    <img alt="Twitter: macahyba" src="https://img.shields.io/twitter/follow/macahyba.svg?style=social" />
+  </a>
+</p>
 
-![java](https://img.shields.io/badge/java-8-blue)
-![spring](https://img.shields.io/badge/spring%20boot-2.2.1-blue)
-![mysql](https://img.shields.io/badge/mysql-8-blue)
-
-
-Application responsible for managing the repair workflow and invoice issuing for a service workshop.  
-
-Backend developed using `Java 8` and Spring `Boot 2.2.1` exposing a REST Api. Database of choice was `MySQL 8.0`
+> Application responsible for managing the repair workflow and invoice issuing for a service workshop.  <br />
+> Backend developed using `Java 8` and Spring `Boot 2.2.1` exposing a REST Api. Database of choice was `MySQL 8.0` <br />
 
 To download the project:
 
@@ -41,41 +50,18 @@ A frontend for this application can be found under the project
 
 https://github.com/Macahyba/portal-cadastro-frontend
 
------------------------------------------------------------------------------
+## Author
 
-Aplicação responsável por controlar o fluxo de reparos em uma oficina e emitir orçamentos para serviços.
+👤 **Thiago Macahyba**
 
-Backend desenvolvido em `Java 8` com `Spring Boot 2.2.1` expondo uma Api REST. O banco de dados escolhido foi `MySQL 8.0`
+* Twitter: [@macahyba](https://twitter.com/macahyba)
+* Github: [@macahyba](https://github.com/macahyba)
+* LinkedIn: [@thiagomacahyba](https://linkedin.com/in/thiagomacahyba)
 
-Para obter o projeto execute:
+## 🤝 Contributing
 
-```
-git clone https://github.com/Macahyba/portal-cadastro.git
-cd portal-cadastro
-```
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/Macahyba/portal-cadastro/issues). 
 
-Existe um arquivo `application.properties` na pasta `resources`, modifique como necessitar. 
+## Show your support
 
-
-Já na pasta de trabalho, baixe as dependências necessárias e efetue o build do projeto
-
-```
-mvn dependency: tree
-mvn install
-```
-
-O arquivo `jar` gerado pode ser encontrado em `target/portal-cadastro-0.0.1-SNAPSHOT.jar`
-
-```
-java -jar target/portal-cadastro-0.0.1-SNAPSHOT.jar
-```
-
-Para que o envio de e-mails funcione corretamente, é necessário que criem-se credenciais OAuth conforme indicado no artigo:
-
-https://developers.google.com/gmail/api/quickstart/java
-
-As credenciais devem ser apontadas na variável `mail.credentials`.
-
-Um frontend para essa aplicação pode ser encontrado no projeto
-
-https://github.com/Macahyba/portal-cadastro-frontend
+Give a ⭐️ if this project helped you!
