@@ -1,6 +1,8 @@
 package com.sony.engineering.portalcadastro.auth;
 
+import com.sony.engineering.portalcadastro.exception.MailSendException;
 import com.sony.engineering.portalcadastro.model.JwtUserDetails;
+import com.sony.engineering.portalcadastro.model.Quotation;
 import com.sony.engineering.portalcadastro.repository.GenericDao;
 import com.sony.engineering.portalcadastro.repository.JwtUserDetailsDao;
 import com.sony.engineering.portalcadastro.service.GenericServiceImpl;
@@ -17,9 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class JwtUserDetailsService extends GenericServiceImpl<JwtUserDetails> implements UserDetailsService {
@@ -46,16 +46,20 @@ public class JwtUserDetailsService extends GenericServiceImpl<JwtUserDetails> im
 
     }
 
-    public void resetPassword(Integer id) {
+    public void resetPassword(Integer id) throws MailSendException {
         JwtUserDetails user = findById(id);
         String password = generateRandomString();
         user.setPassword(password);
 
         try {
             mailService.sendMailReset(user);
-        } catch (MessagingException | GeneralSecurityException | IOException e) {
+        } catch (MailSendException e) {
 
-            throw new RuntimeException(e);
+            logger.warn("Error sending email: " + e);
+            Map<String, Object> errorMap = new HashMap<>();
+            errorMap.put("warning", "Erro ao enviar e-mail!");
+
+            throw new MailSendException(errorMap);
         }
 
         user.setPassword(bcryptEncoder.encode(user.getPassword()));

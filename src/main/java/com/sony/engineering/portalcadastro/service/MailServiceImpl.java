@@ -21,9 +21,12 @@ import javax.mail.Session;
 import javax.mail.internet.*;
 import javax.servlet.http.HttpServletRequest;
 
+import com.sony.engineering.portalcadastro.exception.MailSendException;
 import com.sony.engineering.portalcadastro.model.JwtUserDetails;
 import com.sony.engineering.portalcadastro.auth.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import com.google.api.client.auth.oauth2.Credential;
@@ -51,6 +54,7 @@ public class MailServiceImpl implements MailService {
 	private String username;
 	private static String tokenDir;
 	private static String credentials;
+	private ResourceLoader resourceLoader;
 
 	private JwtUserDetailsService userService;
 	private FileStorageProperties fsp;
@@ -62,7 +66,8 @@ public class MailServiceImpl implements MailService {
 						   JwtUserDetailsService userService,
 						   FileStorageProperties fsp,
 						   HttpServletRequest request,
-						   JwtUserDetails authUser) {
+						   JwtUserDetails authUser,
+						   ResourceLoader resourceLoader) {
 		this.userService = userService;
 		this.fsp = fsp;
 		this.request = request;
@@ -70,6 +75,7 @@ public class MailServiceImpl implements MailService {
 		this.username = mailProperties.getUsername();
 		tokenDir = mailProperties.getTokenDir();
 		credentials = mailProperties.getCredentials();
+		this.resourceLoader = resourceLoader;
 	}
 
 	private static final String APPLICATION_NAME = "portalOrcamento";
@@ -77,13 +83,14 @@ public class MailServiceImpl implements MailService {
     
     private static final List<String> SCOPES = Collections.singletonList(GmailScopes.GMAIL_COMPOSE);
 
-    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+    private Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
 
 		final java.util.logging.Logger buggyLogger = java.util.logging.Logger.getLogger(FileDataStoreFactory.class.getName());
 		buggyLogger.setLevel(java.util.logging.Level.SEVERE);
 
         // Load client secrets.
-        InputStream in = MailServiceImpl.class.getResourceAsStream(credentials);
+        Resource banner = resourceLoader.getResource(credentials);
+		InputStream in = banner.getInputStream();
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + credentials);
         }
@@ -98,9 +105,8 @@ public class MailServiceImpl implements MailService {
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
-	
-	@Override
-    public void sendMailNew(Quotation quotation) throws IOException, GeneralSecurityException, MessagingException {
+
+    private void sendMailNewUnfiltered(Quotation quotation) throws IOException, GeneralSecurityException, MessagingException {
 
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Gmail service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
@@ -121,9 +127,17 @@ public class MailServiceImpl implements MailService {
 
     }
 
-
 	@Override
-	public void sendMailUpdate(Quotation quotation) throws IOException, GeneralSecurityException, MessagingException  {
+	public void sendMailNew(Quotation quotation) throws MailSendException {
+
+		try {
+			sendMailNewUnfiltered(quotation);
+		} catch (MessagingException | GeneralSecurityException | IOException e) {
+			throw new MailSendException(e);
+		}
+	}
+
+	private void sendMailUpdateUnfiltered(Quotation quotation) throws IOException, GeneralSecurityException, MessagingException  {
 
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Gmail service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
@@ -149,7 +163,16 @@ public class MailServiceImpl implements MailService {
 	}
 
 	@Override
-	public void sendMailReset(JwtUserDetails user) throws IOException, GeneralSecurityException, AddressException, MessagingException {
+	public void sendMailUpdate(Quotation quotation) throws MailSendException {
+
+		try {
+			sendMailUpdateUnfiltered(quotation);
+		} catch (MessagingException | GeneralSecurityException | IOException e) {
+			throw new MailSendException(e);
+		}
+	}
+
+	private void sendMailResetUnfiltered(JwtUserDetails user) throws IOException, GeneralSecurityException, AddressException, MessagingException {
 		final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
 		Gmail service = new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
 				.setApplicationName(APPLICATION_NAME)
@@ -165,6 +188,15 @@ public class MailServiceImpl implements MailService {
 		sendMessage(service, username, mail);
 	}
 
+	@Override
+	public void sendMailReset(JwtUserDetails user) throws MailSendException {
+
+    	try {
+    		sendMailResetUnfiltered(user);
+		} catch (MessagingException | GeneralSecurityException | IOException e) {
+    		throw new MailSendException(e);
+		}
+	}
 
 	private static MimeMessage prepareEmail(List<String> to,
 								            String from,

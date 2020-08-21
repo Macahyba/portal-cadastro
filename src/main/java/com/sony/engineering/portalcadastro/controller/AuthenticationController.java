@@ -1,6 +1,7 @@
 package com.sony.engineering.portalcadastro.controller;
 
 import com.sony.engineering.portalcadastro.auth.*;
+import com.sony.engineering.portalcadastro.exception.MailSendException;
 import com.sony.engineering.portalcadastro.model.JwtUserDetails;
 import com.sony.engineering.portalcadastro.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,8 @@ public class AuthenticationController {
             } else {
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
+        } catch (MailSendException e) {
+            return new ResponseEntity<>(e.getErrorMap(), HttpStatus.ACCEPTED);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (RuntimeException e) {

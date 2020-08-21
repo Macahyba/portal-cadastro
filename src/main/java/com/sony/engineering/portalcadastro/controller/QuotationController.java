@@ -9,6 +9,7 @@ import java.util.NoSuchElementException;
 
 import javax.mail.MessagingException;
 
+import com.sony.engineering.portalcadastro.exception.MailSendException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class QuotationController {
 			mailService.sendMailNew(quotation);
 			return new ResponseEntity<>(quotation, HttpStatus.CREATED);
 			
-		} catch (MessagingException | GeneralSecurityException | IOException e) {
+		} catch (MailSendException e) {
 
 			Map<String, Object> map = mailErrorHandling(quotation, e);
 			return new ResponseEntity<>(map, HttpStatus.ACCEPTED);
@@ -105,7 +106,7 @@ public class QuotationController {
 		} catch (NoSuchElementException e) {
 
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		} catch (MessagingException | GeneralSecurityException | IOException e) {
+		} catch (MailSendException e) {
 
 			Map<String, Object> map = mailErrorHandling(quotation, e);
 			return new ResponseEntity<>(map, HttpStatus.ACCEPTED);
@@ -137,7 +138,7 @@ public class QuotationController {
 		} catch (NoSuchElementException e) {
 
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		} catch (MessagingException | GeneralSecurityException | IOException e) {
+		} catch (MailSendException e) {
 
 			Map<String, Object> map = mailErrorHandling(quotation, e);
 			return new ResponseEntity<>(map, HttpStatus.ACCEPTED);
